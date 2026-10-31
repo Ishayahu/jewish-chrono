@@ -12,8 +12,8 @@
       "defaultActive": true,
       "status": "inference",
       "evidence": {
-        "work": "Сефер Юхасин; рассказ о Раби и Антонинусе",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
+        "work": "Седер а-Дорот, 3900; рассказ о Раби и Антонинусе",
+        "url": "https://jewtex.ru/open/heilprin_yechiel/seder_hadorot/siman=3900&siman_katan=%D0%90%D0%BD%D1%82%D0%BE%D0%BD%D0%B8%D0%BD%20%D0%9F%D0%B8%D0%B9/",
         "review": "Единая условная связь: рассказ о ровесниках и отождествление Антонинуса с императором не разделяются на два переключателя. Историческая атрибуция требует отдельной проверки."
       }
     },
@@ -28,9 +28,9 @@
       "defaultActive": true,
       "status": "source-reported",
       "evidence": {
-        "work": "Кидушин 72б; приведено также в хронологии",
-        "url": "https://www.sefaria.org/Kiddushin.72b",
-        "review": "Сообщение о совпадении рождений/смертей — первоисточник, но не самостоятельная абсолютная датировка."
+        "work": "Сефер Юхасин, статья о Раби (цитирует Кидушин 72б)",
+        "url": "https://jewtex.ru/open/abraham_zacuto/sefer_yuchasin/siman=%D0%9C%D0%B0%D0%B0%D0%BC%D0%B0%D1%80%20%D0%BF%D0%B5%D1%80%D0%B2%D1%8B%D0%B9%20%E2%80%94%20%D1%87%D0%B5%D1%82%D0%B2%D1%91%D1%80%D1%82%D0%BE%D0%B5%20%D1%82%D1%8B%D1%81%D1%8F%D1%87%D0%B5%D0%BB%D0%B5%D1%82%D0%B8%D0%B5&siman_katan=%D0%A0%D0%B0%D0%B1%D0%B8%20%D0%99%D0%B5%D1%83%D0%B4%D0%B0%20%D0%B0-%D0%9D%D0%B0%D1%81%D0%B8%2C%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%D0%B8%D0%BD%D1%83%D1%81%20%D0%B8%20%D0%BF%D1%80%D0%BE%D0%B7%D0%B2%D0%B8%D1%89%D0%B5%20%D0%A0%D0%B0%D0%B1%D0%B5%D0%B9%D0%BD%D1%83%20%D0%B0-%D0%9A%D0%B0%D0%B4%D0%BE%D1%88/",
+        "review": "Сефер Юхасин цитирует Кидушин 72б; сам лист Кидушин 72б пока не опубликован в базе jewTeX. Связь не является абсолютной датировкой."
       }
     }
   ],

@@ -13,7 +13,7 @@
         "author": "Раби Давид Ганс (цитирует Гейльприн)",
         "work": "Цемах Давид / Седер а-Дорот",
         "location": "Седер а-Дорот, 3900, Антонин Пий, первый абзац",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "url": "https://jewtex.ru/open/heilprin_yechiel/seder_hadorot/siman=3900&siman_katan=%D0%90%D0%BD%D1%82%D0%BE%D0%BD%D0%B8%D0%BD%20%D0%9F%D0%B8%D0%B9/",
         "originalQuote": "Воцарился в 3900 году от сотворения мира в возрасте сорока семи лет («Цемах Давид»).",
         "review": "Проверено наличие цитаты в русском XML; оригинал «Цемах Давид» требует сверки."
       }
@@ -30,7 +30,7 @@
         "author": "Раби Давид Ганс (цитирует Гейльприн)",
         "work": "Цемах Давид / Седер а-Дорот",
         "location": "Седер а-Дорот, 3900, Антонин Пий, первый абзац",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "url": "https://jewtex.ru/open/heilprin_yechiel/seder_hadorot/siman=3900&siman_katan=%D0%90%D0%BD%D1%82%D0%BE%D0%BD%D0%B8%D0%BD%20%D0%9F%D0%B8%D0%B9/",
         "originalQuote": "Воцарился в 3900 году от сотворения мира в возрасте сорока семи лет («Цемах Давид»).",
         "review": "Возраст указан годами. Точный день рождения не установлен."
       }
@@ -46,9 +46,9 @@
         "author": "Раби Йехиэль Гейльприн",
         "work": "Седер а-Дорот",
         "location": "Обсуждение дат смерти раби Акивы",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "url": "https://jewtex.ru/open/heilprin_yechiel/seder_hadorot/siman=3900&siman_katan=%D0%90%D0%BD%D1%82%D0%BE%D0%BD%D0%B8%D0%BD%20%D0%9F%D0%B8%D0%B9/",
         "originalQuote": null,
-        "review": "Хронология содержит 3880, 3897 и 3901 как альтернативы; первичная атрибуция требует проверки."
+        "review": "Седер а-Дорот, запись 3900, прямо упоминает 3880 как год гибели Акивы; сравнительные датировки требуют проверки."
       }
     },
     {
@@ -62,9 +62,9 @@
         "author": "Хронология: альтернативная датировка",
         "work": "Хронология. Причины и следствия",
         "location": "Годы 3880, 3897, 3901 — смерть раби Акивы",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/lastov_ishayahu/chronos/0000.xml",
+        "url": "https://jewtex.ru/open/lastov_ishayahu/chronos/chapter=3800&seif=3880%20%D0%B8%D0%BB%D0%B8%203897%20%D0%B8%D0%BB%D0%B8%203901%20%D1%83%D0%BC%D0%B5%D1%80%20%D1%80%D0%B0%D0%B1%D0%B8%20%D0%90%D0%BA%D0%B8%D0%B2%D0%B0/",
         "originalQuote": null,
-        "review": "В человекочитаемой хронологии год 3897 указан как альтернативный; ранний источник не установлен."
+        "review": "В человекочитаемой хронологии 3897 указан только в заголовке альтернативных дат; подраздел пока без подробного источниковедческого обоснования. Ранний источник не установлен."
       }
     },
     {
@@ -78,7 +78,7 @@
         "author": "Раби Йехиэль Гейльприн",
         "work": "Седер а-Дорот",
         "location": "Запись 3901 — гибель раби Акивы по другому мнению",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "url": "https://jewtex.ru/open/heilprin_yechiel/seder_hadorot/siman=3901&siman_katan=%D0%93%D0%B8%D0%B1%D0%B5%D0%BB%D1%8C%20%D1%80%D0%B0%D0%B1%D0%B8%20%D0%90%D0%BA%D0%B8%D0%B2%D1%8B%20%D0%BF%D0%BE%20%D0%B4%D1%80%D1%83%D0%B3%D0%BE%D0%BC%D1%83%20%D0%BC%D0%BD%D0%B5%D0%BD%D0%B8%D1%8E/",
         "originalQuote": null,
         "review": "Не путать альтернативную дату смерти с годом падения Бейтара и не приписывать её раннему автору без проверки."
       }
@@ -94,7 +94,7 @@
         "author": "Раби Йехиэль Гейльприн",
         "work": "Седер а-Дорот",
         "location": "Запись 3923, смерть Антонина Пия",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "url": "https://jewtex.ru/open/heilprin_yechiel/seder_hadorot/siman=3923&siman_katan=%D0%A1%D0%BC%D0%B5%D1%80%D1%82%D1%8C%20%D0%90%D0%BD%D1%82%D0%BE%D0%BD%D0%B8%D0%BD%D0%B0%20%D0%9F%D0%B8%D1%8F/",
         "originalQuote": null,
         "review": "Дата из традиционного источника. Исторические сопоставления исследуются отдельно."
       }
