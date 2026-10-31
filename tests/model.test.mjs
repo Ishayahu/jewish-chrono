@@ -25,6 +25,35 @@ test('3901 + 3948 + 47 compatible',()=>{
  const r=evaluate(scenario({akivaClaim:'akiva-3901',accessionClaim:'computed-3948'}),catalog);
  assert.equal(r.status,'consistent');assert.equal(yearLabel(r.emperorBorn),'3901');
 });
+test('regression: 3880 + 3948 + 47 is impossible if infant is the emperor',()=>{
+ const s=scenario({akivaClaim:'akiva-3880',accessionClaim:'computed-3948',identity:true,sourceAge:true,strict:true});
+ const r=evaluate(s,catalog);
+ assert.equal(r.status,'contradictory');
+ assert.equal(yearLabel(r.storyBorn),'3880');
+ assert.equal(yearLabel(r.ageBorn),'3901');
+ assert.equal(yearLabel(r.predictedAccession),'3927');
+ assert.equal(r.gap,21);
+ assert.equal(isAllowed(s,catalog),false);
+ assert.equal(isAllowed({...s,strict:false},catalog),true);
+});
+test('regression: missing identity leaves 3880/3948 underdetermined with a conditional warning',()=>{
+ const s=scenario({akivaClaim:'akiva-3880',accessionClaim:'computed-3948',identity:false,strict:true});
+ const r=evaluate(s,catalog);
+ assert.equal(r.status,'underdetermined');
+ assert.equal(yearLabel(r.infantBorn),'3880');
+ assert.equal(yearLabel(r.ageBorn),'3901');
+ assert.equal(yearLabel(r.ifIdentityAccession),'3927');
+ assert.equal(r.ifIdentityConflict,true);
+ assert.equal(r.ifIdentityGap,21);
+ assert.equal(isAllowed(s,catalog),true);
+});
+test('regression: 3901 + 3948 + 47 permits identity',()=>{
+ const s=scenario({akivaClaim:'akiva-3901',accessionClaim:'computed-3948',identity:true});
+ const r=evaluate(s,catalog);
+ assert.equal(r.status,'consistent');
+ assert.equal(r.ifIdentityConflict,false);
+ assert.equal(isAllowed(s,catalog),true);
+});
 test('identity not silently assumed, and off means underdetermined',()=>{
  const r=evaluate(scenario({identity:false}),catalog);
  assert.equal(r.status,'underdetermined');assert.equal(r.storyBorn,null);

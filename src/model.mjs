@@ -67,6 +67,13 @@ export function evaluate(s,catalog) {
   const emperorBorn=both?(common||null):(storyBorn||ageBorn);
   const ageComputed=storyBorn?subtract(z.value,storyBorn):null;
   const predictedAccession=storyBorn && s.sourceAge?shift(storyBorn,ageClaim.value):null;
+  // Counterfactual calculation: explicitly *not* an accepted historical identity.
+  // Let the user see the consequence of enabling the missing identity assumption.
+  const ifIdentityAccession=infantBorn && s.sourceAge?shift(infantBorn,ageClaim.value):null;
+  const ifIdentityConflict=!!ifIdentityAccession && !intersect(ifIdentityAccession,z.value);
+  const ifIdentityGap=ifIdentityConflict
+    ? (z.value.max<ifIdentityAccession.min?ifIdentityAccession.min-z.value.max:z.value.min-ifIdentityAccession.max)
+    : 0;
   const gap=both && !common ? (ageBorn.max<storyBorn.min ? storyBorn.min-ageBorn.max : ageBorn.min-storyBorn.max) : 0;
   const status=contradictory?'contradictory':both?'consistent':'underdetermined';
   const byId=id=>catalog.constraints.find(x=>x.id===id);
@@ -97,7 +104,7 @@ export function evaluate(s,catalog) {
       });
     }
   }
-  return {status, akiva:a.value, accession:z.value, rabbiBorn, infantBorn, storyBorn, ageBorn, emperorBorn, ageComputed, predictedAccession, gap,rows,ageValue:ageClaim.value,identityEnabled:!!s.identity && !!infantBorn,hasYearZero:a.value.min<=0||z.value.min<=0};
+  return {status, akiva:a.value, accession:z.value, rabbiBorn, infantBorn, storyBorn, ageBorn, emperorBorn, ageComputed, predictedAccession, ifIdentityAccession, ifIdentityConflict, ifIdentityGap, gap,rows,ageValue:ageClaim.value,identityEnabled:!!s.identity && !!infantBorn,hasYearZero:a.value.min<=0||z.value.min<=0};
 }
 export function isAllowed(s,catalog) {
   const r=evaluate(s,catalog);return r.status!=='invalid' && (!s.strict || r.status!=='contradictory');
