@@ -15,12 +15,6 @@
       "subject": "Антонин Пий"
     },
     {
-      "id": "antoninus_infant_birth",
-      "label": "Рождение младенца Антонинуса",
-      "kind": "birth",
-      "subject": "Антонинус из рассказа"
-    },
-    {
       "id": "emperor_accession",
       "label": "Вступление императора на престол",
       "kind": "accession",
@@ -30,7 +24,7 @@
       "id": "emperor_birth",
       "label": "Рождение императора Антонина",
       "kind": "birth",
-      "subject": "Антонин Пий (условная идентификация)"
+      "subject": "Антонинус из рассказа (в сценарии — император)"
     },
     {
       "id": "rabbi_birth",

@@ -2,35 +2,19 @@
   "schema": "chronology-constraints-v1",
   "constraints": [
     {
-      "id": "baby",
+      "id": "antoninus",
       "kind": "research-inference",
-      "lhsEvent": "antoninus_infant_birth",
+      "lhsEvent": "emperor_birth",
       "rhsEvent": "rabbi_birth",
       "relation": "same-year",
       "deltaYears": 0,
-      "label": "Раби и младенец Антонинус — ровесники",
+      "label": "Раби и Антонинус (император из рассказа) — ровесники",
       "defaultActive": true,
       "status": "inference",
       "evidence": {
-        "work": "Сефер Юхасин; рассказы о Раби и Антонинусе",
+        "work": "Сефер Юхасин; рассказ о Раби и Антонинусе",
         "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
-        "review": "Интерпретация рассказа о младенцах; сама по себе не устанавливает год."
-      }
-    },
-    {
-      "id": "identity",
-      "kind": "identity-hypothesis",
-      "lhsEvent": "emperor_birth",
-      "rhsEvent": "antoninus_infant_birth",
-      "relation": "same-year",
-      "deltaYears": 0,
-      "label": "Младенец Антонинус — тот же человек, что император",
-      "defaultActive": false,
-      "status": "unproven",
-      "evidence": {
-        "work": "Гипотеза отождествления",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
-        "review": "Отождествление нельзя считать фактом без отдельного доказательства."
+        "review": "Единая условная связь: рассказ о ровесниках и отождествление Антонинуса с императором не разделяются на два переключателя. Историческая атрибуция требует отдельной проверки."
       }
     },
     {
