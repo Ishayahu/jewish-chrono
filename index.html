@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17354e">
+<title>Лаборатория еврейской хронологии</title>
+<link rel="stylesheet" href="./src/style.css">
+<script type="module" src="./src/app.mjs"></script>
+</head>
+<body>
+<main class="shell">
+<header class="hero">
+<div class="eyebrow">Jewish Chronology Lab · Исследование источников</div>
+<h1>Лаборатория хронологии</h1>
+<p>Сравнивайте свидетельства, принимайте или отклоняйте исторические связи и проверяйте, какие даты следуют из выбранных предпосылок.</p>
+<div class="meta"><span>Годы от сотворения мира (АМ)</span><span>Источники — отдельно от гипотез</span><a href="https://github.com/Ishayahu/jewTeX/issues/23" target="_blank" rel="noopener noreferrer">Задача #23</a></div>
+</header>
+<div class="layout">
+<section class="panel controls" aria-labelledby="controls-title">
+<div class="section-heading"><h2 id="controls-title">Исходные условия</h2><span class="subtle">Выбираются независимо</span></div>
+<div class="field"><label for="akiva">Смерть раби Акивы</label>
+<select id="akiva"></select>
+<div class="range-fields" id="akiva-custom-wrap" hidden><label>От <input id="akiva-min" type="number" min="-100000" max="100000" step="1"></label><label>До <input id="akiva-max" type="number" min="-100000" max="100000" step="1"></label></div>
+<small>3880 и 3901 — альтернативные датировки; атрибуция второй требует дополнительной проверки.</small></div>
+<div class="field"><label for="accession">Вступление императора на престол</label>
+<select id="accession"></select>
+<div class="range-fields" id="accession-custom-wrap" hidden><label>От <input id="accession-min" type="number" min="-100000" max="100000" step="1"></label><label>До <input id="accession-max" type="number" min="-100000" max="100000" step="1"></label></div>
+<small>3927 и 3948 — результаты расчёта, <b>не цитаты</b> из исторических книг.</small></div>
+<h3>Исторические связи</h3>
+<div id="constraints"></div>
+<label class="toggle" id="age-label"><input type="checkbox" id="source-age"><span>Принять свидетельство о возрасте при вступлении: <b>47 лет</b><small>«Цемах Давид», в цитировании «Седер а-Дорот»</small></span></label>
+<h3>Правила проверки</h3>
+<label class="toggle mode"><input type="checkbox" id="strict"><span><b>Строгий режим</b><small>Несовместимые варианты не принимаются. Снимите флажок, чтобы исследовать конфликт.</small></span></label>
+<div id="ui-notice" class="notice" role="status" aria-live="polite"></div>
+<div class="actions">
+<button type="button" id="reset">Сброс</button>
+<button type="button" id="export">Экспорт JSON</button>
+<label class="import-button">Импорт JSON<input type="file" id="import" accept="application/json,.json"></label>
+</div>
+<div id="save-status" class="save-note" aria-live="polite"></div>
+</section>
+<section class="panel results" aria-labelledby="result-title">
+<div class="section-heading"><h2 id="result-title">Что следует из условий</h2><span class="subtle" id="result-mode"></span></div>
+<div id="status" role="status" aria-live="polite"></div>
+<div class="stats">
+<div class="stat"><small>Рождение Раби</small><strong id="rabbi-year">—</strong></div>
+<div class="stat"><small>Рождение императора</small><strong id="emperor-year">—</strong></div>
+<div class="stat"><small>Возраст при вступлении</small><strong id="age">—</strong></div>
+</div>
+<h3>События и происхождение дат</h3>
+<div class="table-scroll"><table><thead><tr><th>Событие</th><th>Год АМ</th><th>Обоснование и ссылка</th></tr></thead><tbody id="rows"></tbody></table></div>
+<h3>Проверка логики</h3><div id="explanation" class="explanation"></div>
+</section>
+<section class="panel full">
+<div class="section-heading"><h2>Интерактивная временная шкала</h2><span class="subtle">Нажмите на точку, чтобы открыть источник</span></div>
+<div class="timeline-scroll"><svg id="timeline" role="img" aria-label="Временная шкала дат по выбранным условиям" viewBox="0 0 1120 355"></svg></div>
+<p class="legend"><span><i class="dot source-dot"></i>Свидетельство</span><span><i class="dot inferred-dot"></i>Вычисление</span><span><i class="dot hypothesis-dot"></i>Гипотеза</span><span><i class="dot conflict-dot"></i>Несовместимое следствие</span></p>
+</section>
+<section class="panel full">
+<div class="section-heading"><h2>Свидетельства и правила</h2><span class="subtle">Кликните для перехода к XML</span></div>
+<div id="sources" class="sources"></div>
+</section>
+</div>
+<footer>Все вычисления выполняются локально. Публичный каталог версионируется в GitHub, личные сценарии сохраняются только в этом браузере и экспортируются в JSON. Арифметическая совместимость не устанавливает исторической истинности. Год 0 и отрицательные годы АМ поддержаны только как формальные тестовые значения.</footer>
+</main>
+</body></html>

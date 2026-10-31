@@ -1,0 +1,36 @@
+{
+  "schema": "chronology-events-v1",
+  "calendar": "AM",
+  "events": [
+    {
+      "id": "akiva_death",
+      "label": "Смерть раби Акивы",
+      "kind": "death",
+      "subject": "Раби Акива"
+    },
+    {
+      "id": "rabbi_birth",
+      "label": "Рождение Раби Йеуды а-Наси",
+      "kind": "birth",
+      "subject": "Раби Йеуда а-Наси"
+    },
+    {
+      "id": "antoninus_infant_birth",
+      "label": "Рождение младенца Антонинуса",
+      "kind": "birth",
+      "subject": "Антонинус из рассказа"
+    },
+    {
+      "id": "emperor_birth",
+      "label": "Рождение императора Антонина",
+      "kind": "birth",
+      "subject": "Антонин Пий (условная идентификация)"
+    },
+    {
+      "id": "emperor_accession",
+      "label": "Вступление императора на престол",
+      "kind": "accession",
+      "subject": "Антонин Пий"
+    }
+  ]
+}

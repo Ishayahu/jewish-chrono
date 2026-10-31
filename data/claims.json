@@ -1,0 +1,71 @@
+{
+  "schema": "chronology-claims-v1",
+  "calendar": "AM",
+  "claims": [
+    {
+      "id": "akiva-3880",
+      "kind": "source-claim",
+      "eventId": "akiva_death",
+      "year": 3880,
+      "title": "3880 АМ — датировка смерти раби Акивы",
+      "status": "needs-verification",
+      "source": {
+        "author": "Раби Йехиэль Гейльприн",
+        "work": "Седер а-Дорот",
+        "location": "Обсуждение хронологии раби Акивы",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "originalQuote": null,
+        "review": "Точная первичная атрибуция и привязка фрагмента требуют проверки"
+      }
+    },
+    {
+      "id": "akiva-3901",
+      "kind": "source-claim",
+      "eventId": "akiva_death",
+      "year": 3901,
+      "title": "3901 АМ — альтернативная датировка",
+      "status": "needs-primary-attribution",
+      "source": {
+        "author": "Раби Йехиэль Гейльприн",
+        "work": "Седер а-Дорот",
+        "location": "Альтернативная датировка, сопоставить с гибелью Бейтара",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "originalQuote": null,
+        "review": "Не приписывать раннему автору без проверки: датировка Бейтара не доказывает дату смерти раби Акивы"
+      }
+    },
+    {
+      "id": "accession-3900",
+      "kind": "source-claim",
+      "eventId": "emperor_accession",
+      "year": 3900,
+      "title": "3900 АМ — вступление Антонина",
+      "status": "verified-in-translated-xml",
+      "source": {
+        "author": "Раби Давид Ганс (цитируется Гейльприном)",
+        "work": "Цемах Давид / Седер а-Дорот",
+        "location": "Седер а-Дорот, раздел 3900, «Антонин Пий», первый абзац",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml#L3-L5",
+        "originalQuote": "Воцарился в 3900 году от сотворения мира в возрасте сорока семи лет («Цемах Давид»).",
+        "review": "Проверено наличие текста в XML; оригинал «Цемах Давид» требует отдельной сверки"
+      }
+    },
+    {
+      "id": "age-47",
+      "kind": "source-claim",
+      "eventId": "emperor_accession",
+      "metric": "age_at_accession",
+      "value": 47,
+      "title": "47 лет — возраст при вступлении",
+      "status": "verified-in-translated-xml",
+      "source": {
+        "author": "Раби Давид Ганс (цитируется Гейльприном)",
+        "work": "Цемах Давид / Седер а-Дорот",
+        "location": "Седер а-Дорот, раздел 3900, «Антонин Пий», первый абзац",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml#L3-L5",
+        "originalQuote": "...в возрасте сорока семи лет («Цемах Давид»).",
+        "review": "Возраст на уровне целых лет; оригинальная дата рождения не выведена без дополнительного условия"
+      }
+    }
+  ]
+}

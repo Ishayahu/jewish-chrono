@@ -1,0 +1,53 @@
+{
+  "schema": "chronology-constraints-v1",
+  "constraints": [
+    {
+      "id": "rabbi",
+      "kind": "reported-relation",
+      "lhsEvent": "rabbi_birth",
+      "relation": "same-year",
+      "rhsEvent": "akiva_death",
+      "deltaYears": 0,
+      "label": "Раби родился в год смерти раби Акивы",
+      "defaultActive": true,
+      "status": "source-reported-needs-check",
+      "evidence": {
+        "work": "Сефер Юхасин и Седер а-Дорот",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
+        "review": "Точная цитата и день совпадения требуют адресной сверки"
+      }
+    },
+    {
+      "id": "baby",
+      "kind": "research-inference",
+      "lhsEvent": "antoninus_infant_birth",
+      "relation": "same-year",
+      "rhsEvent": "rabbi_birth",
+      "deltaYears": 0,
+      "label": "Раби и младенец Антонинус — ровесники",
+      "defaultActive": true,
+      "status": "inference",
+      "evidence": {
+        "work": "Рассказ о Раби и Антонинусе",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
+        "review": "Ровесничество — интерпретация сюжета, не самостоятельная датировка"
+      }
+    },
+    {
+      "id": "identity",
+      "kind": "identity-hypothesis",
+      "lhsEvent": "emperor_birth",
+      "relation": "same-year",
+      "rhsEvent": "antoninus_infant_birth",
+      "deltaYears": 0,
+      "label": "Младенец Антонинус — тот же человек, что император",
+      "defaultActive": false,
+      "status": "unproven",
+      "evidence": {
+        "work": "Исследовательская гипотеза",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
+        "review": "Должна включаться явно; авторство отождествления не установлено"
+      }
+    }
+  ]
+}
