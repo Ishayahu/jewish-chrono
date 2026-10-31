@@ -12,6 +12,7 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 SCHEMAS = {
     "events.json": "chronology-events-v1",
@@ -51,10 +52,26 @@ def optional_text(element: ET.Element, tag: str) -> str | None:
     return (child.text or "").strip() or None if child is not None else None
 
 
+def check_public_text_url(url: str) -> str:
+    """User-facing evidence must point to a published text on jewtex.ru."""
+    parts = urlsplit(url)
+    path_parts = parts.path.split("/")
+    if (
+        parts.scheme != "https"
+        or parts.netloc != "jewtex.ru"
+        or len(path_parts) != 6
+        or path_parts[1] != "open"
+        or not all(path_parts[i] for i in (2, 3, 4))
+        or path_parts[5] != ""
+        or parts.query
+        or parts.fragment
+    ):
+        raise ValueError(f"Source links must target a jewtex.ru/open/ text section: {url!r}")
+    return url
+
+
 def parse_source(node: ET.Element) -> dict[str, str | None]:
-    url = required(node, "url")
-    if not url.startswith("https://"):
-        raise ValueError(f"Source must use an https URL: {url!r}")
+    url = check_public_text_url(required(node, "url"))
     source = {
         "author": required(node, "author"),
         "work": required(node, "work"),
@@ -109,9 +126,7 @@ def parse_constraint(element: ET.Element) -> dict[str, Any]:
     evidence = element.find("evidence")
     if evidence is None:
         raise ValueError(f"Constraint {element.get('id')} lacks evidence")
-    url = required(evidence, "url")
-    if not url.startswith("https://"):
-        raise ValueError("Constraint evidence needs an https URL")
+    url = check_public_text_url(required(evidence, "url"))
     return {
         "id": required(element, "id"),
         "kind": required(element, "kind"),

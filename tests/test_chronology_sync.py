@@ -18,15 +18,15 @@ EXAMPLE = """<?xml version="1.0"?>
   </events>
   <claims>
    <claim id="date-one" kind="source-claim" event_id="one" year_min="-3" year_max="5" title="Dated event" status="needs-verification">
-    <source author="Author" work="Book" location="Chapter" url="https://github.com/example/source"><review>Uncertain</review></source>
+    <source author="Author" work="Book" location="Chapter" url="https://jewtex.ru/open/example/book/siman=3900/"><review>Uncertain</review></source>
    </claim>
    <claim id="age-one" kind="source-claim" event_id="two" metric="age_at_accession" value="47" title="Age" status="quoted">
-    <source author="Author" work="Book" location="Chapter" url="https://github.com/example/source"/>
+    <source author="Author" work="Book" location="Chapter" url="https://jewtex.ru/open/example/book/siman=3900/"/>
    </claim>
   </claims>
   <constraints>
    <constraint id="link" kind="reported-relation" lhs_event="two" rhs_event="one" relation="same-year" delta_years="0" label="same" default_active="false" status="unproven">
-    <evidence work="Book" url="https://github.com/example/source" review="Not verified"/>
+    <evidence work="Book" url="https://jewtex.ru/open/example/book/siman=3900/" review="Not verified"/>
    </constraint>
   </constraints>
   <derived_examples>
@@ -54,6 +54,8 @@ class ChronologySyncTests(unittest.TestCase):
         self.assertEqual(result["claims.json"]["claims"][1]["year"], {"min": -3, "max": 5})
         self.assertFalse(result["constraints.json"]["constraints"][0]["defaultActive"])
         self.assertEqual(before, (self.source / "0000.xml").read_bytes())
+        self.assertTrue(all(x["source"]["url"].startswith("https://jewtex.ru/open/") for x in result["claims.json"]["claims"]))
+        self.assertTrue(all(x["evidence"]["url"].startswith("https://jewtex.ru/open/") for x in result["constraints.json"]["constraints"]))
 
     def test_idempotence_and_check(self):
         self.assertEqual(sync(self.source, self.output, check=True), ["claims.json", "constraints.json", "events.json"])
@@ -84,9 +86,17 @@ class ChronologySyncTests(unittest.TestCase):
         (self.source / "0000.xml").write_text(text, encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "unsupported relation"):
             read_source_directory(self.source)
-        text = EXAMPLE.replace('https://github.com/example/source', 'javascript:alert(1)')
+        text = EXAMPLE.replace('https://jewtex.ru/open/example/book/siman=3900/', 'javascript:alert(1)')
         (self.source / "0000.xml").write_text(text, encoding="utf-8")
-        with self.assertRaisesRegex(ValueError, "https"):
+        with self.assertRaisesRegex(ValueError, "jewtex.ru"):
+            read_source_directory(self.source)
+        text = EXAMPLE.replace("https://jewtex.ru/open/example/book/siman=3900/", "https://www.sefaria.org/Kiddushin.72b")
+        (self.source / "0000.xml").write_text(text, encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "jewtex.ru"):
+            read_source_directory(self.source)
+        text = EXAMPLE.replace("https://jewtex.ru/open/example/book/siman=3900/", "https://jewtex.ru.evil.example/open/example/book/siman=3900/")
+        (self.source / "0000.xml").write_text(text, encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "jewtex.ru"):
             read_source_directory(self.source)
 
     def test_missing_machine_data_cannot_erase_site(self):

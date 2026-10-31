@@ -13,8 +13,11 @@ function node(tag,text,attrs={}){
   for(const [key,value] of Object.entries(attrs))el.setAttribute(key,String(value));
   return el;
 }
+function isPublishedSourceUrl(url){
+  return typeof url==='string' && /^https:\/\/jewtex\.ru\/open\/[^?#\s]+\/$/.test(url);
+}
 function safeLink(url,label) {
-  if(typeof url!=='string'||!/^https:\/\/(github\.com|raw\.githubusercontent\.com|he\.wikisource\.org|www\.sefaria\.org)\//.test(url))return node('span',label);
+  if(!isPublishedSourceUrl(url))return node('span','Источник на jewtex.ru ещё не указан');
   return node('a',label,{href:url,target:'_blank',rel:'noopener noreferrer'});
 }
 function validYearInput(id){const raw=$(id).value.trim();return raw===''?NaN:Number(raw);}
@@ -72,14 +75,14 @@ function renderSources(){
     card.append(node('p',(src.work||'')+' — '+(src.location||'')));
     if(src.originalQuote)card.append(node('p','«'+src.originalQuote+'»'));
     if(src.review)card.append(node('p',src.review));
-    if(src.url)card.append(safeLink(src.url,'Открыть XML-источник'));
+    if(src.url)card.append(safeLink(src.url,'Читать на jewtex.ru'));
     host.appendChild(card);
   }
   for(const c of catalog.constraints){
     const card=node('article',null,{class:'source-card'});
     card.append(node('strong',c.label),node('span',c.kind+' · '+c.status,{class:'tag review'}));
     card.append(node('p',c.evidence?.review||''));
-    if(c.evidence?.url)card.append(safeLink(c.evidence.url,'Перейти к тексту'));
+    if(c.evidence?.url)card.append(safeLink(c.evidence.url,'Читать на jewtex.ru'));
     host.appendChild(card);
   }
 }
@@ -95,7 +98,7 @@ function renderRows(r){
     const urls=[...new Set(item.sourceUrls||[])];
     for(let i=0;i<urls.length;i++){
       provenance.append(document.createTextNode(' '));
-      const a=safeLink(urls[i],urls.length===1?'↗ Источник':'↗ Источник '+(i+1));
+      const a=safeLink(urls[i],urls.length===1?'↗ jewtex.ru':'↗ jewtex.ru · '+(i+1));
       a.className='source-link';provenance.append(a);
     }
     tr.append(provenance);tbody.append(tr);
@@ -167,7 +170,7 @@ function renderTimeline(r){
     const shortened=item.label.replace('Рождение императора — ','Император: ').replace('Вступление, ожидаемое при возрасте 47','Вступление (при 47)');
     const name=sv('text',{x:12,y:cy+4,fill:'#354a5d','font-size':12},shortened.length>35?shortened.slice(0,34)+'…':shortened);
     name.append(sv('title',{},item.label));svg.append(name);
-    const target=item.sourceUrls?.find(u=>/^https:\/\//.test(u));
+    const target=item.sourceUrls?.find(isPublishedSourceUrl);
     const group=target?sv('a',{href:target,target:'_blank',rel:'noopener noreferrer'}):sv('g');
     group.append(sv('title',{},item.label+': '+yearLabel(item.year)+' АМ. '+item.note+(target?' Открыть источник.':'')));
     if(item.year.min!==item.year.max){

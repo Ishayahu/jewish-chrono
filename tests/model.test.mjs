@@ -113,7 +113,10 @@ test('v3 import migrates only the effective combined link: baby AND identity',()
 test('dated assertions preserve provenance; computed examples are not source claims',()=>{
  assert.equal(new Set(catalog.events.map(x=>x.id)).size,catalog.events.length);
  assert.equal(new Set(catalog.claims.map(x=>x.id)).size,catalog.claims.length);
- assert.ok(catalog.claims.find(x=>x.id==='age-47').source.url.startsWith('https://github.com/'));
+ assert.ok(catalog.claims.find(x=>x.id==='age-47').source.url.startsWith('https://jewtex.ru/open/'));
+ assert.ok(catalog.claims.every(x=>x.source.url.startsWith('https://jewtex.ru/open/')));
+ assert.ok(catalog.constraints.every(x=>x.evidence.url.startsWith('https://jewtex.ru/open/')));
+ assert.equal(catalog.claims.find(x=>x.id==='accession-3900').source.url.includes('siman_katan='),true);
  assert.ok(!catalog.claims.some(x=>x.id==='computed-3927'||x.id==='computed-3948'));
  const before=JSON.stringify(catalog);
  evaluate(scenario(),catalog);
