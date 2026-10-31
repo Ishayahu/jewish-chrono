@@ -3,68 +3,100 @@
   "calendar": "AM",
   "claims": [
     {
-      "id": "akiva-3880",
-      "kind": "source-claim",
-      "eventId": "akiva_death",
-      "year": 3880,
-      "title": "3880 АМ — датировка смерти раби Акивы",
-      "status": "needs-verification",
-      "source": {
-        "author": "Раби Йехиэль Гейльприн",
-        "work": "Седер а-Дорот",
-        "location": "Обсуждение хронологии раби Акивы",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
-        "originalQuote": null,
-        "review": "Точная первичная атрибуция и привязка фрагмента требуют проверки"
-      }
-    },
-    {
-      "id": "akiva-3901",
-      "kind": "source-claim",
-      "eventId": "akiva_death",
-      "year": 3901,
-      "title": "3901 АМ — альтернативная датировка",
-      "status": "needs-primary-attribution",
-      "source": {
-        "author": "Раби Йехиэль Гейльприн",
-        "work": "Седер а-Дорот",
-        "location": "Альтернативная датировка, сопоставить с гибелью Бейтара",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
-        "originalQuote": null,
-        "review": "Не приписывать раннему автору без проверки: датировка Бейтара не доказывает дату смерти раби Акивы"
-      }
-    },
-    {
       "id": "accession-3900",
       "kind": "source-claim",
       "eventId": "emperor_accession",
-      "year": 3900,
       "title": "3900 АМ — вступление Антонина",
       "status": "verified-in-translated-xml",
+      "year": 3900,
       "source": {
-        "author": "Раби Давид Ганс (цитируется Гейльприном)",
+        "author": "Раби Давид Ганс (цитирует Гейльприн)",
         "work": "Цемах Давид / Седер а-Дорот",
-        "location": "Седер а-Дорот, раздел 3900, «Антонин Пий», первый абзац",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml#L3-L5",
+        "location": "Седер а-Дорот, 3900, Антонин Пий, первый абзац",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
         "originalQuote": "Воцарился в 3900 году от сотворения мира в возрасте сорока семи лет («Цемах Давид»).",
-        "review": "Проверено наличие текста в XML; оригинал «Цемах Давид» требует отдельной сверки"
+        "review": "Проверено наличие цитаты в русском XML; оригинал «Цемах Давид» требует сверки."
       }
     },
     {
       "id": "age-47",
       "kind": "source-claim",
       "eventId": "emperor_accession",
-      "metric": "age_at_accession",
-      "value": 47,
       "title": "47 лет — возраст при вступлении",
       "status": "verified-in-translated-xml",
+      "metric": "age_at_accession",
+      "value": 47,
       "source": {
-        "author": "Раби Давид Ганс (цитируется Гейльприном)",
+        "author": "Раби Давид Ганс (цитирует Гейльприн)",
         "work": "Цемах Давид / Седер а-Дорот",
-        "location": "Седер а-Дорот, раздел 3900, «Антонин Пий», первый абзац",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml#L3-L5",
-        "originalQuote": "...в возрасте сорока семи лет («Цемах Давид»).",
-        "review": "Возраст на уровне целых лет; оригинальная дата рождения не выведена без дополнительного условия"
+        "location": "Седер а-Дорот, 3900, Антонин Пий, первый абзац",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "originalQuote": "Воцарился в 3900 году от сотворения мира в возрасте сорока семи лет («Цемах Давид»).",
+        "review": "Возраст указан годами. Точный день рождения не установлен."
+      }
+    },
+    {
+      "id": "akiva-3880",
+      "kind": "source-claim",
+      "eventId": "akiva_death",
+      "title": "3880 АМ — датировка смерти раби Акивы",
+      "status": "needs-verification",
+      "year": 3880,
+      "source": {
+        "author": "Раби Йехиэль Гейльприн",
+        "work": "Седер а-Дорот",
+        "location": "Обсуждение дат смерти раби Акивы",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "originalQuote": null,
+        "review": "Хронология содержит 3880, 3897 и 3901 как альтернативы; первичная атрибуция требует проверки."
+      }
+    },
+    {
+      "id": "akiva-3897",
+      "kind": "source-claim",
+      "eventId": "akiva_death",
+      "title": "3897 АМ — альтернативная дата смерти раби Акивы",
+      "status": "needs-primary-attribution",
+      "year": 3897,
+      "source": {
+        "author": "Хронология: альтернативная датировка",
+        "work": "Хронология. Причины и следствия",
+        "location": "Годы 3880, 3897, 3901 — смерть раби Акивы",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/lastov_ishayahu/chronos/0000.xml",
+        "originalQuote": null,
+        "review": "В человекочитаемой хронологии год 3897 указан как альтернативный; ранний источник не установлен."
+      }
+    },
+    {
+      "id": "akiva-3901",
+      "kind": "source-claim",
+      "eventId": "akiva_death",
+      "title": "3901 АМ — альтернативная дата смерти раби Акивы",
+      "status": "needs-primary-attribution",
+      "year": 3901,
+      "source": {
+        "author": "Раби Йехиэль Гейльприн",
+        "work": "Седер а-Дорот",
+        "location": "Запись 3901 — гибель раби Акивы по другому мнению",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "originalQuote": null,
+        "review": "Не путать альтернативную дату смерти с годом падения Бейтара и не приписывать её раннему автору без проверки."
+      }
+    },
+    {
+      "id": "antoninus-death-3923",
+      "kind": "source-claim",
+      "eventId": "antoninus_death",
+      "title": "3923 АМ — сообщение о смерти Антонина Пия",
+      "status": "verified-in-translated-xml",
+      "year": 3923,
+      "source": {
+        "author": "Раби Йехиэль Гейльприн",
+        "work": "Седер а-Дорот",
+        "location": "Запись 3923, смерть Антонина Пия",
+        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/heilprin_yechiel/seder_hadorot/01.xml",
+        "originalQuote": null,
+        "review": "Дата из традиционного источника. Исторические сопоставления исследуются отдельно."
       }
     }
   ]

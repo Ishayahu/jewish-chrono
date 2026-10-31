@@ -2,67 +2,67 @@
   "schema": "chronology-constraints-v1",
   "constraints": [
     {
-      "id": "rabbi",
-      "kind": "reported-relation",
-      "lhsEvent": "rabbi_birth",
-      "relation": "same-year",
-      "rhsEvent": "akiva_death",
-      "deltaYears": 0,
-      "label": "Раби родился в год смерти раби Акивы",
-      "defaultActive": true,
-      "status": "source-reported-needs-check",
-      "evidence": {
-        "work": "Сефер Юхасин и Седер а-Дорот",
-        "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
-        "review": "Точная цитата и день совпадения требуют адресной сверки"
-      }
-    },
-    {
       "id": "baby",
       "kind": "research-inference",
       "lhsEvent": "antoninus_infant_birth",
-      "relation": "same-year",
       "rhsEvent": "rabbi_birth",
+      "relation": "same-year",
       "deltaYears": 0,
       "label": "Раби и младенец Антонинус — ровесники",
       "defaultActive": true,
       "status": "inference",
       "evidence": {
-        "work": "Рассказ о Раби и Антонинусе",
+        "work": "Сефер Юхасин; рассказы о Раби и Антонинусе",
         "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
-        "review": "Ровесничество — интерпретация сюжета, не самостоятельная датировка"
+        "review": "Интерпретация рассказа о младенцах; сама по себе не устанавливает год."
       }
     },
     {
       "id": "identity",
       "kind": "identity-hypothesis",
       "lhsEvent": "emperor_birth",
-      "relation": "same-year",
       "rhsEvent": "antoninus_infant_birth",
+      "relation": "same-year",
       "deltaYears": 0,
       "label": "Младенец Антонинус — тот же человек, что император",
       "defaultActive": false,
       "status": "unproven",
       "evidence": {
-        "work": "Исследовательская гипотеза",
+        "work": "Гипотеза отождествления",
         "url": "https://github.com/Ishayahu/jewTeX_TEXTS_DB/blob/master/abraham_zacuto/sefer_yuchasin/01.xml",
-        "review": "Должна включаться явно; авторство отождествления не установлено"
+        "review": "Отождествление нельзя считать фактом без отдельного доказательства."
+      }
+    },
+    {
+      "id": "rabbi",
+      "kind": "reported-relation",
+      "lhsEvent": "rabbi_birth",
+      "rhsEvent": "akiva_death",
+      "relation": "same-year",
+      "deltaYears": 0,
+      "label": "Раби родился в год смерти раби Акивы",
+      "defaultActive": true,
+      "status": "source-reported",
+      "evidence": {
+        "work": "Кидушин 72б; приведено также в хронологии",
+        "url": "https://www.sefaria.org/Kiddushin.72b",
+        "review": "Сообщение о совпадении рождений/смертей — первоисточник, но не самостоятельная абсолютная датировка."
       }
     }
   ],
   "derivedExamples": [
     {
       "id": "computed-3927",
+      "kind": "computed-example",
       "baseClaimId": "akiva-3880",
       "ageClaimId": "age-47",
-      "kind": "computed-example",
       "status": "arithmetic-example"
     },
     {
       "id": "computed-3948",
+      "kind": "computed-example",
       "baseClaimId": "akiva-3901",
       "ageClaimId": "age-47",
-      "kind": "computed-example",
       "status": "arithmetic-example"
     }
   ]
