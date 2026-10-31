@@ -19,10 +19,15 @@ export const INITIAL = Object.freeze({
   accessionClaim:'accession-3900',accessionCustom:3900,
   rabbi:true,baby:true,identity:false,sourceAge:true,strict:true
 });
-export const COMPUTED_ACCESSION_OPTIONS = Object.freeze([
-  {id:'computed-3927',year:3927,label:'3927 — вычисление: 3880 + 47'},
-  {id:'computed-3948',year:3948,label:'3948 — вычисление: 3901 + 47'}
-]);
+export function computedAccessionOptions(catalog){
+  return (catalog.derivedExamples||[]).map(def=>{
+    const base=catalog.claims.find(x=>x.id===def.baseClaimId && x.kind==='source-claim');
+    const age=catalog.claims.find(x=>x.id===def.ageClaimId && x.metric==='age_at_accession');
+    if(!base || !age || !Number.isInteger(base.year) || !Number.isInteger(age.value))throw new Error('Неверное вычисленное предложение: '+def.id);
+    const year=base.year+age.value;
+    return {id:def.id,year,basisClaimId:base.id,label:year+' — вычисление: '+base.year+' + '+age.value};
+  });
+}
 const flags=['rabbi','baby','identity','sourceAge','strict'];
 export function validateScenario(s,catalog) {
   if(!s || typeof s!=='object' || Array.isArray(s)) return 'Неверная структура сценария.';
@@ -33,7 +38,7 @@ export function validateScenario(s,catalog) {
   else if(!hasClaim(s.akivaClaim,'akiva_death'))return 'Неизвестный вариант смерти Акивы.';
   if(s.accessionClaim==='custom') {if(!validRange(s.accessionCustom))return 'Недопустимый пользовательский год воцарения.';}
   else if(!hasClaim(s.accessionClaim,'emperor_accession') &&
-    !COMPUTED_ACCESSION_OPTIONS.some(x=>x.id===s.accessionClaim))return 'Неизвестный вариант воцарения.';
+    !computedAccessionOptions(catalog).some(x=>x.id===s.accessionClaim))return 'Неизвестный вариант воцарения.';
   if(!catalog.claims.some(x=>x.id==='age-47' && x.value===47))return 'Нет подтверждённого каталожного свидетельства о возрасте.';
   for(const id of ['rabbi','baby','identity'])if(!catalog.constraints.some(x=>x.id===id))return 'Нет ограничения: '+id;
   return null;
@@ -42,8 +47,8 @@ function choice(catalog,id,custom) {
   if(id==='custom')return {value:range(custom),kind:'custom',source:null,claimId:null};
   const claim=catalog.claims.find(x=>x.id===id && x.kind==='source-claim');
   if(claim)return {value:range(claim.year),kind:'source',source:claim.source?.url||null,claimId:claim.id};
-  const example=COMPUTED_ACCESSION_OPTIONS.find(x=>x.id===id);
-  if(example)return {value:range(example.year),kind:'computed-example',source:null,claimId:null};
+  const example=computedAccessionOptions(catalog).find(x=>x.id===id);
+  if(example)return {value:range(example.year),kind:'computed-example',source:null,claimId:null,basisClaimId:example.basisClaimId};
   throw new Error('Неизвестный вариант: '+id);
 }
 export function evaluate(s,catalog) {
@@ -67,7 +72,7 @@ export function evaluate(s,catalog) {
   const byId=id=>catalog.constraints.find(x=>x.id===id);
   const sourceOf=(claim)=>claim?.source?.url||null;
   const ageUrl=sourceOf(ageClaim);
-  const computedBasis=z.kind==='computed-example' ? sourceOf(catalog.claims.find(x=>x.id===(s.accessionClaim==='computed-3948'?'akiva-3901':'akiva-3880'))) : null;
+  const computedBasis=z.kind==='computed-example' ? sourceOf(catalog.claims.find(x=>x.id===z.basisClaimId)) : null;
   const link=(c)=>c?.evidence?.url||null;
   const rows=[
     {eventId:'akiva_death',label:'Смерть раби Акивы',year:a.value,kind:a.kind,sourceUrls:a.source?[a.source]:[],note:a.kind==='custom'?'Введено пользователем':a.kind==='source'?'Выбранная датировка источника':'Вычислено'},

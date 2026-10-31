@@ -49,5 +49,21 @@
         "review": "Должна включаться явно; авторство отождествления не установлено"
       }
     }
+  ],
+  "derivedExamples": [
+    {
+      "id": "computed-3927",
+      "baseClaimId": "akiva-3880",
+      "ageClaimId": "age-47",
+      "kind": "computed-example",
+      "status": "arithmetic-example"
+    },
+    {
+      "id": "computed-3948",
+      "baseClaimId": "akiva-3901",
+      "ageClaimId": "age-47",
+      "kind": "computed-example",
+      "status": "arithmetic-example"
+    }
   ]
 }

@@ -1,4 +1,4 @@
-import {INITIAL, COMPUTED_ACCESSION_OPTIONS, evaluate, isAllowed, normalizeImported, range, validRange, yearLabel} from './model.mjs';
+import {INITIAL, computedAccessionOptions, evaluate, isAllowed, normalizeImported, range, validRange, yearLabel} from './model.mjs';
 
 const $ = id => document.getElementById(id);
 const STORAGE_KEY='jewish-chrono-scenario-v3';
@@ -53,7 +53,7 @@ function setupOptions(){
   const death=catalog.claims.filter(x=>x.eventId==='akiva_death' && x.kind==='source-claim');
   const accession=catalog.claims.filter(x=>x.eventId==='emperor_accession' && x.kind==='source-claim');
   $('akiva').replaceChildren(...death.map(x=>option(x.id,yearLabel(x.year)+' — '+x.source.work+(x.status==='needs-primary-attribution'?' (атрибуция уточняется)':''))),option('custom','Другой год / интервал'));
-  $('accession').replaceChildren(...accession.map(x=>option(x.id,yearLabel(x.year)+' — '+x.source.work)),...COMPUTED_ACCESSION_OPTIONS.map(x=>option(x.id,x.label)),option('custom','Другой год / интервал'));
+  $('accession').replaceChildren(...accession.map(x=>option(x.id,yearLabel(x.year)+' — '+x.source.work)),...computedAccessionOptions(catalog).map(x=>option(x.id,x.label)),option('custom','Другой год / интервал'));
   const wrap=$('constraints');
   for(const c of catalog.constraints){
     const label=node('label',null,{class:'toggle'});
@@ -247,7 +247,7 @@ async function loadCatalog(){
     const json=await Promise.all(urls.map(async u=>{
       const r=await fetch(u,{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status+' — '+u);return r.json();
     }));
-    catalog={events:json[0].events,claims:json[1].claims,constraints:json[2].constraints};
+    catalog={events:json[0].events,claims:json[1].claims,constraints:json[2].constraints,derivedExamples:json[2].derivedExamples};
     setupOptions();setupControls();renderSources();
     try{
       const stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
