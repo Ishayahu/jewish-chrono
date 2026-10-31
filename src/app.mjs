@@ -1,12 +1,12 @@
 import {INITIAL, computedAccessionOptions, evaluate, isAllowed, normalizeImported, range, validRange, yearLabel} from './model.mjs';
 
 const $ = id => document.getElementById(id);
-const STORAGE_KEY='jewish-chrono-scenario-v3';
+const STORAGE_KEY='jewish-chrono-scenario-v4';
 let catalog=null;
 let state={...INITIAL};
 const sourceIds=['akiva','accession'];
-const switches=['rabbi','baby','identity','sourceAge','strict'];
-const switchInput={rabbi:'constraint-rabbi',baby:'constraint-baby',identity:'constraint-identity',sourceAge:'source-age',strict:'strict'};
+const switches=['rabbi','antoninus','sourceAge','strict'];
+const switchInput={rabbi:'constraint-rabbi',antoninus:'constraint-antoninus',sourceAge:'source-age',strict:'strict'};
 function node(tag,text,attrs={}){
   const el=document.createElement(tag);
   if(text!==undefined && text!==null)el.textContent=String(text);
@@ -59,7 +59,7 @@ function setupOptions(){
     const label=node('label',null,{class:'toggle'});
     const input=node('input',null,{id:'constraint-'+c.id,type:'checkbox'});
     const span=node('span');
-    span.append(node('span',c.label),node('small',c.kind==='identity-hypothesis'?'Гипотеза, тождество не установлено':c.kind==='research-inference'?'Вывод из текста, не датировка': 'Сообщаемая традиция; точная ссылка требует проверки'));
+    span.append(node('span',c.label),node('small',c.kind==='research-inference'?'Единая сюжетная связь; отождествление обсуждается как часть сценария': 'Сообщаемая традиция; точная ссылка требует проверки'));
     label.append(input,span);wrap.appendChild(label);
   }
 }
@@ -107,12 +107,12 @@ function statusBlock(r,s){
   const headline=r.status==='contradictory'?'Есть противоречие между принятыми условиями':
     r.status==='consistent'?'Выбранные условия арифметически совместимы':'Недостаточно принятых связей для проверки совпадения';
   let explanation='';
-  if(r.status==='contradictory')explanation='От возраста 47 лет и года вступления следует рождение '+yearLabel(r.ageBorn)+', но рассказ с тремя принятыми связями указывает '+yearLabel(r.storyBorn)+'. Минимальное расхождение: '+r.gap+' лет.';
-  else if(r.status==='consistent')explanation='Свидетельство о возрасте совместимо с цепочкой принятых связей. Это не доказывает историческую достоверность.';
-  else if(!s.identity && r.ifIdentityAccession){
-    explanation='Отождествление младенца с императором НЕ принято. Младенец родился в '+yearLabel(r.infantBorn)+', а император при выбранном возрасте 47 лет — в '+yearLabel(r.ageBorn)+'. Если принять тождество, год вступления должен быть '+yearLabel(r.ifIdentityAccession)+(r.ifIdentityConflict?', то есть выбранный год '+yearLabel(r.accession)+' отличается на '+r.ifIdentityGap+' лет.':' — это совпадает с выбранным годом.')+' Пока тождество не принято, это два разных исторических лица и арифметического противоречия нет.';
-  }
-  else explanation='Отсутствие противоречия не означает подтверждения: нет полной цепочки связей либо независимой возрастной проверки.';
+  if(r.status==='contradictory')
+    explanation='Из года смерти раби Акивы и двух принятых связей следует рождение Антонинуса-императора '+yearLabel(r.storyBorn)+'. Но вступление на престол '+yearLabel(r.accession)+' при возрасте 47 лет даёт '+yearLabel(r.ageBorn)+'. Расхождение: '+r.gap+' лет.';
+  else if(r.status==='consistent')
+    explanation='Годы совместимы при двух принятых связях и возрасте 47 лет. Это не доказывает историческую достоверность отождествления.';
+  else
+    explanation='Проверка невозможна: отключена хотя бы одна связь или свидетельство о возрасте. Ровесничество и тождество Антонинуса не разделяются на независимые переключатели.';
   host.append(node('strong',headline),node('p',explanation));
   $('result-mode').textContent=s.strict?'Строгий режим':'Исследовательский режим';
   const show=(id,value)=>{const el=$(id);el.textContent=value===null?'—':yearLabel(value);el.classList.toggle('na',value===null);};
@@ -120,14 +120,12 @@ function statusBlock(r,s){
   $('age').textContent=s.sourceAge?'47 (ист.)':r.ageComputed?yearLabel(r.ageComputed):'—';
   const explain=$('explanation');explain.replaceChildren();
   const add=(str,cls)=>explain.append(node('p',str,cls?{class:cls}:{}));
-  add('Шаг 1. Смерть раби Акивы: '+yearLabel(r.akiva)+'. '+(s.rabbi?'Принято, что Раби родился тогда же.':'Связь с рождением Раби отключена.'));
-  add('Шаг 2. '+(r.infantBorn?'По принятому ровесничеству младенец Антонинус родился в '+yearLabel(r.infantBorn)+'.':'Год рождения младенца из рассказа не установлен.'));
-  add('Шаг 3. '+(r.storyBorn?'Принято тождество младенца с императором; его рождение тогда '+yearLabel(r.storyBorn)+'.':s.identity?'Гипотеза о тождестве включена, но предыдущих связей недостаточно, чтобы датировать рождение императора.':'Гипотеза «младенец Антонинус = император» ОТКЛЮЧЕНА. Возраст младенца нельзя автоматически приписывать императору.'));
-  add('Шаг 4. '+(s.sourceAge?'При возрасте 47 лет и восшествии '+yearLabel(r.accession)+' рождение императора следует датировать '+yearLabel(r.ageBorn)+'.':'Свидетельство о возрасте 47 лет не включено.'));
-  if(r.predictedAccession)add('Из всех трёх связей вместе с возрастом 47 следует ожидаемый год восшествия '+yearLabel(r.predictedAccession)+'.');
-  if(!s.identity && r.ifIdentityAccession)add('ПРОВЕРКА ГИПОТЕЗЫ (НЕ принятой в сценарии): если младенец и император — одно лицо, ожидаемое вступление '+yearLabel(r.ifIdentityAccession)+'; выбранное '+yearLabel(r.accession)+(r.ifIdentityConflict?' даёт разницу '+r.ifIdentityGap+' лет.':' совместимо.')+' Эта условная проверка не делает тождество доказанным.');
-  if(r.status==='contradictory')add('Несовместимость: одно и то же рождение должно одновременно приходиться на '+yearLabel(r.storyBorn)+' и '+yearLabel(r.ageBorn)+'. Для разрешения конфликта измените год или снимите хотя бы одну связь / возрастное свидетельство.','error-text');
-  if(r.hasYearZero)add('Предупреждение: выбран формальный нулевой или отрицательный год АМ; это математический тест, а не историческая дата.');
+  add('Шаг 1. Смерть раби Акивы: '+yearLabel(r.akiva)+'. '+(s.rabbi?'Принято, что Раби родился в этот же год.':'Связь рождения Раби с Акивой отключена.'));
+  add('Шаг 2. '+(r.storyBorn?'Принят весь рассказ о ровесниках: Антонинус в нём — император, значит год его рождения '+yearLabel(r.storyBorn)+'.':s.antoninus?'Связь Раби и Антонинуса принята, но год рождения Раби пока неизвестен.':'Связь ровесничества Раби с Антонинусом-императором отключена.'));
+  add('Шаг 3. '+(s.sourceAge?'Вступление '+yearLabel(r.accession)+' при возрасте 47 лет означает год рождения '+yearLabel(r.ageBorn)+'.':'Возраст 47 лет не принят.'));
+  if(r.predictedAccession)add('Следствие обеих связей и возраста 47: ожидаемое вступление '+yearLabel(r.predictedAccession)+'.');
+  if(r.status==='contradictory')add('Несовместимость: один и тот же человек должен родиться одновременно в '+yearLabel(r.storyBorn)+' и '+yearLabel(r.ageBorn)+'. Для сравнения вариантов переключитесь в исследовательский режим или измените дату/условия.','error-text');
+  if(r.hasYearZero)add('Предупреждение: нулевой или отрицательный год АМ — формальный математический тест.');
 }
 const SVGNS='http://www.w3.org/2000/svg';
 function sv(tag,attrs={},label){
@@ -185,15 +183,13 @@ function renderTimeline(r){
 }
 function updateAssumptionInfo(r,s){
   const el=$('assumption-info');if(!el)return;
-  el.classList.toggle('active',s.identity);
-  if(s.identity){
-    el.replaceChildren(node('strong','Гипотеза тождества принята для этого сценария'),
-      node('span','Младенец Антонинус и император считаются одним человеком. Строгий режим проверяет согласованность их дат при наличии остальных связей.'));
+  el.classList.toggle('active',s.antoninus);
+  if(s.antoninus){
+    el.replaceChildren(node('strong','Единая связь истории включена'),
+      node('span','«Раби и Антонинус — ровесники» относится к Антонинусу-императору из этой же истории. Отдельного переключателя тождества младенца и императора больше нет.'));
   }else{
-    const message=r.ifIdentityAccession
-      ? 'Если включить тождество, возраст 47 лет потребует вступления в '+yearLabel(r.ifIdentityAccession)+' году. '+(r.ifIdentityConflict?'Выбранный '+yearLabel(r.accession)+' год расходится на '+r.ifIdentityGap+' лет.':'Выбранный год совместим.')+' Пока гипотеза отключена, строгий режим не блокирует комбинацию.'
-      : 'Строгий режим не связывает годы рождения младенца и императора без принятия этой гипотезы.';
-    el.replaceChildren(node('strong','Гипотеза «младенец = император» отключена'),node('span',message));
+    el.replaceChildren(node('strong','Связь Раби с Антонинусом отключена'),
+      node('span','Рассказ о ровесничестве и идентичность Антонинуса рассматриваются вместе: обе предпосылки либо приняты для расчёта, либо не приняты.'));
   }
 }
 function disableImpossible(){
@@ -206,7 +202,7 @@ function disableImpossible(){
       o.title=o.disabled?'Не совместимо с уже выбранными предпосылками':'';
     }
   }
-  for(const field of ['rabbi','baby','identity','sourceAge']){
+  for(const field of ['rabbi','antoninus','sourceAge']){
     const input=$(switchInput[field]),trial={...s,[field]:!s[field]};
     const disable=s.strict&&!isAllowed(trial,catalog);
     input.disabled=disable;input.closest('.toggle').classList.toggle('disabled',disable);
@@ -237,9 +233,9 @@ function setupControls(){
   $('reset').addEventListener('click',()=>{state={...INITIAL};notice('');persist();render();});
   $('export').addEventListener('click',()=>{
     const json={
-      schema:'chronology-scenario-v3',calendar:'AM',scenario:state,
+      schema:'chronology-scenario-v4',calendar:'AM',scenario:state,
       selected_claims:[state.akivaClaim,state.accessionClaim,...(state.sourceAge?['age-47']:[])].filter(x=>!x.startsWith('computed')&&x!=='custom'),
-      active_constraints:['rabbi','baby','identity'].filter(x=>state[x]),overrides:{
+      active_constraints:['rabbi','antoninus'].filter(x=>state[x]),overrides:{
         ...(state.akivaClaim==='custom'?{akiva_death:state.akivaCustom}:{}),
         ...(state.accessionClaim==='custom'?{emperor_accession:state.accessionCustom}:{})
       },savedAt:new Date().toISOString(),note:'Исследовательский сценарий — не установленная историческая хронология'
@@ -268,7 +264,7 @@ async function loadCatalog(){
     setupOptions();setupControls();renderSources();
     try{
       const stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
-      if(stored && isAllowed(stored,catalog))state=Object.fromEntries(Object.keys(INITIAL).map(k=>[k,stored[k]]));
+      if(stored && !validateScenario(stored,catalog) && isAllowed(stored,catalog))state=Object.fromEntries(Object.keys(INITIAL).map(k=>[k,stored[k]]));
     }catch(e){}
     render();
   }catch(error){

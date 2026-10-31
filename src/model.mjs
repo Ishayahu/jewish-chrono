@@ -16,8 +16,8 @@ export function yearLabel(value) {
 }
 export const INITIAL = Object.freeze({
   akivaClaim:'akiva-3880',akivaCustom:3880,
-  accessionClaim:'accession-3900',accessionCustom:3900,
-  rabbi:true,baby:true,identity:false,sourceAge:true,strict:true
+  accessionClaim:'computed-3927',accessionCustom:3900,
+  rabbi:true,antoninus:true,sourceAge:true,strict:true
 });
 export function computedAccessionOptions(catalog){
   return (catalog.derivedExamples||[]).map(def=>{
@@ -28,7 +28,7 @@ export function computedAccessionOptions(catalog){
     return {id:def.id,year,basisClaimId:base.id,label:year+' — вычисление: '+base.year+' + '+age.value};
   });
 }
-const flags=['rabbi','baby','identity','sourceAge','strict'];
+const flags=['rabbi','antoninus','sourceAge','strict'];
 export function validateScenario(s,catalog) {
   if(!s || typeof s!=='object' || Array.isArray(s)) return 'Неверная структура сценария.';
   for(const flag of flags) if(typeof s[flag]!=='boolean') return 'Поле '+flag+' должно быть логическим.';
@@ -40,7 +40,7 @@ export function validateScenario(s,catalog) {
   else if(!hasClaim(s.accessionClaim,'emperor_accession') &&
     !computedAccessionOptions(catalog).some(x=>x.id===s.accessionClaim))return 'Неизвестный вариант воцарения.';
   if(!catalog.claims.some(x=>x.id==='age-47' && x.value===47))return 'Нет подтверждённого каталожного свидетельства о возрасте.';
-  for(const id of ['rabbi','baby','identity'])if(!catalog.constraints.some(x=>x.id===id))return 'Нет ограничения: '+id;
+  for(const id of ['rabbi','antoninus'])if(!catalog.constraints.some(x=>x.id===id))return 'Нет ограничения: '+id;
   return null;
 }
 function choice(catalog,id,custom) {
@@ -57,42 +57,37 @@ export function evaluate(s,catalog) {
   const a=choice(catalog,s.akivaClaim,s.akivaCustom);
   const z=choice(catalog,s.accessionClaim,s.accessionCustom);
   const ageClaim=catalog.claims.find(x=>x.id==='age-47');
+  // Two independent story links only:
+  // (1) Rabbi's birth = Akiva's death.
+  // (2) Antoninus in that birth narrative IS the emperor and is Rabbi's contemporary.
+  // There is NO independent 'infant identity' toggle.
   const rabbiBorn=s.rabbi?a.value:null;
-  const infantBorn=s.baby && rabbiBorn?rabbiBorn:null;
-  const storyBorn=s.identity && infantBorn?infantBorn:null;
+  const storyBorn=s.antoninus && rabbiBorn?rabbiBorn:null;
   const ageBorn=s.sourceAge?shift(z.value,-ageClaim.value):null;
   const both=!!storyBorn && !!ageBorn;
   const common=both?intersect(storyBorn,ageBorn):null;
   const contradictory=both && !common;
-  const emperorBorn=both?(common||null):(storyBorn||ageBorn);
+  const emperorBorn=both?common:(storyBorn||ageBorn);
   const ageComputed=storyBorn?subtract(z.value,storyBorn):null;
   const predictedAccession=storyBorn && s.sourceAge?shift(storyBorn,ageClaim.value):null;
-  // Counterfactual calculation: explicitly *not* an accepted historical identity.
-  // Let the user see the consequence of enabling the missing identity assumption.
-  const ifIdentityAccession=infantBorn && s.sourceAge?shift(infantBorn,ageClaim.value):null;
-  const ifIdentityConflict=!!ifIdentityAccession && !intersect(ifIdentityAccession,z.value);
-  const ifIdentityGap=ifIdentityConflict
-    ? (z.value.max<ifIdentityAccession.min?ifIdentityAccession.min-z.value.max:z.value.min-ifIdentityAccession.max)
-    : 0;
-  const gap=both && !common ? (ageBorn.max<storyBorn.min ? storyBorn.min-ageBorn.max : ageBorn.min-storyBorn.max) : 0;
+  const gap=contradictory?(ageBorn.max<storyBorn.min?storyBorn.min-ageBorn.max:ageBorn.min-storyBorn.max):0;
   const status=contradictory?'contradictory':both?'consistent':'underdetermined';
   const byId=id=>catalog.constraints.find(x=>x.id===id);
-  const sourceOf=(claim)=>claim?.source?.url||null;
+  const sourceOf=claim=>claim?.source?.url||null;
   const ageUrl=sourceOf(ageClaim);
-  const computedBasis=z.kind==='computed-example' ? sourceOf(catalog.claims.find(x=>x.id===z.basisClaimId)) : null;
-  const link=(c)=>c?.evidence?.url||null;
+  const computedBasis=z.kind==='computed-example'?sourceOf(catalog.claims.find(x=>x.id===z.basisClaimId)):null;
+  const link=c=>c?.evidence?.url||null;
   const rows=[
     {eventId:'akiva_death',label:'Смерть раби Акивы',year:a.value,kind:a.kind,sourceUrls:a.source?[a.source]:[],note:a.kind==='custom'?'Введено пользователем':a.kind==='source'?'Выбранная датировка источника':'Вычислено'},
-    {eventId:'rabbi_birth',label:'Рождение Раби',year:rabbiBorn,kind:'inferred',sourceUrls:s.rabbi?[link(byId('rabbi'))].filter(Boolean):[],note:s.rabbi?'Условное равенство со смертью Акивы':'Связь не принята'},
-    {eventId:'antoninus_infant_birth',label:'Рождение младенца Антонинуса',year:infantBorn,kind:'inferred',sourceUrls:s.baby&&rabbiBorn?[link(byId('baby'))].filter(Boolean):[],note:infantBorn?'Условное ровесничество с Раби':'Недостаточно связей'},
+    {eventId:'rabbi_birth',label:'Рождение Раби',year:rabbiBorn,kind:'inferred',sourceUrls:rabbiBorn?[link(byId('rabbi'))].filter(Boolean):[],note:rabbiBorn?'Условное равенство со смертью Акивы':'Связь не принята'},
+    {eventId:'emperor_birth',label:'Рождение Антонинуса-императора — по рассказу',year:storyBorn,kind:'hypothesis',sourceUrls:storyBorn?[link(byId('antoninus'))].filter(Boolean):[],note:storyBorn?'Единая сюжетная связь: ровесничество и идентичность':'Связь с Раби не принята или не датирована'},
     {eventId:'emperor_birth',label:'Рождение императора — по свидетельству о возрасте',year:ageBorn,kind:'inferred',sourceUrls:ageBorn?[ageUrl].filter(Boolean):[],note:ageBorn?'Год воцарения минус 47':'Свидетельство о возрасте отключено'},
-    {eventId:'emperor_birth',label:'Рождение императора — по рассказу',year:storyBorn,kind:'hypothesis',sourceUrls:storyBorn?[link(byId('identity'))].filter(Boolean):[],note:storyBorn?'Три отдельно принятые связи':'Связь с младенцем не установлена'},
     {eventId:'emperor_accession',label:'Вступление на престол',year:z.value,kind:z.kind,sourceUrls:z.source?[z.source]:(z.kind==='computed-example'?[ageUrl,computedBasis].filter(Boolean):[]),note:z.kind==='computed-example'?'Вычисленный пример, не свидетельство':z.kind==='custom'?'Введено пользователем':'Выбранное свидетельство'},
-    {eventId:'emperor_accession',label:'Вступление, ожидаемое при возрасте 47',year:predictedAccession,kind:'inferred',sourceUrls:predictedAccession?[ageUrl,link(byId('identity'))].filter(Boolean):[],note:predictedAccession?'Применены возраст и три связи':'Недостаточно связей'}
+    {eventId:'emperor_accession',label:'Вступление, ожидаемое при возрасте 47',year:predictedAccession,kind:'inferred',sourceUrls:predictedAccession?[ageUrl,link(byId('antoninus')),link(byId('rabbi'))].filter(Boolean):[],note:predictedAccession?'Возраст и обе связи':'Недостаточно связей'}
   ];
-  // Dated claims for events outside the interactive case study are still
-  // displayed. They are catalog evidence, not automatically accepted scenario assumptions.
-  const coreEventIds=new Set(['akiva_death','rabbi_birth','antoninus_infant_birth','emperor_birth','emperor_accession']);
+  // Catalog dates independent of the interactive two-variable case study
+  // remain visible, but never become silently accepted scenario assumptions.
+  const coreEventIds=new Set(['akiva_death','rabbi_birth','emperor_birth','emperor_accession']);
   for(const event of catalog.events){
     if(coreEventIds.has(event.id))continue;
     for(const claim of catalog.claims){
@@ -104,16 +99,21 @@ export function evaluate(s,catalog) {
       });
     }
   }
-  return {status, akiva:a.value, accession:z.value, rabbiBorn, infantBorn, storyBorn, ageBorn, emperorBorn, ageComputed, predictedAccession, ifIdentityAccession, ifIdentityConflict, ifIdentityGap, gap,rows,ageValue:ageClaim.value,identityEnabled:!!s.identity && !!infantBorn,hasYearZero:a.value.min<=0||z.value.min<=0};
+  return {status,akiva:a.value,accession:z.value,rabbiBorn,storyBorn,ageBorn,emperorBorn,ageComputed,predictedAccession,gap,rows,ageValue:ageClaim.value,hasYearZero:a.value.min<=0||z.value.min<=0};
 }
 export function isAllowed(s,catalog) {
   const r=evaluate(s,catalog);return r.status!=='invalid' && (!s.strict || r.status!=='contradictory');
 }
 export function normalizeImported(raw,catalog) {
-  if(!raw || raw.schema!=='chronology-scenario-v3' || raw.calendar!=='AM' || !raw.scenario)throw new Error('Неизвестный формат JSON сценария.');
-  const s=raw.scenario;
+  if(!raw || !['chronology-scenario-v3','chronology-scenario-v4'].includes(raw.schema) || raw.calendar!=='AM' || !raw.scenario)throw new Error('Неизвестный формат JSON сценария.');
+  const scenario=raw.schema==='chronology-scenario-v3'
+    // Preserve the EFFECTIVE old constraints; discarded identity switch cannot
+    // silently create newly accepted historical assumptions.
+    ? {...raw.scenario,antoninus:!!raw.scenario.baby && !!raw.scenario.identity}
+    : raw.scenario;
+  const s=Object.fromEntries(Object.keys(INITIAL).map(key=>[key,scenario[key]]));
   const error=validateScenario(s,catalog);
   if(error)throw new Error(error);
   if(!isAllowed(s,catalog))throw new Error('В строгом режиме импортированный сценарий противоречив.');
-  return Object.fromEntries(Object.keys(INITIAL).map(key=>[key,s[key]]));
+  return s;
 }
