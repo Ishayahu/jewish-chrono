@@ -83,6 +83,20 @@ export function evaluate(s,catalog) {
     {eventId:'emperor_accession',label:'Вступление на престол',year:z.value,kind:z.kind,sourceUrls:z.source?[z.source]:(z.kind==='computed-example'?[ageUrl,computedBasis].filter(Boolean):[]),note:z.kind==='computed-example'?'Вычисленный пример, не свидетельство':z.kind==='custom'?'Введено пользователем':'Выбранное свидетельство'},
     {eventId:'emperor_accession',label:'Вступление, ожидаемое при возрасте 47',year:predictedAccession,kind:'inferred',sourceUrls:predictedAccession?[ageUrl,link(byId('identity'))].filter(Boolean):[],note:predictedAccession?'Применены возраст и три связи':'Недостаточно связей'}
   ];
+  // Dated claims for events outside the interactive case study are still
+  // displayed. They are catalog evidence, not automatically accepted scenario assumptions.
+  const coreEventIds=new Set(['akiva_death','rabbi_birth','antoninus_infant_birth','emperor_birth','emperor_accession']);
+  for(const event of catalog.events){
+    if(coreEventIds.has(event.id))continue;
+    for(const claim of catalog.claims){
+      if(claim.eventId!==event.id || !validRange(claim.year))continue;
+      rows.push({
+        eventId:event.id,label:event.label,year:range(claim.year),kind:'source',
+        sourceUrls:claim.source?.url?[claim.source.url]:[],
+        note:'Каталог: '+claim.title+' (проверка: '+claim.status+')'
+      });
+    }
+  }
   return {status, akiva:a.value, accession:z.value, rabbiBorn, infantBorn, storyBorn, ageBorn, emperorBorn, ageComputed, predictedAccession, gap,rows,ageValue:ageClaim.value,identityEnabled:!!s.identity && !!infantBorn,hasYearZero:a.value.min<=0||z.value.min<=0};
 }
 export function isAllowed(s,catalog) {

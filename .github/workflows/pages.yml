@@ -1,15 +1,17 @@
-name: Test and deploy static chronology lab
+name: Test, sync chronology XML and deploy Pages
 on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '17 */3 * * *'
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: chronology-pages
+  cancel-in-progress: false
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -17,18 +19,60 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
+      - name: Checkout chronology website
         uses: actions/checkout@v4
+      - name: Checkout public XML text database
+        uses: actions/checkout@v4
+        with:
+          repository: Ishayahu/jewTeX_TEXTS_DB
+          ref: master
+          path: .source-chronology
+          persist-credentials: false
+      - name: Unit tests for XML synchronization
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Generate chronology JSON from XML
+        run: |
+          python3 scripts/sync_chronology.py --source-dir .source-chronology/lastov_ishayahu/chronos --output-dir data
+          python3 scripts/sync_chronology.py --source-dir .source-chronology/lastov_ishayahu/chronos --output-dir data --check
       - name: Check chronology logic
         run: node --test tests/*.test.mjs
-      - name: Check browser JavaScript syntax
+      - name: Check JavaScript syntax
         run: node --check src/app.mjs && node --check src/model.mjs
+      - name: Check hidden XML metadata XSLT templates
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          ns={'xsl':'http://www.w3.org/1999/XSL/Transform'}
+          for name in ('html.xslt','quote_html.xslt','markdown.xslt'):
+              path=Path('.source-chronology/.meta')/name
+              tree=ET.parse(path)
+              skips=[x for x in tree.findall('.//xsl:template',ns) if x.get('match')=='chronology_data' and not list(x) and not (x.text or '').strip()]
+              assert skips, f'{name}: hidden chronology metadata is not excluded from XSLT output'
+              print(f'{name}: chronology_data excluded')
+          PY
+      - name: Commit generated JSON if changed
+        run: |
+          if ! git diff --quiet -- data/events.json data/claims.json data/constraints.json; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add data/events.json data/claims.json data/constraints.json
+            git commit -m 'chore: sync chronology JSON from canonical XML [skip ci]'
+            git push
+          else
+            echo 'Chronology JSON already up to date'
+          fi
+      - name: Stage GitHub Pages artifact
+        run: |
+          mkdir -p dist
+          cp index.html .nojekyll dist/
+          cp -R src data dist/
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload static files
+      - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
-      - name: Deploy GitHub Pages
+          path: dist
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

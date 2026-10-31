@@ -14,7 +14,7 @@ function node(tag,text,attrs={}){
   return el;
 }
 function safeLink(url,label) {
-  if(typeof url!=='string'||!/^https:\/\/(github\.com|raw\.githubusercontent\.com|he\.wikisource\.org)\//.test(url))return node('span',label);
+  if(typeof url!=='string'||!/^https:\/\/(github\.com|raw\.githubusercontent\.com|he\.wikisource\.org|www\.sefaria\.org)\//.test(url))return node('span',label);
   return node('a',label,{href:url,target:'_blank',rel:'noopener noreferrer'});
 }
 function validYearInput(id){const raw=$(id).value.trim();return raw===''?NaN:Number(raw);}
