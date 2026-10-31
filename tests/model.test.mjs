@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {evaluate,INITIAL,isAllowed,yearLabel,intersect,shift,normalizeImported,validateScenario} from '../src/model.mjs';
 const load=(name)=>JSON.parse(readFileSync(new URL('../data/'+name+'.json',import.meta.url),'utf8'));
 const catalog={events:load('events').events,claims:load('claims').claims,constraints:load('constraints').constraints};
-const scenario=(overrides={})=>({...INITIAL,...overrides,identity:true});
+const scenario=(overrides={})=>({...INITIAL,identity:true,...overrides});
 test('3880 + 3900 + 47 with all links: explicit 27-year contradiction',()=>{
  const r=evaluate(scenario(),catalog);
  assert.equal(r.status,'contradictory');

@@ -67,6 +67,7 @@ export function evaluate(s,catalog) {
   const byId=id=>catalog.constraints.find(x=>x.id===id);
   const sourceOf=(claim)=>claim?.source?.url||null;
   const ageUrl=sourceOf(ageClaim);
+  const computedBasis=z.kind==='computed-example' ? sourceOf(catalog.claims.find(x=>x.id===(s.accessionClaim==='computed-3948'?'akiva-3901':'akiva-3880'))) : null;
   const link=(c)=>c?.evidence?.url||null;
   const rows=[
     {eventId:'akiva_death',label:'Смерть раби Акивы',year:a.value,kind:a.kind,sourceUrls:a.source?[a.source]:[],note:a.kind==='custom'?'Введено пользователем':a.kind==='source'?'Выбранная датировка источника':'Вычислено'},
@@ -74,7 +75,7 @@ export function evaluate(s,catalog) {
     {eventId:'antoninus_infant_birth',label:'Рождение младенца Антонинуса',year:infantBorn,kind:'inferred',sourceUrls:s.baby&&rabbiBorn?[link(byId('baby'))].filter(Boolean):[],note:infantBorn?'Условное ровесничество с Раби':'Недостаточно связей'},
     {eventId:'emperor_birth',label:'Рождение императора — по свидетельству о возрасте',year:ageBorn,kind:'inferred',sourceUrls:ageBorn?[ageUrl].filter(Boolean):[],note:ageBorn?'Год воцарения минус 47':'Свидетельство о возрасте отключено'},
     {eventId:'emperor_birth',label:'Рождение императора — по рассказу',year:storyBorn,kind:'hypothesis',sourceUrls:storyBorn?[link(byId('identity'))].filter(Boolean):[],note:storyBorn?'Три отдельно принятые связи':'Связь с младенцем не установлена'},
-    {eventId:'emperor_accession',label:'Вступление на престол',year:z.value,kind:z.kind,sourceUrls:z.source?[z.source]:[],note:z.kind==='computed-example'?'Вычисленный пример, не свидетельство':z.kind==='custom'?'Введено пользователем':'Выбранное свидетельство'},
+    {eventId:'emperor_accession',label:'Вступление на престол',year:z.value,kind:z.kind,sourceUrls:z.source?[z.source]:(z.kind==='computed-example'?[ageUrl,computedBasis].filter(Boolean):[]),note:z.kind==='computed-example'?'Вычисленный пример, не свидетельство':z.kind==='custom'?'Введено пользователем':'Выбранное свидетельство'},
     {eventId:'emperor_accession',label:'Вступление, ожидаемое при возрасте 47',year:predictedAccession,kind:'inferred',sourceUrls:predictedAccession?[ageUrl,link(byId('identity'))].filter(Boolean):[],note:predictedAccession?'Применены возраст и три связи':'Недостаточно связей'}
   ];
   return {status, akiva:a.value, accession:z.value, rabbiBorn, infantBorn, storyBorn, ageBorn, emperorBorn, ageComputed, predictedAccession, gap,rows,ageValue:ageClaim.value,identityEnabled:!!s.identity && !!infantBorn,hasYearZero:a.value.min<=0||z.value.min<=0};
