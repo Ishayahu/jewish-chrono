@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09192c">
+  <meta name="description" content="MouseHost Cloud — панель управления с оплатой каждого движения мыши. Шуточная демонстрация.">
+  <title>MouseHost Cloud — Панель управления</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; --navy:#0a1b30; --blue:#437df5; --ink:#17243b; --muted:#728198; --border:#e4eaf3; --bg:#f5f7fc; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); min-height: 100vh; }
+    button { font: inherit; cursor: pointer; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #76adff; outline-offset: 3px; }
+    .quota { position: sticky; top: 0; z-index: 15; padding: 17px clamp(16px,4vw,54px) 19px; color: #fff; background: linear-gradient(108deg,#091a30 0%,#123c74 62%,#244e99 100%); box-shadow: 0 10px 30px #07132626; }
+    .quota-top { display:flex; align-items:center; justify-content:space-between; gap:22px; max-width:1450px; margin:auto; }
+    .quota-title { display:flex; gap:14px; align-items:center; min-width:0; }
+    .quota-icon { flex:0 0 45px; width:45px; height:45px; display:grid; place-items:center; border-radius:13px; background:#ffffff1b; font-size:24px; }
+    .eyebrow { text-transform:uppercase; font-size:10px; letter-spacing:1.6px; font-weight:800; opacity:.72; }
+    h1,h2,h3,p { margin:0; }
+    .quota h1 { font-size:clamp(15px,1.8vw,22px); margin-top:4px; font-weight:730; }
+    .quota-numbers { text-align:right; white-space:nowrap; }
+    .quota-numbers strong { font-size:clamp(25px,3.2vw,38px); line-height:1; font-variant-numeric:tabular-nums; }
+    .quota-numbers small { font-size:12px; opacity:.78; }
+    .progress { overflow:hidden; max-width:1450px; margin:16px auto 8px; height:12px; border:1px solid #ffffff2b; border-radius:20px; background:#ffffff28; }
+    .progress > div { height:100%; width:100%; border-radius:20px; transition:width .1s linear,background .3s; background:linear-gradient(90deg,#5af5bc,#b9ffe2); box-shadow:0 0 18px #64efaf66; }
+    .quota-foot { display:flex; gap:10px; justify-content:space-between; max-width:1450px; margin:auto; color:#dbe6fb; font-size:11px; }
+    .shell { display:grid; grid-template-columns:240px minmax(0,1fr); min-height:calc(100vh - 132px); }
+    aside { background:#101f34; color:#aebdd2; padding:27px 15px 20px; }
+    .brand { color:#fff; font-size:21px; font-weight:850; letter-spacing:-.9px; padding:0 14px 28px; }
+    .brand span { color:#73a9ff; }
+    .brand small { display:block; color:#889bb7; font-size:10px; letter-spacing:1.8px; font-weight:700; margin-top:3px; }
+    .nav-label { padding:0 14px 12px; letter-spacing:1.4px; font-size:10px; font-weight:800; color:#657b98; }
+    .nav { display:grid; gap:5px; }
+    .nav button { display:flex; align-items:center; gap:11px; text-align:left; border:0; border-radius:10px; color:#b9c5d7; background:transparent; padding:13px 14px; width:100%; font-size:13px; }
+    .nav button:hover,.nav button[aria-current="page"] { background:#243b60; color:#fff; }
+    .nav .symbol { font-size:17px; width:20px; text-align:center; }
+    .aside-footer { margin:50px 12px 0; font-size:11px; color:#8ba0bd; line-height:1.7; padding-top:18px; border-top:1px solid #2b3d55; }
+    main { padding:clamp(20px,3vw,38px); max-width:1250px; width:100%; margin:auto; }
+    .crumbs { font-size:12px; color:#8a96aa; margin-bottom:15px; }
+    .topline { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:29px; }
+    .topline h2 { font-size:clamp(25px,3vw,32px); letter-spacing:-.9px; }
+    .topline p { color:var(--muted); font-size:13px; margin-top:7px; }
+    .tag { display:inline-flex; align-items:center; gap:7px; border-radius:50px; padding:8px 11px; color:#167853; background:#e2f8ed; font-size:11px; font-weight:800; }
+    .dot { width:7px; height:7px; border-radius:50%; background:#36c48a; box-shadow:0 0 0 4px #36c48a22; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .card { background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 6px 25px #243a5e07; padding:23px; min-width:0; }
+    .card-title { font-size:12px; font-weight:700; color:#718099; }
+    .stat { margin:14px 0 7px; font-size:30px; letter-spacing:-1px; font-weight:800; }
+    .stat small { color:var(--muted); font-weight:500; font-size:13px; letter-spacing:0; }
+    .trend { color:#149c70; font-size:11px; font-weight:700; }
+    .section { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(250px,1fr); gap:16px; margin-top:16px; }
+    .card h3 { font-size:17px; letter-spacing:-.25px; }
+    .sub { color:var(--muted); font-size:12px; line-height:1.6; margin-top:7px; }
+    .server-head { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px; }
+    .server-id { margin-top:6px; color:#718099; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:12px; }
+    .server { display:flex; gap:17px; align-items:center; margin:23px 0; padding:19px; background:#f6f9fe; border:1px solid #e9eff9; border-radius:12px; }
+    .server-art { width:64px; height:65px; border:1px solid #bdcee4; border-radius:10px; background:linear-gradient(#dbe7f6,#b8cee7); padding:11px; flex:0 0 auto; }
+    .server-art div { border-radius:3px; background:#476487; margin-bottom:7px; height:10px; position:relative; }
+    .server-art div:after { content:""; position:absolute; right:5px; top:3px; background:#58e2ab; border-radius:50%; width:4px; height:4px; }
+    .server-name { font-weight:780; margin-bottom:5px; }
+    .server-desc { color:#748299; font-size:12px; line-height:1.6; }
+    .actions { display:flex; gap:9px; flex-wrap:wrap; }
+    .btn { background:#fff; color:#304462; border:1px solid #dbe3f0; padding:11px 14px; border-radius:9px; font-size:12px; font-weight:800; }
+    .btn:hover { background:#f3f7ff; border-color:#a9bee8; }
+    .btn-primary { background:#3778ee; color:white; border-color:#3778ee; }
+    .btn-primary:hover { background:#2361d5; color:white; }
+    .bill { margin-top:21px; background:linear-gradient(120deg,#ecf3ff,#f7faff); border:1px solid #dfebff; border-radius:12px; padding:17px; }
+    .bill strong { display:block; color:#275dc4; margin-top:6px; font-size:24px; }
+    .bill p { font-size:11px; color:#6e7d95; line-height:1.6; margin-top:7px; }
+    .bill-note { margin-top:18px; font-size:11px; color:#8493a8; line-height:1.65; }
+    .meter-row { margin:21px 0 0; }
+    .meter-label { display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; color:#718099; }
+    .mini-track { background:#edf2fa; border-radius:20px; overflow:hidden; height:9px; }
+    .mini-track div { height:100%; background:#6d9ef5; border-radius:20px; }
+    .updates { margin-top:16px; }
+    .updates-list { display:grid; gap:19px; margin-top:24px; }
+    .news { display:flex; gap:13px; align-items:flex-start; }
+    .news-ico { display:grid; place-items:center; width:34px; height:34px; flex:0 0 auto; border-radius:10px; background:#edf4ff; font-size:17px; }
+    .news strong { font-size:12px; display:block; }
+    .news p { margin-top:6px; color:#8290a4; font-size:11px; line-height:1.6; }
+    .log { margin-top:16px; }
+    .log-head { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    pre { background:#0f2239; color:#bcd0e6; border-radius:11px; padding:17px; overflow:auto; font-size:11px; line-height:1.85; margin:15px 0 0; white-space:pre-wrap; word-break:break-word; }
+    pre[hidden] { display:none; }
+    .foot { margin:28px 0 0; text-align:center; color:#929eb1; font-size:11px; line-height:1.6; }
+    .overlay { position:fixed; inset:0; display:grid; place-items:center; z-index:99; padding:16px; background:#081527c9; backdrop-filter:blur(9px); }
+    .overlay[hidden] { display:none; }
+    .dialog { width:min(100%,520px); text-align:center; background:#fff; border:1px solid #e8eaf2; border-radius:22px; padding:clamp(25px,5vw,42px); box-shadow:0 25px 100px #0008; }
+    .warning { display:grid; place-items:center; width:72px; height:72px; border-radius:19px; margin:auto auto 21px; font-size:33px; background:#fff0e9; }
+    .dialog h2 { font-size:clamp(23px,3vw,31px); letter-spacing:-.8px; line-height:1.2; }
+    .dialog p { color:#66758d; line-height:1.65; margin-top:14px; font-size:14px; }
+    .amount { margin:22px 0 8px; font-size:48px; font-weight:850; letter-spacing:-2px; color:#142b50; }
+    .dialog .btn { width:100%; padding:16px; margin-top:14px; font-size:14px; }
+    .dialog .note { font-size:11px; margin-top:14px; }
+    .toast { position:fixed; right:22px; bottom:22px; max-width:min(370px,calc(100vw - 44px)); z-index:110; background:#12243c; color:#fff; border-radius:12px; box-shadow:0 15px 45px #08152744; padding:15px 18px; line-height:1.5; font-size:13px; }
+    .toast[hidden] { display:none; }
+    .critical .progress > div { background:linear-gradient(90deg,#ff9b64,#ff5252); box-shadow:0 0 18px #ff646455; }
+    @media(max-width:880px) { .shell { grid-template-columns:1fr; } aside { display:none; } .section { grid-template-columns:1fr; } }
+    @media(max-width:600px) { .quota { padding:12px 16px; } .quota-title { gap:8px; } .quota-icon { display:none; } .quota-foot { font-size:10px; } .grid { grid-template-columns:1fr; gap:10px; } .stat { font-size:26px; } .card { padding:19px; } .quota-numbers strong { font-size:26px; } .quota h1 { font-size:15px; } }
+    @media(prefers-reduced-motion:reduce) { *,*:before,*:after { scroll-behavior:auto!important; transition:none!important; } }
+  </style>
+</head>
+<body>
+  <header class="quota" id="quota">
+    <div class="quota-top">
+      <div class="quota-title">
+        <span class="quota-icon" aria-hidden="true">🖱️</span>
+        <div><div class="eyebrow">MouseHost Cloud · Тариф «Эконом»</div><h1>Остаток оплаченного пробега мыши</h1></div>
+      </div>
+      <div class="quota-numbers"><strong id="remaining">70,00</strong> <small>м</small></div>
+    </div>
+    <div class="progress" id="track" role="progressbar" aria-label="Остаток оплаченного движения мыши" aria-valuemin="0" aria-valuemax="70" aria-valuenow="70"><div id="fill"></div></div>
+    <div class="quota-foot"><span id="spent">Израсходовано: 0,00 м</span><span>Каждый сантиметр под контролем™</span></div>
+  </header>
+
+  <div class="shell">
+    <aside aria-label="Меню демо-панели">
+      <div class="brand">MOUSE<span>HOST</span><small>CLOUD PLATFORM</small></div>
+      <div class="nav-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+      <nav class="nav" id="navigation">
+        <button aria-current="page" data-section="Обзор" type="button"><span class="symbol">◫</span> Обзор</button>
+        <button data-section="Виртуальные машины" type="button"><span class="symbol">▤</span> Виртуальные машины</button>
+        <button data-section="Счета и платежи" type="button"><span class="symbol">▣</span> Счета и платежи</button>
+        <button data-section="Мониторинг" type="button"><span class="symbol">◉</span> Мониторинг</button>
+        <button data-section="Поддержка" type="button"><span class="symbol">☏</span> Поддержка</button>
+      </nav>
+      <div class="aside-footer">● Все системы работают<br>● Отдел тарификации не спит<br>Публичная шуточная демоверсия</div>
+    </aside>
+
+    <main>
+      <div class="crumbs">Рабочее пространство / <span id="crumb">Обзор</span></div>
+      <div class="topline">
+        <div><h2 id="page-title">Панель управления</h2><p id="page-description">Ваши облачные ресурсы работают. Ваша мышь — тоже.</p></div>
+        <span class="tag"><span class="dot"></span><span id="health">Все серверы в норме</span></span>
+      </div>
+
+      <div class="grid">
+        <section class="card"><div class="card-title">Доступность инфраструктуры</div><div class="stat">99,99<small>%</small></div><div class="trend">↗ Выше условий SLA</div></section>
+        <section class="card"><div class="card-title">Средняя нагрузка CPU</div><div class="stat">12,4<small>%</small></div><div class="trend">↗ Всё под контролем</div></section>
+        <section class="card"><div class="card-title">Пройдено вашей мышью</div><div class="stat"><span id="distance">0,00</span> <small>м</small></div><div class="trend" id="distance-description">Отслеживание включено</div></section>
+      </div>
+
+      <div class="section">
+        <section class="card">
+          <div class="server-head">
+            <div><h3>Ваш виртуальный сервер</h3><div class="server-id">srv-042 · eu-central-fantasy-1</div></div>
+            <span class="tag"><span class="dot"></span><span id="server-state">Работает</span></span>
+          </div>
+          <div class="server">
+            <div class="server-art" aria-hidden="true"><div></div><div></div><div></div></div>
+            <div><div class="server-name">production-mouse-01</div><div class="server-desc">FreeBSD · 8 vCPU · 16 GB RAM · SSD 240 GB<br>IP: 192.0.2.70 (демонстрационный адрес)</div></div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" id="diagnose" type="button">↗ Диагностика</button>
+            <button class="btn" id="restart" type="button">⟳ Перезагрузить</button>
+            <button class="btn" id="snapshot" type="button">▧ Снимок диска</button>
+          </div>
+          <div class="meter-row"><div class="meter-label"><span>Оперативная память</span><span>4,7 / 16 GB</span></div><div class="mini-track"><div style="width:29%"></div></div></div>
+          <div class="meter-row"><div class="meter-label"><span>Диск</span><span>86 / 240 GB</span></div><div class="mini-track"><div style="width:36%"></div></div></div>
+        </section>
+        <section class="card">
+          <h3>Ваш тариф</h3><p class="sub">MouseHost CLOUD™ · Оплата по пробегу</p>
+          <div class="bill"><div class="card-title">Стоимость нового пакета</div><strong>$70,00</strong><p>Включено 70 условных метров движения курсора. Неиспользованные метры сгорают от взгляда на экран.</p></div>
+          <div class="actions" style="margin-top:18px"><button class="btn btn-primary" id="billing" type="button">Пополнить пробег</button></div>
+          <p class="bill-note">Тариф не является реальной услугой. Платежи, облачные серверы и показатели на этой странице вымышлены.</p>
+        </section>
+      </div>
+
+      <div class="section">
+        <section class="card updates">
+          <h3>Новости провайдера</h3><p class="sub">Мы постоянно улучшаем способы заботиться о ваших деньгах.</p>
+          <div class="updates-list">
+            <div class="news"><div class="news-ico">📣</div><div><strong>Новый тариф «Безлимитная неподвижность»</strong><p>Не двигайте мышью целый день — и получите целых 0 дополнительных метров бесплатно.</p></div></div>
+            <div class="news"><div class="news-ico">🛡️</div><div><strong>Забота о безопасности</strong><p>Все резкие перемещения курсора автоматически проверяются отделом защиты бюджета.</p></div></div>
+            <div class="news"><div class="news-ico">💳</div><div><strong>Возвращение легендарного тарифа</strong><p>По многочисленным просьбам мы снова принимаем воображаемые $70 за каждый новый пакет.</p></div></div>
+          </div>
+        </section>
+        <section class="card updates">
+          <div class="log-head"><h3>Системный журнал</h3><button class="btn" id="toggle-log" type="button" aria-expanded="true">Скрыть</button></div>
+          <p class="sub">События виртуальной инфраструктуры</p>
+          <pre id="logs" aria-live="off">[OK] nginx: responding in 18 ms
+[OK] storage: healthy
+[OK] backup: completed
+[INFO] mouse-billing: quota active
+[WARN] price-per-pixel: classified</pre>
+        </section>
+      </div>
+      <p class="foot">© MouseHost Cloud. Вся панель — пародия. Ничего не подключено, реальных платежей нет. Двигать мышью можно, но дорого (понарошку).</p>
+    </main>
+  </div>
+
+  <div class="overlay" id="paywall" role="dialog" aria-modal="true" aria-labelledby="paywall-title" aria-describedby="paywall-description" hidden>
+    <div class="dialog">
+      <div class="warning" aria-hidden="true">🖱️</div>
+      <div class="eyebrow" style="color:#d05a3b">Биллинг · Превышен лимит</div>
+      <h2 id="paywall-title">Ваше оплаченное движение мыши закончилось</h2>
+      <p id="paywall-description">Вы израсходовали все 70 метров разрешённого перемещения курсора. Дальнейшее движение доступно после пополнения.</p>
+      <div class="amount">$70<span style="font-size:18px">,00</span></div>
+      <button class="btn btn-primary" id="pay-fake" type="button">Внести ещё $70 (понарошку)</button>
+      <p class="note">Это шутка: кнопка просто сбрасывает счётчик. Ни карты, ни денег мы не просим.</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script>
+    (() => {
+      "use strict";
+      const MAX_METERS = 70;
+      const METERS_PER_PIXEL = 0.013;
+      const STORAGE_KEY = "mousehost-remaining-v1";
+      const el = id => document.getElementById(id);
+      const fmt = n => n.toLocaleString("ru-RU", {minimumFractionDigits:2,maximumFractionDigits:2});
+      const clamp = n => Math.max(0,Math.min(MAX_METERS,n));
+      let remaining = MAX_METERS;
+      let lastPoint = null;
+      let toastTimer = null;
+      let restarting = false;
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved !== null && saved.trim() !== "") {
+          const parsed = Number(saved);
+          if (Number.isFinite(parsed)) remaining = clamp(parsed);
+        }
+      } catch (_) { /* private browsing may disable storage */ }
+
+      function save() {
+        try { localStorage.setItem(STORAGE_KEY,String(remaining)); } catch (_) {}
+      }
+      function render() {
+        const used = MAX_METERS - remaining;
+        el("remaining").textContent = fmt(remaining);
+        el("spent").textContent = "Израсходовано: " + fmt(used) + " м";
+        el("distance").textContent = fmt(used);
+        el("track").setAttribute("aria-valuenow", remaining.toFixed(2));
+        el("fill").style.width = (remaining / MAX_METERS * 100) + "%";
+        el("quota").classList.toggle("critical",remaining <= MAX_METERS * 0.2);
+        el("distance-description").textContent = remaining > 0 ? "Из 70 оплаченных метров" : "Лимит превышен — требуется $70";
+        el("paywall").hidden = remaining > 0;
+      }
+      function toast(message) {
+        clearTimeout(toastTimer);
+        el("toast").textContent = message;
+        el("toast").hidden = false;
+        toastTimer = setTimeout(() => { el("toast").hidden = true; },3400);
+      }
+      function appendLog(message) {
+        const box = el("logs");
+        const now = new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+        box.textContent = "[" + now + "] " + message + "\n" + box.textContent.split("\n").slice(0,9).join("\n");
+      }
+      function renew() {
+        remaining = MAX_METERS;
+        lastPoint = null;
+        save();
+        render();
+        appendLog("[OK] demo-payment: $70 received in imagination; new quota active");
+        toast("Платёж успешно воображён. Ещё 70 метров — ваши!");
+      }
+      function trackPointer(event) {
+        if (remaining <= 0) return;
+        if (event.pointerType && !["mouse","pen","touch"].includes(event.pointerType)) return;
+        const point = { x:event.clientX, y:event.clientY, type:event.pointerType || "mouse" };
+        if (lastPoint && lastPoint.type === point.type) {
+          // Large jumps (e.g. returning from browser chrome) are not billed.
+          const pixels = Math.min(160, Math.hypot(point.x-lastPoint.x, point.y-lastPoint.y));
+          if (pixels > 0) {
+            remaining = clamp(remaining - pixels * METERS_PER_PIXEL);
+            save();
+            render();
+            if (remaining === 0) {
+              appendLog("[ERROR] pointer mileage quota exhausted; payment required: $70");
+              el("pay-fake").focus();
+            }
+          }
+        }
+        lastPoint = point;
+      }
+      window.addEventListener("pointermove",trackPointer,{passive:true});
+      document.addEventListener("pointerleave",() => {lastPoint=null;});
+      document.addEventListener("visibilitychange",() => {lastPoint=null;});
+
+      el("pay-fake").addEventListener("click", renew);
+      el("billing").addEventListener("click", () => {
+        if (remaining <= 0) {el("pay-fake").focus();return;}
+        toast("Пополнить заранее нельзя. Сначала израсходуйте оплаченные метры!");
+      });
+      el("diagnose").addEventListener("click",() => {
+        appendLog("[OK] diagnostics: all fictional services operational");
+        toast("Диагностика завершена: сервер здоров, курсор расходует бюджет.");
+      });
+      el("snapshot").addEventListener("click",() => {
+        appendLog("[OK] snapshot: imaginary backup created");
+        toast("Воображаемый снимок диска успешно создан.");
+      });
+      el("restart").addEventListener("click",() => {
+        if (restarting) return;
+        restarting = true;
+        el("server-state").textContent = "Перезагрузка";
+        el("health").textContent = "Сервер перезагружается";
+        appendLog("[INFO] restart: virtual server reboot started");
+        toast("Перезагружаем вымышленный сервер…");
+        setTimeout(() => {
+          restarting = false;
+          el("server-state").textContent = "Работает";
+          el("health").textContent = "Все серверы в норме";
+          appendLog("[OK] restart: virtual server ready");
+        },1600);
+      });
+      el("toggle-log").addEventListener("click", () => {
+        const box = el("logs");
+        box.hidden = !box.hidden;
+        el("toggle-log").textContent = box.hidden ? "Показать" : "Скрыть";
+        el("toggle-log").setAttribute("aria-expanded",String(!box.hidden));
+      });
+      const titles = {
+        "Обзор":["Панель управления","Ваши облачные ресурсы работают. Ваша мышь — тоже."],
+        "Виртуальные машины":["Виртуальные машины","Единственный сервер приведён ниже. Все данные демонстрационные."],
+        "Счета и платежи":["Биллинг","Оплата курсорных метров по революционному тарифу."],
+        "Мониторинг":["Мониторинг","В нашей вымышленной инфраструктуре всегда 99,99% доступности."],
+        "Поддержка":["Служба поддержки","Совет инженера: двигайте мышью исключительно по делу."]
+      };
+      document.querySelectorAll("[data-section]").forEach(button => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-section]").forEach(other => other.removeAttribute("aria-current"));
+          button.setAttribute("aria-current","page");
+          const name = button.dataset.section;
+          el("crumb").textContent = name;
+          el("page-title").textContent = titles[name][0];
+          el("page-description").textContent = titles[name][1];
+          window.scrollTo({top:0,behavior:"smooth"});
+        });
+      });
+      render();
+      if (remaining <= 0) el("pay-fake").focus();
+    })();
+  </script>
+</body>
+</html>
