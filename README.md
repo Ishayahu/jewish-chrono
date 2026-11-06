@@ -86,3 +86,15 @@ The machine-readable ontology is project-specific, declared in `@context`, not a
 Schema: `christianity/data/schema.json`; tests: `tests/christianity.test.mjs`. The schema and tests constrain correctness without duplicating the knowledge graph.
 
 Referenced projects: https://diadoche.org/controversy/arian-crisis ; https://examineddoctrine.com/locus/trinity/ ; https://christianatlas.org/explore/history/ ; https://www.churchinconversation.com/atlas-v3 ; https://fideograph.com/logical-pathways/ ; https://doctrinelab.org/doctrine-graph . These are secondary references; they are NOT asserted to lack machine-readable APIs. In particular, DoctrineLab describes programmatic interfaces and dataset exports on its own site.
+
+
+## Сквозная матрица богословских вопросов (2026-11-06)
+Страница: https://ishayahu.github.io/jewish-chrono/christianity/matrix.html
+
+Матрица `вопросы × авторы` и исторический граф — **два представления одного и того же** `christianity/data/graph.jsonld`. Новые типы: `TheologicalTopic` (предметный раздел), `TheologicalQuestion` (самостоятельный вопрос), `TheologicalAuthor` (исторический автор), `AuthorPosition` (утверждение конкретного автора по конкретному вопросу, с точным местом первоисточника).
+
+Матрица строится по авторам, не по широким никейским лагерям: Александр, Арий и Афанасий различаются. Пустая клетка означает только **«позиция пока не установлена»**, а не отказ автора от идеи. Для одного автора и вопроса допускается несколько `AuthorPosition`, если обнаружатся разные высказывания или изменения с течением времени; каждое имеет собственную ссылку и статус проверки.
+
+`historicalClaim` может связывать отдельную авторскую позицию с более общей записью о конкретном споре; утверждения не переносятся в отдельную «христианскую таблицу» на хранение. Порядок вопросов в интерфейсе — исследовательский порядок, **не** заявление о порядке исторического возникновения догматов. Для принятия современными церквями потребуются отдельные подтверждённые историко-конфессиональные связи; автоматически выводить ортодоксальность из сходства фраз нельзя.
+
+Отдельные галахические исследовательские структуры к этим данным не подключаются.

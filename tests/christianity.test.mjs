@@ -12,14 +12,14 @@ const checkRef=(id)=>assert.ok(byId.has(id),"Dangling IRI: "+id);
 test("one canonical JSON-LD knowledge file",()=>{
   assert.ok(d["@context"]);assert.ok(Array.isArray(records));assert.equal(byId.size,records.length);
   assert.ok(!existsSync(new URL("../christianity/data/splits.json",import.meta.url)));
-  const a=single("HistoricalAtlas");assert.equal(a.schemaVersion,4);checkRef(a.rootPosition);
+  const a=single("HistoricalAtlas");assert.equal(a.schemaVersion,5);checkRef(a.rootPosition);
   const base="https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#";
   for(const n of records)assert.ok(n["@id"].startsWith(base),n["@id"]);
   const wf=readFileSync(new URL("../.github/workflows/pages.yml",import.meta.url),"utf8");
   assert.ok(!wf.includes("build_christianity_graph"));assert.ok(wf.includes("cp -R src data christianity dist/"));
 });
 test("every semantic connection is resolvable",()=>{
-  const keys=["rootPosition","previousPosition","resultingPositions","relatedResearchProjects","position","inControversy","respondsTo","citedSources","fromClaim","toClaim","relatedClaims"];
+  const keys=["rootPosition","previousPosition","resultingPositions","relatedResearchProjects","position","inControversy","respondsTo","citedSources","fromClaim","toClaim","relatedClaims","topic","author","question","historicalClaim"];
   for(const n of records)for(const key of keys)if(n[key]!==undefined)for(const v of [].concat(n[key]))checkRef(v);
 });
 test("historical positions, questions and evidence are preserved",()=>{
@@ -44,3 +44,22 @@ test("browser view references canonical JSON-LD only",()=>{const app=readFileSyn
 test("published identifiers pass JSON Schema URI regexp",()=>{const schema=JSON.parse(readFileSync(new URL("../christianity/data/schema.json",import.meta.url),"utf8"));const re=new RegExp(schema.properties["@graph"].items.properties["@id"].pattern);for(const n of records)assert.ok(re.test(n["@id"]),n["@id"]);});
 
 test("Six external projects have an auditable machine access finding",()=>{const p=ofType("Source").filter(x=>x.category==="research_project");assert.equal(p.length,6);const allowed=new Set(["not_documented_publicly","internal_structured_data_only","public_repository_data","claimed_undocumented_api"]);for(const s of p){assert.ok(allowed.has(s.machineAccessStatus));assert.ok(s.machineAccessCheckedAt);assert.ok(s.machineAccessNote);}const cic=p.find(x=>x.label.startsWith("Church in Conversation"));assert.equal(cic.machineAccessStatus,"public_repository_data");assert.ok(cic.dataRepositoryFileUrl.includes("world-census.json"));});
+
+test("cross-cutting questions and author opinions share the canonical JSON-LD", async()=>{
+ const {createMatrixView}=await import("../christianity/model.mjs");
+ const v=createMatrixView(d);
+ assert.equal(v.topics.length,4);assert.equal(v.authors.length,5);assert.ok(v.questions.length>=13);
+ assert.equal(ofType("AuthorPosition").length,10);
+ assert.ok(!existsSync(new URL("../christianity/data/matrix.json",import.meta.url)));
+ for(const a of ofType("AuthorPosition")){
+  assert.ok(a.sourceLocator);assert.ok(a.citedSources?.length);assert.equal(a.humanReviewStatus,"not_reviewed");
+  assert.ok(["source","interpretation","work_needed"].includes(a.evidenceStatus));
+ }
+ const ath=v.authors.find(a=>a.label.includes("Афанасий"));
+ const q=v.questions.find(q=>q.label.includes("посредника"));
+ assert.ok(v.answers.get(ath.id+"|"+q.id)?.length);
+ const html=readFileSync(new URL("../christianity/matrix.html",import.meta.url),"utf8");
+ assert.ok(html.includes("matrix.mjs"));
+ const js=readFileSync(new URL("../christianity/matrix.mjs",import.meta.url),"utf8");
+ assert.ok(js.includes('fetch("./data/graph.jsonld")'));
+});

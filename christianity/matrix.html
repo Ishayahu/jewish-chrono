@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Матрица богословских вопросов · Христианство</title><link rel="stylesheet" href="./style.css">
+<script type="module" src="./matrix.mjs"></script></head>
+<body><main class="page">
+<nav><a href="./">← Исторические развилки</a><span>Сквозная матрица · исследовательская версия</span></nav>
+<header class="hero"><p class="eyebrow">Не только кто с кем спорил</p><h1>Матрица богословских вопросов</h1><p>Одни и те же вопросы независимо сопоставляются с позициями отдельных авторов. Исторический граф и эта матрица используют один JSON-LD, а не две конкурирующие базы.</p>
+<div class="legend"><span>● Первоисточник</span><span>◐ Интерпретация</span><span>○ Требует исследования</span><span>— Позиция не установлена</span></div></header>
+<section class="panel">
+<div class="heading"><div><p class="eyebrow">Вопросы × авторы</p><h2>Сравнительная матрица</h2></div><small id="coverage"></small></div>
+<div class="matrix-controls">
+<label>Поиск по вопросам <input id="question-search" type="search" placeholder="Например: Адам, Сын, спасение"></label>
+<label>Автор <select id="author-filter"><option value="">Все авторы</option></select></label>
+<label>Раздел <select id="topic-filter"><option value="">Все разделы</option></select></label>
+</div>
+<p class="disclaimer">В строке формулируется вопрос, а не готовый догматический ответ. Пустая ячейка не означает отрицания или согласия. Разные высказывания одного автора по одному вопросу можно хранить отдельно, с датой и точной ссылкой.</p>
+<div id="matrix" class="matrix-container" aria-live="polite">Загрузка…</div>
+</section>
+<section class="panel"><p class="eyebrow">Метод</p><h2>Что фиксируем при чтении</h2><p>Для каждого места текста записываем автора, конкретный вопрос, формулировку позиции, точный источник и статус проверки. Хронологическая последовательность, взаимные влияния и современная рецепция — отдельные отношения, их нельзя автоматически выводить из сходства слов.</p><p><strong>Начальное покрытие намеренно неполное.</strong> Некоторые авторы присутствуют в таблице без атрибутированных позиций: их тексты ещё нужно изучить. Статус «проверено человеком» не присваивается автоматически.</p></section>
+<section class="panel"><p class="eyebrow">Единый источник</p><h2>Исследовательские данные</h2><p><a href="./data/graph.jsonld" type="application/ld+json">JSON-LD — вопросы, авторы, доводы и расколы</a> · <a href="./data/schema.json">Схема</a></p></section>
+<footer><a href="./">Исторический граф</a> · <a href="https://github.com/Ishayahu/jewish-chrono/tree/main/christianity">GitHub</a></footer></main>
+<dialog id="matrix-dialog" aria-labelledby="matrix-dialog-title"><div class="dialog-content"><div class="heading"><div><p class="eyebrow" id="matrix-dialog-subtitle"></p><h2 id="matrix-dialog-title"></h2></div><button class="close" id="matrix-dialog-close" aria-label="Закрыть" type="button">×</button></div><div id="matrix-dialog-body"></div></div></dialog>
+</body></html>

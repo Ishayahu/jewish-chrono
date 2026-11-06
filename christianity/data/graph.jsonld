@@ -49,6 +49,22 @@
     "relatedClaims": {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/relatedClaims",
       "@type": "@id"
+    },
+    "topic": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/topic",
+      "@type": "@id"
+    },
+    "author": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/author",
+      "@type": "@id"
+    },
+    "question": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/question",
+      "@type": "@id"
+    },
+    "historicalClaim": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/historicalClaim",
+      "@type": "@id"
     }
   },
   "@graph": [
@@ -57,10 +73,10 @@
       "@type": "HistoricalAtlas",
       "label": "Граф христианских расколов",
       "rootPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
-      "schemaVersion": 4,
+      "schemaVersion": 5,
       "updated": "2026-11-06",
-      "semanticVersion": "1.1.0",
-      "description": "Машиночитаемый исторический граф решений, доводов и первоисточников. Ссылки и человеческая проверка различаются."
+      "semanticVersion": "1.2.0",
+      "description": "Машиночитаемый исторический граф решений, доводов и первоисточников. Ссылки и человеческая проверка различаются. Добавлена сквозная матрица вопросов и авторских позиций без дублирующей базы данных."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
@@ -521,6 +537,351 @@
       "evidenceStatus": "work_needed",
       "humanReviewStatus": "not_reviewed",
       "citedSources": []
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-incarnation",
+      "@type": "source",
+      "label": "Афанасий Александрийский, «О воплощении Слова», §§3–7",
+      "url": "https://www.newadvent.org/fathers/2802.htm",
+      "category": "primary",
+      "sourceDescription": "Первичный текст Афанасия о творении, смертности и благодати",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/irenaeus-against-heresies-iv38",
+      "@type": "source",
+      "label": "Ириней Лионский, «Против ересей», IV.38",
+      "url": "https://www.newadvent.org/fathers/0103438.htm",
+      "category": "primary",
+      "sourceDescription": "Первичный текст Иринея о постепенном совершенствовании человека",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/son",
+      "@type": "TheologicalTopic",
+      "label": "Отец и Сын",
+      "description": "Онтологический статус Сына: начало, сотворённость, природа, отношения с Отцом.",
+      "order": 1
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/human",
+      "@type": "TheologicalTopic",
+      "label": "Человек до грехопадения",
+      "description": "Сотворённая природа, смертность, благодать, свобода и совершенство.",
+      "order": 2
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/salvation",
+      "@type": "TheologicalTopic",
+      "label": "Спасение и воплощение",
+      "description": "Цель спасения, роль посредника, время и необходимость воплощения.",
+      "order": 3
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/method",
+      "@type": "TheologicalTopic",
+      "label": "Догмат и аргументация",
+      "description": "Что считалось доказательством и как возникают обязательные формулы.",
+      "order": 4
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/son-origin",
+      "@type": "TheologicalQuestion",
+      "label": "Имел ли Сын начало существования?",
+      "description": "Не путать начало существования с началом воплощения.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/son",
+      "order": 1,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/son-created",
+      "@type": "TheologicalQuestion",
+      "label": "Является ли Сын сотворённым существом?",
+      "description": "Различать происхождение, сотворение, рождение.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/son",
+      "order": 2,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/son-divinity",
+      "@type": "TheologicalQuestion",
+      "label": "В каком смысле Сын является Богом?",
+      "description": "Не считать слово «Бог» однозначным для всех авторов и эпох.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/son",
+      "order": 3,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/son-essence",
+      "@type": "TheologicalQuestion",
+      "label": "Каково отношение сущности Сына к сущности Отца?",
+      "description": "Единосущие и альтернативные формулы исторически меняли значение.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/son",
+      "order": 4,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/adam-nature",
+      "@type": "TheologicalQuestion",
+      "label": "Был ли Адам по природе смертным?",
+      "description": "Различать естественную смертность и фактическую смерть.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/human",
+      "order": 5,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/adam-grace",
+      "@type": "TheologicalQuestion",
+      "label": "Как сохранялись жизнь и нетление Адама до греха?",
+      "description": "Благодать, причастность Слову, свобода и заповедь могут быть отдельными механизмами.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/human",
+      "order": 6,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/adam-perfection",
+      "@type": "TheologicalQuestion",
+      "label": "Почему человек не был создан окончательно совершенным?",
+      "description": "Открытый вопрос: не приписывать автору ответа, которого он не дал.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/human",
+      "order": 7,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/human-sinless-freedom",
+      "@type": "TheologicalQuestion",
+      "label": "Совместима ли свобода с невозможностью согрешить?",
+      "description": "Не смешивать отсутствие греха, нетление и неспособность грешить.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/human",
+      "order": 8,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/salvation-goal",
+      "@type": "TheologicalQuestion",
+      "label": "В чём состоит спасение: прощение, нетление или обожение?",
+      "description": "Формы спасения не обязательно взаимоисключающие.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/salvation",
+      "order": 9,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/salvation-mediator",
+      "@type": "TheologicalQuestion",
+      "label": "Может ли Бог спасти окончательно через сотворённого посредника?",
+      "description": "Отличать автономный источник благодати от посредника, через которого действует Бог.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/salvation",
+      "order": 10,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/incarnation-before-fall",
+      "@type": "TheologicalQuestion",
+      "label": "Мог ли Спаситель прийти до грехопадения?",
+      "description": "Вопрос о времени пришествия отличается от вопроса о мире без падения.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/salvation",
+      "order": 11,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/incarnation-without-fall",
+      "@type": "TheologicalQuestion",
+      "label": "Было бы воплощение, если бы грехопадения вообще не произошло?",
+      "description": "Гипотеза не тождественна возможности прийти раньше.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/salvation",
+      "order": 12,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/council-authority",
+      "@type": "TheologicalQuestion",
+      "label": "Что делает догматическую формулу собора обязательной?",
+      "description": "Различать авторитет, аргументацию и реальный консенсус.",
+      "topic": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalTopic/method",
+      "order": 13,
+      "reviewStatus": "open"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/irenaeus",
+      "@type": "TheologicalAuthor",
+      "label": "Ириней Лионский",
+      "period": "II век",
+      "order": 1
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/origen",
+      "@type": "TheologicalAuthor",
+      "label": "Ориген",
+      "period": "III век",
+      "order": 2
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/arius",
+      "@type": "TheologicalAuthor",
+      "label": "Арий Александрийский",
+      "period": "начало IV века",
+      "order": 3
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/alexander",
+      "@type": "TheologicalAuthor",
+      "label": "Александр Александрийский",
+      "period": "начало IV века",
+      "order": 4
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/athanasius",
+      "@type": "TheologicalAuthor",
+      "label": "Афанасий Александрийский",
+      "period": "IV век",
+      "order": 5
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/arius--son-origin",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/arius",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/son-origin",
+      "summary": "Имеет начало",
+      "text": "Сын получил существование от Отца прежде веков, но не совечен Ему.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/arius"
+      ],
+      "sourceLocator": "Письмо Ария Евсевию Никомидийскому"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/arius--son-created",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/arius",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/son-created",
+      "summary": "Не является безначальным",
+      "text": "Арий рассматривает Сына как возникшего по воле Отца. Терминологию «творение» следует сверять по каждому тексту.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/arius"
+      ],
+      "sourceLocator": "Письмо Ария Евсевию Никомидийскому",
+      "note": "При чтении различать формулы Ария и характеристики, данные его противниками."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/athanasius--son-created",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/athanasius",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/son-created",
+      "summary": "Сын не творение",
+      "text": "Афанасий противопоставляет вечное несотворённое Слово созданным существам. Сын сам не нуждается в спасении.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius"
+      ],
+      "sourceLocator": "«Против ариан», II, §§67–70",
+      "historicalClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--mechanism--nicene"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/athanasius--adam-nature",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/athanasius",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/adam-nature",
+      "summary": "По природе смертен",
+      "text": "Человек как сотворённый из ничего по природе смертен; нетление не присуще ему независимо от Бога.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-incarnation"
+      ],
+      "sourceLocator": "«О воплощении Слова», §§3–5"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/athanasius--adam-grace",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/athanasius",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/adam-grace",
+      "summary": "Причастность Слову",
+      "text": "Первоначальное нетление человека держалось на благодати и причастности Слову; преступление заповеди обратило человека к тлению.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-incarnation"
+      ],
+      "sourceLocator": "«О воплощении Слова», §§3–5"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/athanasius--salvation-goal",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/athanasius",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/salvation-goal",
+      "summary": "Нетление, обновление природы",
+      "text": "Спасение у Афанасия выходит за пределы простого прощения: обновление человека и преодоление тления через Слово.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-68",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius"
+      ],
+      "sourceLocator": "«Против ариан», II, §§68–70",
+      "historicalClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--salvation--nicene"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/athanasius--salvation-mediator",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/athanasius",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/salvation-mediator",
+      "summary": "Творение не самостоятельный источник",
+      "text": "Афанасий утверждает, что сотворённый посредник сам зависит от соединения с Богом, поэтому только несотворённое Слово может сообщить человеку нетление и божественную жизнь.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius"
+      ],
+      "sourceLocator": "«Против ариан», II, §§69–70",
+      "note": "Не доказана логическая невозможность того, что Бог сообщит окончательную благодать ЧЕРЕЗ сотворённого посредника.",
+      "historicalClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--mechanism--nicene"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/athanasius--incarnation-before-fall",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/athanasius",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/incarnation-before-fall",
+      "summary": "Мог прийти с самого начала",
+      "text": "Афанасий допускает, что Спаситель мог прийти с самого начала; это не является ответом на контрфактический вопрос об отсутствии грехопадения.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-68"
+      ],
+      "sourceLocator": "«Против ариан», II, §68"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/irenaeus--adam-perfection",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/irenaeus",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/adam-perfection",
+      "summary": "Человек должен возрастать",
+      "text": "Ириней сравнивает изначального человека с младенцем: Бог мог дать совершенство, но недавно сотворённый человек не был готов его вместить или сохранить.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/irenaeus-against-heresies-iv38"
+      ],
+      "sourceLocator": "«Против ересей», IV.38",
+      "note": "Открыто возражение: почему Бог не мог сразу создать человека способным принять совершенство?"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#AuthorPosition/irenaeus--adam-grace",
+      "@type": "AuthorPosition",
+      "author": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalAuthor/irenaeus",
+      "question": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#TheologicalQuestion/adam-grace",
+      "summary": "Возрастание к нетлению",
+      "text": "Ириней связывает бессмертие с подчинением Богу и постепенным возрастанием человека к совершенству; не отождествлять это без проверки с моделью Афанасия.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/irenaeus-against-heresies-iv38"
+      ],
+      "sourceLocator": "«Против ересей», IV.38"
     }
   ]
 }

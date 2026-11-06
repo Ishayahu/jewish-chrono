@@ -34,7 +34,11 @@
               "PositionClaim",
               "ReasoningLink",
               "OpenResearchQuestion",
-              "Source"
+              "Source",
+              "TheologicalTopic",
+              "TheologicalQuestion",
+              "TheologicalAuthor",
+              "AuthorPosition"
             ]
           }
         }
