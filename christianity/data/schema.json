@@ -23,7 +23,7 @@
         "properties": {
           "@id": {
             "type": "string",
-            "pattern": "^https://ishayahu\\\\.github\\\\.io/jewish-chrono/christianity/data/graph\\\\.jsonld#"
+            "pattern": "^https://ishayahu\\.github\\.io/jewish-chrono/christianity/data/graph\\.jsonld#"
           },
           "@type": {
             "enum": [

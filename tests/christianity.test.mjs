@@ -40,3 +40,5 @@ test("source kind and human review are independent",()=>{
 });
 test("reasoning links are interpretations, not proven implication",()=>{const relations=new Set(["motivates","supports","challenges","contradicts","depends_on"]);for(const e of ofType("ReasoningLink")){assert.ok(relations.has(e.relationKind));assert.equal(e.evidenceStatus,"interpretation");}});
 test("browser view references canonical JSON-LD only",()=>{const app=readFileSync(new URL("../christianity/app.mjs",import.meta.url),"utf8");assert.ok(app.includes('fetch("./data/graph.jsonld")'));assert.ok(!app.includes("splits.json"));});
+
+test("published identifiers pass JSON Schema URI regexp",()=>{const schema=JSON.parse(readFileSync(new URL("../christianity/data/schema.json",import.meta.url),"utf8"));const re=new RegExp(schema.properties["@graph"].items.properties["@id"].pattern);for(const n of records)assert.ok(re.test(n["@id"]),n["@id"]);});
