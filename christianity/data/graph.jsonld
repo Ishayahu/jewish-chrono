@@ -1,0 +1,502 @@
+{
+  "@context": {
+    "@vocab": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/",
+    "label": "http://www.w3.org/2000/01/rdf-schema#label",
+    "url": {
+      "@id": "https://schema.org/url",
+      "@type": "@id"
+    },
+    "rootPosition": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/rootPosition",
+      "@type": "@id"
+    },
+    "previousPosition": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/previousPosition",
+      "@type": "@id"
+    },
+    "resultingPositions": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/resultingPositions",
+      "@type": "@id"
+    },
+    "relatedResearchProjects": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/relatedResearchProjects",
+      "@type": "@id"
+    },
+    "position": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/position",
+      "@type": "@id"
+    },
+    "inControversy": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/inControversy",
+      "@type": "@id"
+    },
+    "respondsTo": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/respondsTo",
+      "@type": "@id"
+    },
+    "citedSources": {
+      "@id": "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "@type": "@id"
+    },
+    "fromClaim": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/fromClaim",
+      "@type": "@id"
+    },
+    "toClaim": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/toClaim",
+      "@type": "@id"
+    },
+    "relatedClaims": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/relatedClaims",
+      "@type": "@id"
+    }
+  },
+  "@graph": [
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#atlas/main",
+      "@type": "HistoricalAtlas",
+      "label": "Граф христианских расколов",
+      "rootPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "schemaVersion": 4,
+      "updated": "2026-11-06",
+      "semanticVersion": "1.1.0",
+      "description": "Машиночитаемый исторический граф решений, доводов и первоисточников. Ссылки и человеческая проверка различаются."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "@type": "DoctrinalPosition",
+      "label": "Доникейское христианство",
+      "period": "до начала IV века",
+      "description": "Несколько богословских подходов к отношениям Отца и Сына; до Ария тоже существовали разногласия."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/arius",
+      "@type": "DoctrinalPosition",
+      "label": "Арий и его сторонники",
+      "period": "ок. 318–325",
+      "description": "Сын получил существование от Отца прежде веков, но имеет начало. Это не означает, что в 318 году существовала готовая отдельная церковь."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/nicene",
+      "@type": "DoctrinalPosition",
+      "label": "Александр → Никея → Афанасий",
+      "period": "325 и позднее",
+      "description": "Непосредственным противником Ария был Александр; единосущие закреплено в Никее; Афанасий позже развил его защиту."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/arius",
+      "@type": "Source",
+      "label": "Письмо Ария Евсевию Никомидийскому",
+      "url": "https://www.tertullian.org/fathers2/NPNF2-03/Npnf2-03-10.htm",
+      "category": "primary",
+      "sourceDescription": "первичный текст в передаче историков",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/nicaea",
+      "@type": "Source",
+      "label": "Первый Никейский собор: Символ веры 325 года",
+      "url": "https://www.newadvent.org/fathers/3801.htm",
+      "category": "primary",
+      "sourceDescription": "соборный первоисточник",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-68",
+      "@type": "Source",
+      "label": "Афанасий, «Против ариан», II, §§67–70 (особенно §68)",
+      "url": "https://www.newadvent.org/fathers/28162.htm",
+      "category": "primary",
+      "sourceDescription": "Первоисточник: Бог мог отменить проклятие словом, но это вернуло бы человека в прежнее уязвимое состояние",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius",
+      "@type": "Source",
+      "label": "Афанасий, Против ариан, II, §69",
+      "url": "https://www.newadvent.org/fathers/28162.htm",
+      "category": "primary",
+      "sourceDescription": "позднейшая полемическая аргументация",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/cambridge",
+      "@type": "Source",
+      "label": "Rebecca Lyman, Arius and Arianism (2021)",
+      "url": "https://www.cambridge.org/core/books/abs/cambridge-companion-to-the-council-of-nicaea/arius-and-arianism/BA2A28323C36138745DB796F8EED45EA",
+      "category": "secondary_study",
+      "sourceDescription": "современное исследование",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-75",
+      "@type": "Source",
+      "label": "Афанасий, «Против ариан», II, §75",
+      "url": "https://www.newadvent.org/fathers/28162.htm",
+      "category": "primary",
+      "sourceDescription": "Первоисточник: Бог предвидел падение и приготовил спасение ещё до сотворения мира",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/diadoche",
+      "@type": "Source",
+      "label": "Diadoche — The Arian crisis",
+      "url": "https://diadoche.org/controversy/arian-crisis",
+      "category": "research_project",
+      "sourceDescription": "Исследовательский проект: споры, события, доктрины и соборы",
+      "humanReviewStatus": "not_reviewed",
+      "relevance": "Исторический контекст арианского кризиса и последовательность соборов.",
+      "limitations": "Сопоставление доктрин не обязательно раскрывает всю аргументацию каждой стороны.",
+      "checked_by_ai_on": "2026-11-06"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/examined-doctrine",
+      "@type": "Source",
+      "label": "Examined Doctrine — The Trinity",
+      "url": "https://examineddoctrine.com/locus/trinity/",
+      "category": "research_project",
+      "sourceDescription": "Исследовательский проект: позиции авторов, цитаты и уровни источников",
+      "humanReviewStatus": "not_reviewed",
+      "relevance": "Сравнение сформулированных доктрин и цитируемых исторических позиций.",
+      "limitations": "Включение ограничено никейской христианской традицией; отсутствие Ария на странице не доказывает отсутствия позиции.",
+      "checked_by_ai_on": "2026-11-06"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/christian-atlas",
+      "@type": "Source",
+      "label": "Christian Atlas — Schisms, reforms and reunions",
+      "url": "https://christianatlas.org/explore/history/",
+      "category": "research_project",
+      "sourceDescription": "Исследовательский атлас исторических связей между церквами",
+      "humanReviewStatus": "not_reviewed",
+      "relevance": "Различать расколы, историческое отчуждение, реформы, автономию и примирение.",
+      "limitations": "Редакционные черновики и неполное покрытие; само описание проекта различает прочитанные и непрочитанные источники.",
+      "checked_by_ai_on": "2026-11-06"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/church-in-conversation",
+      "@type": "Source",
+      "label": "Church in Conversation — Church Family Tree",
+      "url": "https://www.churchinconversation.com/atlas-v3",
+      "category": "research_project",
+      "sourceDescription": "Интерактивная карта развития христианских традиций",
+      "humanReviewStatus": "not_reviewed",
+      "relevance": "Визуализация линий традиций и исторических взаимодействий.",
+      "limitations": "Факт наличия карты не означает проверки каждого исторического утверждения.",
+      "checked_by_ai_on": "2026-11-06"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/fideograph",
+      "@type": "Source",
+      "label": "Fideograph — Logical Pathways",
+      "url": "https://fideograph.com/logical-pathways/",
+      "category": "research_project",
+      "sourceDescription": "Католический апологетический проект: деревья аргументов",
+      "humanReviewStatus": "not_reviewed",
+      "relevance": "Методологический образец причинно-логических цепочек, предпосылок и следствий.",
+      "limitations": "Конфессиональная апологетическая направленность, не независимая историческая экспертиза.",
+      "checked_by_ai_on": "2026-11-06"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/doctrinelab",
+      "@type": "Source",
+      "label": "DoctrineLab — Living Doctrine Graph",
+      "url": "https://doctrinelab.org/doctrine-graph",
+      "category": "research_project",
+      "sourceDescription": "Граф зависимостей богословских утверждений",
+      "humanReviewStatus": "not_reviewed",
+      "relevance": "Модель зависимости выводов от предпосылок и эффект исключения утверждения.",
+      "limitations": "Текущая демонстрация построена вокруг сравнений христианства и движения святых последних дней.",
+      "checked_by_ai_on": "2026-11-06"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "@type": "Controversy",
+      "label": "Арианский кризис",
+      "period": "ок. 318–381",
+      "issue": "Кем является Сын по отношению к единственному Богу Отцу и как возможно спасение?",
+      "caveat": "Начальный спор: Арий против Александра Александрийского. Афанасий систематизировал никейскую аргументацию позднее; не следует приписывать её всю Никее 325 года.",
+      "previousPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "resultingPositions": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/arius",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/nicene"
+      ],
+      "relatedResearchProjects": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/diadoche",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/examined-doctrine",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/christian-atlas",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/church-in-conversation",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/fideograph",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/doctrinelab"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--salvation",
+      "@type": "ComparativeQuestion",
+      "label": "Что такое спасение?",
+      "questionCode": "salvation",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--salvation--arius",
+      "@type": "PositionClaim",
+      "text": "Собственная концепция спасения у Ария здесь пока не установлена. Утверждать, что он сводил его только к избавлению от греха, нельзя.",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/arius",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--salvation",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/cambridge"
+      ],
+      "note": "Требуется первоисточник или исследование."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--salvation--nicene",
+      "@type": "PositionClaim",
+      "text": "У Афанасия: не только прощение греха и возвращение ранее дарованной благодати, но окончательное освобождение от смерти и тления — обновление человеческой природы через соединение со Словом.",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/nicene",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--salvation",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius"
+      ],
+      "note": "У Афанасия «Против ариан» II, §§68–70 говорится о преодолении тления и угрозы нового падения; буквальная невозможность согрешить не установлена. Вывод о ней нуждается в проверке."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--mechanism",
+      "@type": "ComparativeQuestion",
+      "label": "Почему спасение возможно?",
+      "questionCode": "mechanism",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--mechanism--arius",
+      "@type": "PositionClaim",
+      "text": "Допустима гипотеза о действии Отца через сотворённого Сына, но точная аргументация Ария о механизме спасения пока не установлена.",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/arius",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--mechanism",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/arius"
+      ],
+      "note": "Не приписывать гипотезу самому Арию."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--mechanism--nicene",
+      "@type": "PositionClaim",
+      "text": "Афанасий объясняет: прямое возвращение благодати поставило бы человека опять в положение Адама до падения; воплощённое несотворённое Слово соединяет благодать с человеческой природой и делает восстановление устойчивым. Сотворённое существо, по Афанасию, само зависит от спасительного соединения с Богом.",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/nicene",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--mechanism",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-68",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius"
+      ],
+      "note": "work_needed: источник благодати — Бог, однако почему Он не мог сделать соединение окончательным изначально или через созданного посредника? Аналогия с независимым источником — реконструкция нашей беседы, не формулировка Афанасия."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--danger",
+      "@type": "ComparativeQuestion",
+      "label": "Какой опасности хотели избежать?",
+      "questionCode": "danger",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--danger--arius",
+      "@type": "PositionClaim",
+      "text": "Допущения двух безначальных начал и нарушения уникальности Бога Отца.",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/arius",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--danger",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/arius",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/cambridge",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/diadoche"
+      ],
+      "note": "Не сводить позицию к простому отказу от божественного статуса Сына."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--danger--nicene",
+      "@type": "PositionClaim",
+      "text": "Превращения Сына в творение; позднее Афанасий связывает это с невозможностью полноценного приобщения людей к Богу.",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/nicene",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--danger",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/nicaea"
+      ],
+      "note": "Никейскую и позднейшую афанасиевскую аргументацию различать."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--solution",
+      "@type": "ComparativeQuestion",
+      "label": "К какому решению пришли?",
+      "questionCode": "solution",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--solution--arius",
+      "@type": "PositionClaim",
+      "text": "Отец безначален; Сын произведён по Его воле прежде веков, но имеет начало.",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/arius",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--solution",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/arius"
+      ],
+      "note": ""
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--solution--nicene",
+      "@type": "PositionClaim",
+      "text": "Никея 325 года: Сын рождён, не сотворён, единосущен Отцу; тезис, что Сына когда-то не было, осуждён.",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/nicene",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--solution",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/nicaea",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/examined-doctrine",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/diadoche"
+      ],
+      "note": ""
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#reasoning-link/arius-nicaea--arian-monotheism-motivates-created-son",
+      "@type": "ReasoningLink",
+      "fromClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--danger--arius",
+      "toClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--solution--arius",
+      "relationKind": "motivates",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "note": "Реконструкция перехода от защиты единственного безначального начала к учению о начале Сына; требуется проверить собственную полноту рассуждения Ария.",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/arius",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/diadoche"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#reasoning-link/arius-nicaea--nicene-salvation-motivates-mechanism",
+      "@type": "ReasoningLink",
+      "fromClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--salvation--nicene",
+      "toClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--mechanism--nicene",
+      "relationKind": "motivates",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "note": "Передаёт структуру довода Афанасия, а не формальную логическую импликацию.",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-68"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#reasoning-link/arius-nicaea--nicene-mechanism-motivates-decision",
+      "@type": "ReasoningLink",
+      "fromClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--mechanism--nicene",
+      "toClaim": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--solution--nicene",
+      "relationKind": "motivates",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "note": "Связь позднейшей аргументации Афанасия с ранее принятым решением Никеи; не обозначает историческую причинность решения 325 года.",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/nicaea"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/arius-nicaea--adam-why-not-initially",
+      "@type": "OpenResearchQuestion",
+      "label": "Если Бог хотел устойчивого соединения человека с Собой, почему не создать Адама сразу в таком состоянии?",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--salvation--nicene",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--mechanism--nicene"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-68",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-75"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/arius-nicaea--is-sin-impossible",
+      "@type": "OpenResearchQuestion",
+      "label": "Обязательно ли окончательное нетление означает невозможность снова согрешить? Различать нетление и неспособность согрешить.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--salvation--nicene"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-68"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/arius-nicaea--mediator",
+      "@type": "OpenResearchQuestion",
+      "label": "Почему Бог не мог сообщить благодать окончательно через созданного посредника?",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--mechanism--nicene"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/arius-nicaea--arius-soteriology",
+      "@type": "OpenResearchQuestion",
+      "label": "Собственная сотериология Ария: найти и проверить исходные тексты.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--salvation--arius"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": []
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/arius-nicaea--alexander-vs-athanasius",
+      "@type": "OpenResearchQuestion",
+      "label": "Развести аргументы Александра до 325 года и позднейшие доводы Афанасия.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--solution--nicene"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": []
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/arius-nicaea--councils-325-381",
+      "@type": "OpenResearchQuestion",
+      "label": "Проследить соборы и изменение позиций между 325 и 381 годами.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--solution--nicene"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": []
+    }
+  ]
+}

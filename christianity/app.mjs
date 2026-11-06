@@ -1,3 +1,4 @@
+import {createView} from "./model.mjs";
 const $=id=>document.getElementById(id);
 const el=(tag,text,cls)=>{const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;};
 const dialog=$("dialog");$("close").onclick=()=>dialog.close();dialog.addEventListener("click",e=>{if(e.target===dialog)dialog.close();});
@@ -27,4 +28,4 @@ const tree=el("ul",undefined,"tree");tree.append(branch(d.root_id));$("graph").r
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
 for(const split of d.splits)for(const q of split.open_questions)todo.append(el("li",q));
 for(const s of d.sources){const li=el("li");li.append(sourceLink(s),el("small",s.type),el("small",s.human_review_status==="verified"?"Человеком проверено":"Человеком не проверено"));if(s.relevance)li.append(el("small","Для чего полезен: "+s.relevance));if(s.limitations)li.append(el("small","Ограничения: "+s.limitations));sources.append(li);}}
-fetch("./data/splits.json").then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(render).catch(e=>$("graph").textContent="Не удалось загрузить граф: "+e.message);
+fetch("./data/graph.jsonld").then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(createView).then(render).catch(e=>$("graph").textContent="Не удалось загрузить граф: "+e.message);

@@ -1,302 +1,45 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ishayahu.github.io/jewish-chrono/christianity/data/schema.json",
-  "title": "Historical Christian doctrinal controversy graph",
-  "description": "Canonical authored data: position nodes, controversy comparisons, evidence provenance and reasoning links. JSON-LD export generated separately.",
+  "title": "Canonical Christian controversy JSON-LD",
   "type": "object",
   "required": [
-    "schema_version",
-    "root_id",
-    "nodes",
-    "splits",
-    "sources"
+    "@context",
+    "@graph"
   ],
   "properties": {
-    "schema_version": {
-      "const": 3
+    "@context": {
+      "type": "object"
     },
-    "semantic_version": {
-      "type": "string"
-    },
-    "root_id": {
-      "type": "string"
-    },
-    "updated": {
-      "type": "string"
-    },
-    "nodes": {
+    "@graph": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
         "required": [
-          "id",
-          "title",
-          "period",
-          "description"
+          "@id",
+          "@type"
         ],
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "period": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "sources": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "title",
-          "url",
-          "category",
-          "human_review_status"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "url": {
+          "@id": {
             "type": "string",
-            "format": "uri"
+            "pattern": "^https://ishayahu\\\\.github\\\\.io/jewish-chrono/christianity/data/graph\\\\.jsonld#"
           },
-          "category": {
+          "@type": {
             "enum": [
-              "primary",
-              "secondary_study",
-              "research_project"
+              "HistoricalAtlas",
+              "DoctrinalPosition",
+              "Controversy",
+              "ComparativeQuestion",
+              "PositionClaim",
+              "ReasoningLink",
+              "OpenResearchQuestion",
+              "Source"
             ]
-          },
-          "human_review_status": {
-            "$ref": "#/$defs/reviewStatus"
-          },
-          "relevance": {
-            "type": "string"
-          },
-          "limitations": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "splits": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "parent_id",
-          "branch_ids",
-          "questions",
-          "issue"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "parent_id": {
-            "type": "string"
-          },
-          "branch_ids": {
-            "type": "array",
-            "minItems": 2,
-            "items": {
-              "type": "string"
-            }
-          },
-          "questions": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "required": [
-                "id",
-                "title",
-                "answers"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": "string"
-                },
-                "answers": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "$ref": "#/$defs/answer"
-                  }
-                }
-              }
-            }
-          },
-          "secondary_project_ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "argument_edges": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "id",
-                "from",
-                "to",
-                "relation",
-                "status",
-                "human_review_status",
-                "source_ids"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "from": {
-                  "$ref": "#/$defs/claimRef"
-                },
-                "to": {
-                  "$ref": "#/$defs/claimRef"
-                },
-                "relation": {
-                  "enum": [
-                    "motivates",
-                    "supports",
-                    "challenges",
-                    "contradicts",
-                    "depends_on"
-                  ]
-                },
-                "status": {
-                  "$ref": "#/$defs/evidenceStatus"
-                },
-                "human_review_status": {
-                  "$ref": "#/$defs/reviewStatus"
-                },
-                "source_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "research_questions": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "id",
-                "question",
-                "related_claims",
-                "status",
-                "human_review_status"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "question": {
-                  "type": "string"
-                },
-                "related_claims": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/$defs/claimRef"
-                  }
-                },
-                "status": {
-                  "const": "work_needed"
-                },
-                "human_review_status": {
-                  "$ref": "#/$defs/reviewStatus"
-                },
-                "source_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
           }
         }
       }
     }
   },
-  "$defs": {
-    "evidenceStatus": {
-      "enum": [
-        "source",
-        "interpretation",
-        "work_needed"
-      ]
-    },
-    "reviewStatus": {
-      "enum": [
-        "verified",
-        "not_reviewed"
-      ]
-    },
-    "claimRef": {
-      "type": "object",
-      "required": [
-        "question_id",
-        "branch_id"
-      ],
-      "properties": {
-        "question_id": {
-          "type": "string"
-        },
-        "branch_id": {
-          "type": "string"
-        }
-      }
-    },
-    "answer": {
-      "type": "object",
-      "required": [
-        "status",
-        "text",
-        "source_ids",
-        "human_review_status"
-      ],
-      "properties": {
-        "status": {
-          "$ref": "#/$defs/evidenceStatus"
-        },
-        "text": {
-          "type": "string"
-        },
-        "source_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "human_review_status": {
-          "$ref": "#/$defs/reviewStatus"
-        },
-        "note": {
-          "type": "string"
-        }
-      }
-    }
-  }
+  "description": "A single @graph file contains every position, comparison, claim, reasoning link, research gap and source. For referential integrity use the accompanying Node tests."
 }

@@ -67,20 +67,22 @@ node --test tests/*.test.mjs
 
 Страница: https://ishayahu.github.io/jewish-chrono/christianity/
 
-Отдельный интерактивный атлас богословских решений: папка christianity/, JSON с узлами и разветвлениями, модальное сравнение четырёх вопросов, статусы source / interpretation / work_needed и первоисточники. Никакие XML или данные хронологии не меняются. Добавлен тест tests/christianity.test.mjs.
+Отдельный интерактивный атлас богословских решений: папка christianity/, единый JSON-LD с узлами и разветвлениями, модальное сравнение четырёх вопросов, статусы source / interpretation / work_needed и первоисточники. Никакие XML или данные хронологии не меняются. Добавлен тест tests/christianity.test.mjs.
 
 ### Статусы свидетельств и проверки
 
 У каждого ответа в точке разделения есть `status` (`source`, `interpretation`, `work_needed`) и независимо `human_review_status` (`verified`, `not_reviewed`). Для каталога источников также есть `human_review_status`. **Просмотр или пересказ текста ИИ не считается человеческой проверкой**. Ставить `verified` только после явной сверки соответствующего тезиса/оригинала человеком, с обязательными `reviewed_by` и `reviewed_at`; пока все записи остаются `not_reviewed`. Проверка одного тезиса не подтверждает автоматически всё произведение. В богословской части отдельно сохранён вопрос о том, почему Бог не создал человека с устойчивым соединением с Ним с самого начала.
 
-## Machine-readable Christian controversy graph
+## Machine-readable Christian controversy graph (canonical JSON-LD)
 
-**Single source of truth:** `christianity/data/splits.json` (schema_version=3). `christianity/data/schema.json` provides a JSON Schema. The GitHub Pages workflow runs `node scripts/build_christianity_graph.mjs`, which produces `christianity/data/graph.jsonld` in the **deployment artifact**, with stable graph identifiers and links. The generated JSON-LD is not manually edited or committed; the JSON is version-controlled and published alongside it. URLs:
+**Single source of truth:** `christianity/data/graph.jsonld`. This file is committed to GitHub and copied unchanged to GitHub Pages. There is NO intermediate `splits.json`, no generated semantic second copy, and no conversion during deployment. The `christianity/model.mjs` browser module interprets JSON-LD records in memory solely for display.
 
-- https://ishayahu.github.io/jewish-chrono/christianity/data/splits.json
-- https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld
-- https://ishayahu.github.io/jewish-chrono/christianity/data/schema.json
+Published machine-readable document: https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld
 
-The graph contains typed objects `DoctrinalPosition`, `Controversy`, `PositionClaim`, `ReasoningLink`, `OpenResearchQuestion`, and `Source`. Relation types distinguish `motivates`, `supports`, `challenges`, `contradicts` and `depends_on`; these are **not** interchangeable. All links currently entered are researcher interpretations, not logically proven implications. Human review of a claim is independently tracked from its evidence status: `not_reviewed` versus `verified`; AI browsing is not human verification.
+The `@graph` has typed nodes: `HistoricalAtlas`, `DoctrinalPosition`, `Controversy`, `ComparativeQuestion`, `PositionClaim`, `ReasoningLink`, `OpenResearchQuestion`, `Source`. `@id` values use fragments of the published JSON-LD URL to give stable dereferenceable record identities. `citedSources` uses `prov:wasDerivedFrom`, and relationships use explicit IRI references. Current reasoning-link type is `motivates` and must NOT be mistaken for logical implication.
 
-Research sites Diadoche, Examined Doctrine, Christian Atlas, Church in Conversation, Fideograph and DoctrineLab are recorded as `research_project` secondary references with explicit links and caveats. They are not considered primary sources. Their availability and descriptions were checked online on 2026-11-06, but no material has been marked human-verified. Attribution is preserved per source.
+The machine-readable ontology is project-specific, declared in `@context`, not a published consensus ontology. Source kind (`primary`, `secondary_study`, `research_project`), evidence type (`source`, `interpretation`, `work_needed`) and human verification (`not_reviewed` / `verified`) are independent. AI-assisted research is never marked as human-verified; verified claims require `reviewedBy` and `reviewedAt` with actual review evidence.
+
+Schema: `christianity/data/schema.json`; tests: `tests/christianity.test.mjs`. The schema and tests constrain correctness without duplicating the knowledge graph.
+
+Referenced projects: https://diadoche.org/controversy/arian-crisis ; https://examineddoctrine.com/locus/trinity/ ; https://christianatlas.org/explore/history/ ; https://www.churchinconversation.com/atlas-v3 ; https://fideograph.com/logical-pathways/ ; https://doctrinelab.org/doctrine-graph . These are secondary references; they are NOT asserted to lack machine-readable APIs. In particular, DoctrineLab describes programmatic interfaces and dataset exports on its own site.

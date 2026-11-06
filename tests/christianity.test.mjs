@@ -1,12 +1,42 @@
-import test from "node:test";import assert from "node:assert/strict";import {readFileSync} from "node:fs";
-const d=JSON.parse(readFileSync(new URL("../christianity/data/splits.json",import.meta.url),"utf8"));
-test("Graph consistency",()=>{assert.equal(d.schema_version,3);const ns=new Set(d.nodes.map(n=>n.id)),ss=new Set(d.sources.map(s=>s.id));assert.equal(ns.size,d.nodes.length);assert.ok(ns.has(d.root_id));for(const sp of d.splits){assert.ok(ns.has(sp.parent_id));assert.ok(sp.branch_ids.length>=2);for(const id of sp.branch_ids)assert.ok(ns.has(id));for(const q of sp.questions)for(const id of sp.branch_ids){const a=q.answers[id];assert.ok(a);assert.ok(["source","interpretation","work_needed"].includes(a.status));for(const ref of a.source_ids||[])assert.ok(ss.has(ref));}}});
-test("Arius salvation is not presented as documented",()=>{const a=d.splits[0].questions.find(q=>q.id==="salvation").answers.arius;assert.equal(a.status,"work_needed");});
-
-test("Human verification is explicit and independent of evidence type",()=>{assert.equal(d.schema_version,3);const valid=new Set(["verified","not_reviewed"]);for(const s of d.sources){assert.ok(valid.has(s.human_review_status));if(s.human_review_status==="verified"){assert.ok(s.reviewed_by);assert.ok(s.reviewed_at);}}for(const split of d.splits)for(const q of split.questions)for(const a of Object.values(q.answers)){assert.ok(valid.has(a.human_review_status));if(a.human_review_status==="verified"){assert.ok(a.reviewed_by);assert.ok(a.reviewed_at);}}});
-test("Athanasius creation question preserved",()=>{const open=d.splits[0].open_questions.join(" ");assert.ok(open.includes("изначально"));assert.ok(open.includes("невозможность согрешить"));});
-
-test("Project sources and links have stable references",()=>{const sourceIds=new Set(d.sources.map(s=>s.id));const split=d.splits[0];assert.equal(split.secondary_project_ids.length,6);for(const id of split.secondary_project_ids){assert.ok(sourceIds.has(id));assert.equal(d.sources.find(s=>s.id===id).category,"research_project");}const questions=new Set(split.questions.map(q=>q.id));for(const edge of split.argument_edges){for(const key of ["from","to"]){assert.ok(questions.has(edge[key].question_id));assert.ok(split.branch_ids.includes(edge[key].branch_id));}assert.ok(["motivates","supports","challenges","contradicts","depends_on"].includes(edge.relation));}for(const rq of split.research_questions){assert.equal(rq.status,"work_needed");for(const ref of rq.related_claims){assert.ok(questions.has(ref.question_id));assert.ok(split.branch_ids.includes(ref.branch_id));}}});
-test("Machine-readable JSON-LD export exists",()=>{const jsonld=JSON.parse(readFileSync(new URL("../christianity/data/graph.jsonld",import.meta.url),"utf8"));const ids=jsonld["@graph"].map(v=>v["@id"]);assert.ok(jsonld["@context"]);assert.equal(ids.length,new Set(ids).size);assert.ok(jsonld["@graph"].some(v=>v["@type"]==="ReasoningLink"));assert.ok(jsonld["@graph"].some(v=>v["@type"]==="OpenResearchQuestion"));});
-
-test("All semantic IDs refer back to the downloadable graph",()=>{const x=JSON.parse(readFileSync(new URL("../christianity/data/graph.jsonld",import.meta.url),"utf8"));const url="https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#";for(const item of x["@graph"])assert.ok(item["@id"].startsWith(url));});
+import test from "node:test";
+import assert from "node:assert/strict";
+import {readFileSync,existsSync} from "node:fs";
+import {createView} from "../christianity/model.mjs";
+const path=new URL("../christianity/data/graph.jsonld",import.meta.url);
+const d=JSON.parse(readFileSync(path,"utf8"));
+const records=d["@graph"];
+const byId=new Map(records.map(n=>[n["@id"],n]));
+const ofType=type=>records.filter(n=>n["@type"]===type);
+const single=type=>{const a=ofType(type);assert.equal(a.length,1);return a[0];};
+const checkRef=(id)=>assert.ok(byId.has(id),"Dangling IRI: "+id);
+test("one canonical JSON-LD knowledge file",()=>{
+  assert.ok(d["@context"]);assert.ok(Array.isArray(records));assert.equal(byId.size,records.length);
+  assert.ok(!existsSync(new URL("../christianity/data/splits.json",import.meta.url)));
+  const a=single("HistoricalAtlas");assert.equal(a.schemaVersion,4);checkRef(a.rootPosition);
+  const base="https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#";
+  for(const n of records)assert.ok(n["@id"].startsWith(base),n["@id"]);
+  const wf=readFileSync(new URL("../.github/workflows/pages.yml",import.meta.url),"utf8");
+  assert.ok(!wf.includes("build_christianity_graph"));assert.ok(wf.includes("cp -R src data christianity dist/"));
+});
+test("every semantic connection is resolvable",()=>{
+  const keys=["rootPosition","previousPosition","resultingPositions","relatedResearchProjects","position","inControversy","respondsTo","citedSources","fromClaim","toClaim","relatedClaims"];
+  for(const n of records)for(const key of keys)if(n[key]!==undefined)for(const v of [].concat(n[key]))checkRef(v);
+});
+test("historical positions, questions and evidence are preserved",()=>{
+  const v=createView(d);assert.equal(v.nodes.length,3);assert.equal(v.splits.length,1);
+  assert.equal(v.splits[0].questions.length,4);assert.equal(v.splits[0].branch_ids.length,2);
+  assert.ok(v.splits[0].open_questions.some(x=>x.includes("Адама")));
+  assert.equal(ofType("ReasoningLink").length,3);
+  assert.ok(ofType("OpenResearchQuestion").length>=6);
+  assert.equal(ofType("Source").filter(s=>s.category==="research_project").length,6);
+  const q=ofType("ComparativeQuestion").find(x=>x.questionCode==="salvation");
+  const arius=ofType("PositionClaim").find(x=>x.respondsTo===q["@id"]&&x.position.endsWith("/arius"));
+  assert.equal(arius.evidenceStatus,"work_needed");
+});
+test("source kind and human review are independent",()=>{
+ const kinds=new Set(["primary","secondary_study","research_project"]);
+ for(const s of ofType("Source")){assert.ok(kinds.has(s.category));assert.ok(["verified","not_reviewed"].includes(s.humanReviewStatus));if(s.humanReviewStatus==="verified"){assert.ok(s.reviewedBy);assert.ok(s.reviewedAt);}}
+ for(const n of records.filter(x=>["PositionClaim","ReasoningLink","OpenResearchQuestion"].includes(x["@type"]))){assert.ok(["source","interpretation","work_needed"].includes(n.evidenceStatus));assert.ok(["verified","not_reviewed"].includes(n.humanReviewStatus));if(n.humanReviewStatus==="verified"){assert.ok(n.reviewedBy);assert.ok(n.reviewedAt);}}
+});
+test("reasoning links are interpretations, not proven implication",()=>{const relations=new Set(["motivates","supports","challenges","contradicts","depends_on"]);for(const e of ofType("ReasoningLink")){assert.ok(relations.has(e.relationKind));assert.equal(e.evidenceStatus,"interpretation");}});
+test("browser view references canonical JSON-LD only",()=>{const app=readFileSync(new URL("../christianity/app.mjs",import.meta.url),"utf8");assert.ok(app.includes('fetch("./data/graph.jsonld")'));assert.ok(!app.includes("splits.json"));});
