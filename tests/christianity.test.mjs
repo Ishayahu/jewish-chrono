@@ -1,0 +1,4 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFileSync} from "node:fs";
+const d=JSON.parse(readFileSync(new URL("../christianity/data/splits.json",import.meta.url),"utf8"));
+test("Graph consistency",()=>{assert.equal(d.schema_version,1);const ns=new Set(d.nodes.map(n=>n.id)),ss=new Set(d.sources.map(s=>s.id));assert.equal(ns.size,d.nodes.length);assert.ok(ns.has(d.root_id));for(const sp of d.splits){assert.ok(ns.has(sp.parent_id));assert.ok(sp.branch_ids.length>=2);for(const id of sp.branch_ids)assert.ok(ns.has(id));for(const q of sp.questions)for(const id of sp.branch_ids){const a=q.answers[id];assert.ok(a);assert.ok(["source","interpretation","work_needed"].includes(a.status));for(const ref of a.source_ids||[])assert.ok(ss.has(ref));}}});
+test("Arius salvation is not presented as documented",()=>{const a=d.splits[0].questions.find(q=>q.id==="salvation").answers.arius;assert.equal(a.status,"work_needed");});
