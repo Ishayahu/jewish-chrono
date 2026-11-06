@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "updated": "2026-11-06",
   "root_id": "early",
   "nodes": [
@@ -45,7 +45,8 @@
               "source_ids": [
                 "cambridge"
               ],
-              "note": "Требуется первоисточник или исследование."
+              "note": "Требуется первоисточник или исследование.",
+              "human_review_status": "not_reviewed"
             },
             "nicene": {
               "status": "source",
@@ -53,7 +54,8 @@
               "source_ids": [
                 "athanasius"
               ],
-              "note": "«Против ариан» II, §§68–70: простое возвращение райской благодати оставило бы возможность повторного падения."
+              "note": "У Афанасия «Против ариан» II, §§68–70 говорится о преодолении тления и угрозы нового падения; буквальная невозможность согрешить не установлена. Вывод о ней нуждается в проверке.",
+              "human_review_status": "not_reviewed"
             }
           }
         },
@@ -67,7 +69,8 @@
               "source_ids": [
                 "arius"
               ],
-              "note": "Не приписывать гипотезу самому Арию."
+              "note": "Не приписывать гипотезу самому Арию.",
+              "human_review_status": "not_reviewed"
             },
             "nicene": {
               "status": "source",
@@ -76,7 +79,8 @@
                 "athanasius-68",
                 "athanasius"
               ],
-              "note": "work_needed: почему это окончательное восстановление нельзя было совершить Божьей волей или через сотворённого посредника? Приведённая автором предпосылка пока не является строгим доказательством."
+              "note": "work_needed: источник благодати — Бог, однако почему Он не мог сделать соединение окончательным изначально или через созданного посредника? Аналогия с независимым источником — реконструкция нашей беседы, не формулировка Афанасия.",
+              "human_review_status": "not_reviewed"
             }
           }
         },
@@ -91,7 +95,8 @@
                 "arius",
                 "cambridge"
               ],
-              "note": "Не сводить позицию к простому отказу от божественного статуса Сына."
+              "note": "Не сводить позицию к простому отказу от божественного статуса Сына.",
+              "human_review_status": "not_reviewed"
             },
             "nicene": {
               "status": "interpretation",
@@ -100,7 +105,8 @@
                 "athanasius",
                 "nicaea"
               ],
-              "note": "Никейскую и позднейшую афанасиевскую аргументацию различать."
+              "note": "Никейскую и позднейшую афанасиевскую аргументацию различать.",
+              "human_review_status": "not_reviewed"
             }
           }
         },
@@ -114,7 +120,8 @@
               "source_ids": [
                 "arius"
               ],
-              "note": ""
+              "note": "",
+              "human_review_status": "not_reviewed"
             },
             "nicene": {
               "status": "source",
@@ -122,7 +129,8 @@
               "source_ids": [
                 "nicaea"
               ],
-              "note": ""
+              "note": "",
+              "human_review_status": "not_reviewed"
             }
           }
         }
@@ -132,7 +140,9 @@
         "Почему, по Афанасию, Бог не мог спасти людей через сотворённого посредника?",
         "Развести аргументы Александра до 325 года и позднейшие доводы Афанасия.",
         "Проследить соборы и изменение позиций между 325 и 381 годами.",
-        "Почему, по Афанасию, простое возвращение благодати не могло быть сделано окончательным актом Бога — без несотворённого посредника?"
+        "Почему, по Афанасию, простое возвращение благодати не могло быть сделано окончательным актом Бога — без несотворённого посредника?",
+        "Если конечная цель — устойчивое соединение человека с Богом и преодоление тления, почему Бог не создал человека в таком состоянии изначально? Афанасий (Против ариан II, §68) допускает пришествие Спасителя с самого начала, а в §75 — предведение грехопадения; объяснение строгой необходимости задержки пока не найдено.",
+        "Устраняет ли завершённое спасение саму возможность нового греха или лишь господство греха и смерти? Не приравнивать безгрешность, свободу от тления и невозможность согрешить."
       ]
     }
   ],
@@ -141,31 +151,43 @@
       "id": "arius",
       "title": "Письмо Ария Евсевию Никомидийскому",
       "type": "первичный текст в передаче историков",
-      "url": "https://www.tertullian.org/fathers2/NPNF2-03/Npnf2-03-10.htm"
+      "url": "https://www.tertullian.org/fathers2/NPNF2-03/Npnf2-03-10.htm",
+      "human_review_status": "not_reviewed"
     },
     {
       "id": "nicaea",
       "title": "Первый Никейский собор: Символ веры 325 года",
       "type": "соборный первоисточник",
-      "url": "https://www.newadvent.org/fathers/3801.htm"
+      "url": "https://www.newadvent.org/fathers/3801.htm",
+      "human_review_status": "not_reviewed"
     },
     {
       "id": "athanasius-68",
       "title": "Афанасий, «Против ариан», II, §§67–70 (особенно §68)",
       "type": "Первоисточник: Бог мог отменить проклятие словом, но это вернуло бы человека в прежнее уязвимое состояние",
-      "url": "https://www.newadvent.org/fathers/28162.htm"
+      "url": "https://www.newadvent.org/fathers/28162.htm",
+      "human_review_status": "not_reviewed"
     },
     {
       "id": "athanasius",
       "title": "Афанасий, Против ариан, II, §69",
       "type": "позднейшая полемическая аргументация",
-      "url": "https://www.newadvent.org/fathers/28162.htm"
+      "url": "https://www.newadvent.org/fathers/28162.htm",
+      "human_review_status": "not_reviewed"
     },
     {
       "id": "cambridge",
       "title": "Rebecca Lyman, Arius and Arianism (2021)",
       "type": "современное исследование",
-      "url": "https://www.cambridge.org/core/books/abs/cambridge-companion-to-the-council-of-nicaea/arius-and-arianism/BA2A28323C36138745DB796F8EED45EA"
+      "url": "https://www.cambridge.org/core/books/abs/cambridge-companion-to-the-council-of-nicaea/arius-and-arianism/BA2A28323C36138745DB796F8EED45EA",
+      "human_review_status": "not_reviewed"
+    },
+    {
+      "id": "athanasius-75",
+      "title": "Афанасий, «Против ариан», II, §75",
+      "type": "Первоисточник: Бог предвидел падение и приготовил спасение ещё до сотворения мира",
+      "url": "https://www.newadvent.org/fathers/28162.htm",
+      "human_review_status": "not_reviewed"
     }
   ]
 }
