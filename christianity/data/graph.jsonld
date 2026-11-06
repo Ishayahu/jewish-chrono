@@ -147,7 +147,11 @@
       "humanReviewStatus": "not_reviewed",
       "relevance": "Исторический контекст арианского кризиса и последовательность соборов.",
       "limitations": "Сопоставление доктрин не обязательно раскрывает всю аргументацию каждой стороны.",
-      "checked_by_ai_on": "2026-11-06"
+      "checked_by_ai_on": "2026-11-06",
+      "machineAccessStatus": "not_documented_publicly",
+      "machineAccessCheckedAt": "2026-11-06",
+      "machineAccessNote": "Часть материала привязана к Wikidata/Wikipedia; API или собственный структурированный экспорт Diadoche не подтверждён.",
+      "verifiedContactEmail": "admin@diadoche.org"
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/examined-doctrine",
@@ -159,7 +163,10 @@
       "humanReviewStatus": "not_reviewed",
       "relevance": "Сравнение сформулированных доктрин и цитируемых исторических позиций.",
       "limitations": "Включение ограничено никейской христианской традицией; отсутствие Ария на странице не доказывает отсутствия позиции.",
-      "checked_by_ai_on": "2026-11-06"
+      "checked_by_ai_on": "2026-11-06",
+      "machineAccessStatus": "not_documented_publicly",
+      "machineAccessCheckedAt": "2026-11-06",
+      "machineAccessNote": "Публичных API/экспорта и подтверждённого канала связи на проверенных страницах не найдено; отсутствие не доказано."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/christian-atlas",
@@ -171,7 +178,10 @@
       "humanReviewStatus": "not_reviewed",
       "relevance": "Различать расколы, историческое отчуждение, реформы, автономию и примирение.",
       "limitations": "Редакционные черновики и неполное покрытие; само описание проекта различает прочитанные и непрочитанные источники.",
-      "checked_by_ai_on": "2026-11-06"
+      "checked_by_ai_on": "2026-11-06",
+      "machineAccessStatus": "internal_structured_data_only",
+      "machineAccessCheckedAt": "2026-11-06",
+      "machineAccessNote": "Описана внутренняя исходная таблица с листами и строками; экспорт пользовательских заметок не равен экспорту исследовательских связей; контакт не обнаружен."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/church-in-conversation",
@@ -183,7 +193,13 @@
       "humanReviewStatus": "not_reviewed",
       "relevance": "Визуализация линий традиций и исторических взаимодействий.",
       "limitations": "Факт наличия карты не означает проверки каждого исторического утверждения.",
-      "checked_by_ai_on": "2026-11-06"
+      "checked_by_ai_on": "2026-11-06",
+      "machineAccessStatus": "public_repository_data",
+      "machineAccessCheckedAt": "2026-11-06",
+      "machineAccessNote": "Обнаружен публичный GitHub-монорепозиторий; world-census.json (~3.4 MB) с движениями и ребрами; corpus-coverage.json (~1.6 MB). Скрипт generate_tree_pages.mjs читает данные. Лицензия на повторное использование не установлена; официальность идентификации подтверждается README с доменом сайта, но право на перераспространение не подразумевается.",
+      "verifiedContactEmail": "info@churchinconversation.com",
+      "dataRepositoryFileUrl": "https://github.com/mchadwick25-droid/CIC-Project/blob/main/cic-website/data/world-census.json",
+      "sourceRepositoryUrl": "https://github.com/mchadwick25-droid/CIC-Project"
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/fideograph",
@@ -195,7 +211,11 @@
       "humanReviewStatus": "not_reviewed",
       "relevance": "Методологический образец причинно-логических цепочек, предпосылок и следствий.",
       "limitations": "Конфессиональная апологетическая направленность, не независимая историческая экспертиза.",
-      "checked_by_ai_on": "2026-11-06"
+      "checked_by_ai_on": "2026-11-06",
+      "machineAccessStatus": "not_documented_publicly",
+      "machineAccessCheckedAt": "2026-11-06",
+      "machineAccessNote": "Публичного экспорта графа или документации API на проверенных страницах не найдено; есть контактная форма и отдельный e-mail.",
+      "verifiedContactEmail": "hello@fideograph.com"
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/doctrinelab",
@@ -207,7 +227,11 @@
       "humanReviewStatus": "not_reviewed",
       "relevance": "Модель зависимости выводов от предпосылок и эффект исключения утверждения.",
       "limitations": "Текущая демонстрация построена вокруг сравнений христианства и движения святых последних дней.",
-      "checked_by_ai_on": "2026-11-06"
+      "checked_by_ai_on": "2026-11-06",
+      "machineAccessStatus": "claimed_undocumented_api",
+      "machineAccessCheckedAt": "2026-11-06",
+      "machineAccessNote": "В /labs описан API layer, но опубликованные эндпоинты, лицензия, открытый доступ и получение выборки не подтверждены.",
+      "verifiedContactEmail": "enterprise@doctrinelab.org"
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",

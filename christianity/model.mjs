@@ -24,5 +24,5 @@ export function createView(doc){
     return {id:c["@id"],title:c.label,period:c.period,issue:c.issue,caveat:c.caveat,parent_id:c.previousPosition,branch_ids:c.resultingPositions,questions,open_questions:one(records,"OpenResearchQuestion").filter(x=>x.inControversy===c["@id"]).map(x=>x.label)};
   });
   refs([atlas.rootPosition]);
-  return {root_id:atlas.rootPosition,nodes:positions.map(n=>({id:n["@id"],title:n.label,period:n.period,description:n.description})),splits,sources:sources.map(s=>({id:s["@id"],title:s.label,url:s.url,type:s.sourceDescription,category:s.category,human_review_status:s.humanReviewStatus,relevance:s.relevance,limitations:s.limitations}))};
+  return {root_id:atlas.rootPosition,nodes:positions.map(n=>({id:n["@id"],title:n.label,period:n.period,description:n.description})),splits,sources:sources.map(s=>({id:s["@id"],title:s.label,url:s.url,type:s.sourceDescription,category:s.category,human_review_status:s.humanReviewStatus,relevance:s.relevance,limitations:s.limitations,machine_access_status:s.machineAccessStatus,machine_access_note:s.machineAccessNote,data_repository_file_url:s.dataRepositoryFileUrl}))};
 }
