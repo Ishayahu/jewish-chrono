@@ -896,9 +896,8 @@
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/epiphanius-panarion-62",
       "@type": "Source",
       "label": "Епифаний, «Панарион», 62",
-      "url": "https://www.newadvent.org/fathers/083162.htm",
       "category": "primary",
-      "sourceDescription": "Поздний полемический источник IV века; адрес и раздел требуют дополнительной проверки",
+      "sourceDescription": "Поздний полемический источник IV века; точный текст и локатор ещё требуют проверки",
       "humanReviewStatus": "not_reviewed"
     },
     {
