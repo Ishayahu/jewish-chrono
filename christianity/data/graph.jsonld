@@ -882,6 +882,215 @@
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/irenaeus-against-heresies-iv38"
       ],
       "sourceLocator": "«Против ересей», IV.38"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/hippolytus-refutation-ix",
+      "@type": "Source",
+      "label": "Ипполит, «Опровержение всех ересей», книга IX",
+      "url": "https://www.newadvent.org/fathers/050109.htm",
+      "category": "primary",
+      "sourceDescription": "Современный событиям полемический источник; сведения о противниках не являются их собственными сочинениями",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/epiphanius-panarion-62",
+      "@type": "Source",
+      "label": "Епифаний, «Панарион», 62",
+      "url": "https://www.newadvent.org/fathers/083162.htm",
+      "category": "primary",
+      "sourceDescription": "Поздний полемический источник IV века; адрес и раздел требуют дополнительной проверки",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/noetus",
+      "@type": "DoctrinalPosition",
+      "label": "Ноэт",
+      "period": "конец II — начало III века",
+      "description": "Отождествление Отца и Сына по изложению Ипполита; не подменять полемический пересказ собственными словами Ноэта."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/sabellius-model",
+      "@type": "DoctrinalPosition",
+      "label": "«Савеллий»",
+      "period": "конец II — начало III века",
+      "description": "Условная реконструкция савеллианской модели по поздним сообщениям; не тождественна доказанным взглядам исторического Савеллия."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/callistus",
+      "@type": "DoctrinalPosition",
+      "label": "Каллист",
+      "period": "конец II — начало III века",
+      "description": "Божественный Дух как Отец и видимый человек как Сын, по критическому пересказу Ипполита."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/roman-father-son",
+      "@type": "Controversy",
+      "label": "Римский спор о единстве Отца и Сына",
+      "period": "конец II — начало III века",
+      "issue": "Как совместить единобожие с наличием Отца и Сына?",
+      "caveat": "Сравниваются богословские ответы, а не отдельные церкви. «Савеллий» — условное имя модели. Эпигон и Клеомен пока рассматриваются как передатчики традиции, не отдельные доктринальные ветви.",
+      "previousPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "resultingPositions": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/noetus",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/sabellius-model",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/callistus"
+      ],
+      "relatedResearchProjects": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/diadoche",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/examined-doctrine",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/christian-atlas",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/church-in-conversation",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/fideograph",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/doctrinelab"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--unity",
+      "@type": "ComparativeQuestion",
+      "label": "Как сохраняется единобожие?",
+      "questionCode": "unity",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/roman-father-son"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--unity--noetus",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/noetus",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--unity",
+      "text": "Один божественный субъект.",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/hippolytus-refutation-ix"
+      ],
+      "note": ""
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--unity--sabellius-model",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/sabellius-model",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--unity",
+      "text": "Одна божественная реальность, не три самостоятельных бога (поздняя реконструкция савеллианства).",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/epiphanius-panarion-62"
+      ],
+      "note": "Реконструированная модель «Савеллий», не прямая цитата исторического лица."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--unity--callistus",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/callistus",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--unity",
+      "text": "Один божественный Дух, по сообщению Ипполита.",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/hippolytus-refutation-ix"
+      ],
+      "note": ""
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--names",
+      "@type": "ComparativeQuestion",
+      "label": "Что означают названия «Отец» и «Сын»?",
+      "questionCode": "names",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/roman-father-son"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--names--noetus",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/noetus",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--names",
+      "text": "Отец и Сын — разные именования одного Бога в полемическом изложении Ипполита.",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/hippolytus-refutation-ix"
+      ],
+      "note": ""
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--names--sabellius-model",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/sabellius-model",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--names",
+      "text": "Различные проявления одного Бога; это свидетельство о поздней савеллианской модели, а не доказанная формула исторического Савеллия.",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/epiphanius-panarion-62"
+      ],
+      "note": "Реконструированная модель «Савеллий», не прямая цитата исторического лица."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--names--callistus",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/callistus",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--names",
+      "text": "Отец — божественный Дух во Христе; Сын — видимый человек, по сообщению Ипполита.",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/hippolytus-refutation-ix"
+      ],
+      "note": ""
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--interaction",
+      "@type": "ComparativeQuestion",
+      "label": "Как объясняется взаимодействие Отца и Сына в библейских текстах?",
+      "questionCode": "interaction",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/roman-father-son"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--interaction--noetus",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/noetus",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--interaction",
+      "text": "Прямое объяснение молитвы Иисуса Отцу у Ноэта не установлено.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [],
+      "note": ""
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--interaction--sabellius-model",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/sabellius-model",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--interaction",
+      "text": "Послание Сына можно интерпретировать как проявление одного Бога; собственное объяснение Савеллием диалогов Иисуса с Отцом не установлено.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [],
+      "note": "Реконструированная модель «Савеллий», не прямая цитата исторического лица."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--interaction--callistus",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/callistus",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--interaction",
+      "text": "Гипотеза: молитва человека к пребывающему в нём божественному Духу. Ипполит не приводит прямого объяснения Каллистом молитвы Иисуса.",
+      "evidenceStatus": "interpretation",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/hippolytus-refutation-ix"
+      ],
+      "note": "Логический вывод исследователя, не атрибутировать Каллисту."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/roman-father-son--theodotus",
+      "@type": "OpenResearchQuestion",
+      "label": "Кто такой Феодот, чьё учение Каллист, по обвинению Ипполита, пытался соединить с учением Клеомена? Различить Феодота Византийского (Кожевника) и Феодота Банкира; сверить точное место и контекст Ипполита.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/roman-father-son",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--names--callistus"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/hippolytus-refutation-ix"
+      ]
     }
   ]
 }
