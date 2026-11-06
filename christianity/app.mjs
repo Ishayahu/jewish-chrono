@@ -11,7 +11,7 @@ for(const name of ["Вопрос","Арий","Александр → Никея 
 head.append(hr);table.append(head);const tbody=el("tbody");
 for(const q of split.questions){const tr=el("tr");tr.append(el("td",q.title));
 for(const id of split.branch_ids){const a=q.answers[id],td=el("td");
-td.append(el("span",a.status==="source"?"Первоисточник":a.status==="interpretation"?"Интерпретация":"work_needed","badge "+a.status));
+td.append(el("span",a.status==="source"?"Первоисточник":a.status==="interpretation"?"Интерпретация":"work_needed","badge "+a.status));if(a.status==="source")td.append(el("span",a.human_review_status==="verified"?"Проверено человеком":"Человеком не проверено","badge "+(a.human_review_status==="verified"?"source":"work_needed")));
 td.append(el("div",a.text));if(a.note)td.append(el("p",a.note,"note"));
 const refs=el("div",undefined,"refs");
 for(const sid of a.source_ids||[]){const s=sourceMap.get(sid);if(s)refs.append(sourceLink(s,"↗ "+s.title.split(" — ")[0]));}
@@ -26,5 +26,5 @@ const split=splitMap.get(id);if(split){li.append(el("div",undefined,"spine"));co
 const tree=el("ul",undefined,"tree");tree.append(branch(d.root_id));$("graph").replaceChildren(tree);
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
 for(const split of d.splits)for(const q of split.open_questions)todo.append(el("li",q));
-for(const s of d.sources){const li=el("li");li.append(sourceLink(s),el("small",s.type));sources.append(li);}}
+for(const s of d.sources){const li=el("li");li.append(sourceLink(s),el("small",s.type),el("small",s.human_review_status==="verified"?"Человеком проверено":"Человеком не проверено"));sources.append(li);}}
 fetch("./data/splits.json").then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(render).catch(e=>$("graph").textContent="Не удалось загрузить граф: "+e.message);
