@@ -5,7 +5,7 @@ import {fileURLToPath} from "node:url";
 const input=new URL("../christianity/data/splits.json",import.meta.url);
 const output=new URL("../christianity/data/graph.jsonld",import.meta.url);
 const root="https://ishayahu.github.io/jewish-chrono/christianity/";
-const iri=(kind,id)=>root+"id/"+kind+"/"+encodeURIComponent(id);
+const iri=(kind,id)=>root+"data/graph.jsonld#"+kind+"/"+encodeURIComponent(id);
 const claimIri=(split,q,branch)=>iri("claim",split+"--"+q+"--"+branch);
 export function build(inputData){
  const graph=[];
@@ -20,7 +20,7 @@ export function build(inputData){
    for(const edge of split.argument_edges||[])graph.push({"@id":iri("reasoning-link",split.id+"--"+edge.id),"@type":"ReasoningLink",fromClaim:claimIri(split.id,edge.from.question_id,edge.from.branch_id),toClaim:claimIri(split.id,edge.to.question_id,edge.to.branch_id),relationKind:edge.relation,evidenceStatus:edge.status,humanReviewStatus:edge.human_review_status,note:edge.note,citedSources:edge.source_ids.map(id=>iri("source",id))});
    for(const rq of split.research_questions||[])graph.push({"@id":iri("research-question",split.id+"--"+rq.id),"@type":"OpenResearchQuestion",label:rq.question,inControversy:iri("controversy",split.id),relatedClaims:rq.related_claims.map(a=>claimIri(split.id,a.question_id,a.branch_id)),evidenceStatus:rq.status,humanReviewStatus:rq.human_review_status,citedSources:rq.source_ids.map(id=>iri("source",id))});
  }
- return {"@context":{"@vocab":root+"vocab#","label":"http://www.w3.org/2000/01/rdf-schema#label","url":{"@id":"https://schema.org/url","@type":"@id"},"previousPosition":{"@id":root+"vocab#previousPosition","@type":"@id"},"resultingPositions":{"@id":root+"vocab#resultingPositions","@type":"@id"},"relatedResearchProjects":{"@id":root+"vocab#relatedResearchProjects","@type":"@id"},"position":{"@id":root+"vocab#position","@type":"@id"},"inControversy":{"@id":root+"vocab#inControversy","@type":"@id"},"citedSources":{"@id":"http://www.w3.org/ns/prov#wasDerivedFrom","@type":"@id"},"fromClaim":{"@id":root+"vocab#fromClaim","@type":"@id"},"toClaim":{"@id":root+"vocab#toClaim","@type":"@id"},"relatedClaims":{"@id":root+"vocab#relatedClaims","@type":"@id"}},"@graph":graph};
+ return {"@context":{"@vocab":root+"data/graph.jsonld#vocab/","label":"http://www.w3.org/2000/01/rdf-schema#label","url":{"@id":"https://schema.org/url","@type":"@id"},"previousPosition":{"@id":root+"vocab#previousPosition","@type":"@id"},"resultingPositions":{"@id":root+"vocab#resultingPositions","@type":"@id"},"relatedResearchProjects":{"@id":root+"vocab#relatedResearchProjects","@type":"@id"},"position":{"@id":root+"vocab#position","@type":"@id"},"inControversy":{"@id":root+"vocab#inControversy","@type":"@id"},"citedSources":{"@id":"http://www.w3.org/ns/prov#wasDerivedFrom","@type":"@id"},"fromClaim":{"@id":root+"vocab#fromClaim","@type":"@id"},"toClaim":{"@id":root+"vocab#toClaim","@type":"@id"},"relatedClaims":{"@id":root+"vocab#relatedClaims","@type":"@id"}},"@graph":graph};
 }
 const data=JSON.parse(readFileSync(input,"utf8"));
 const result=JSON.stringify(build(data),null,2)+"\n";
