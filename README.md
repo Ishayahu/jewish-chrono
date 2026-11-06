@@ -72,3 +72,15 @@ node --test tests/*.test.mjs
 ### Статусы свидетельств и проверки
 
 У каждого ответа в точке разделения есть `status` (`source`, `interpretation`, `work_needed`) и независимо `human_review_status` (`verified`, `not_reviewed`). Для каталога источников также есть `human_review_status`. **Просмотр или пересказ текста ИИ не считается человеческой проверкой**. Ставить `verified` только после явной сверки соответствующего тезиса/оригинала человеком, с обязательными `reviewed_by` и `reviewed_at`; пока все записи остаются `not_reviewed`. Проверка одного тезиса не подтверждает автоматически всё произведение. В богословской части отдельно сохранён вопрос о том, почему Бог не создал человека с устойчивым соединением с Ним с самого начала.
+
+## Machine-readable Christian controversy graph
+
+**Single source of truth:** `christianity/data/splits.json` (schema_version=3). `christianity/data/schema.json` provides a JSON Schema. The GitHub Pages workflow runs `node scripts/build_christianity_graph.mjs`, which produces `christianity/data/graph.jsonld` in the **deployment artifact**, with stable graph identifiers and links. The generated JSON-LD is not manually edited or committed; the JSON is version-controlled and published alongside it. URLs:
+
+- https://ishayahu.github.io/jewish-chrono/christianity/data/splits.json
+- https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld
+- https://ishayahu.github.io/jewish-chrono/christianity/data/schema.json
+
+The graph contains typed objects `DoctrinalPosition`, `Controversy`, `PositionClaim`, `ReasoningLink`, `OpenResearchQuestion`, and `Source`. Relation types distinguish `motivates`, `supports`, `challenges`, `contradicts` and `depends_on`; these are **not** interchangeable. All links currently entered are researcher interpretations, not logically proven implications. Human review of a claim is independently tracked from its evidence status: `not_reviewed` versus `verified`; AI browsing is not human verification.
+
+Research sites Diadoche, Examined Doctrine, Christian Atlas, Church in Conversation, Fideograph and DoctrineLab are recorded as `research_project` secondary references with explicit links and caveats. They are not considered primary sources. Their availability and descriptions were checked online on 2026-11-06, but no material has been marked human-verified. Attribution is preserved per source.

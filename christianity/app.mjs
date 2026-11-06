@@ -26,5 +26,5 @@ const split=splitMap.get(id);if(split){li.append(el("div",undefined,"spine"));co
 const tree=el("ul",undefined,"tree");tree.append(branch(d.root_id));$("graph").replaceChildren(tree);
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
 for(const split of d.splits)for(const q of split.open_questions)todo.append(el("li",q));
-for(const s of d.sources){const li=el("li");li.append(sourceLink(s),el("small",s.type),el("small",s.human_review_status==="verified"?"Человеком проверено":"Человеком не проверено"));sources.append(li);}}
+for(const s of d.sources){const li=el("li");li.append(sourceLink(s),el("small",s.type),el("small",s.human_review_status==="verified"?"Человеком проверено":"Человеком не проверено"));if(s.relevance)li.append(el("small","Для чего полезен: "+s.relevance));if(s.limitations)li.append(el("small","Ограничения: "+s.limitations));sources.append(li);}}
 fetch("./data/splits.json").then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(render).catch(e=>$("graph").textContent="Не удалось загрузить граф: "+e.message);
