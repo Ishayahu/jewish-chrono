@@ -540,7 +540,7 @@
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/athanasius-incarnation",
-      "@type": "source",
+      "@type": "Source",
       "label": "Афанасий Александрийский, «О воплощении Слова», §§3–7",
       "url": "https://www.newadvent.org/fathers/2802.htm",
       "category": "primary",
@@ -549,7 +549,7 @@
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/irenaeus-against-heresies-iv38",
-      "@type": "source",
+      "@type": "Source",
       "label": "Ириней Лионский, «Против ересей», IV.38",
       "url": "https://www.newadvent.org/fathers/0103438.htm",
       "category": "primary",
