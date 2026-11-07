@@ -78,7 +78,10 @@ test("browser renderer displays both controversies under their common parent",as
  visit(roots.get("graph"));
  assert.ok(displayed.some(s=>s.includes("Арианский кризис")),displayed.join("; "));
  assert.ok(displayed.some(s=>s.includes("Римский спор")),displayed.join("; "));
- assert.match(roots.get("graph-coverage").textContent,/2 развилки/);
+ const shortcuts=roots.get("split-index").children.map(e=>e.textContent);
+ assert.ok(shortcuts.some(s=>s.includes("Арианский кризис")));
+ assert.ok(shortcuts.some(s=>s.includes("Римский спор")));
+ assert.ok(roots.get("graph-coverage").textContent.startsWith(view.splits.length+" развил"));
 });
 
 test("published identifiers pass JSON Schema URI regexp",()=>{const schema=JSON.parse(readFileSync(new URL("../christianity/data/schema.json",import.meta.url),"utf8"));const re=new RegExp(schema.properties["@graph"].items.properties["@id"].pattern);for(const n of records)assert.ok(re.test(n["@id"]),n["@id"]);});
