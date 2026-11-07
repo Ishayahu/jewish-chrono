@@ -5,10 +5,10 @@ const dialog=$("dialog");$("close").onclick=()=>dialog.close();dialog.addEventLi
 const show=()=>dialog.showModal();
 function sourceLink(s,label){const a=el("a",label||s.title);a.href=s.url;a.target="_blank";a.rel="noopener noreferrer";return a;}
 function showNode(node){$("dialog-title").textContent=node.title;$("dialog-subtitle").textContent=node.period;$("dialog-body").replaceChildren(el("p",node.description,"summary"));show();}
-function showSplit(split,sourceMap){$("dialog-title").textContent=split.title;$("dialog-subtitle").textContent="Разделение · "+split.period;
+function showSplit(split,sourceMap,nodeMap){$("dialog-title").textContent=split.title;$("dialog-subtitle").textContent="Разделение · "+split.period;
 const body=$("dialog-body");body.replaceChildren(el("p",split.issue,"summary"));
 const wrap=el("div",undefined,"tablescroll"),table=el("table",undefined,"compare"),head=el("thead"),hr=el("tr");
-for(const name of ["Вопрос","Арий","Александр → Никея → Афанасий"])hr.append(el("th",name));
+for(const name of ["Вопрос",...split.branch_ids.map(id=>nodeMap.get(id)?.title||"Позиция")])hr.append(el("th",name));
 head.append(hr);table.append(head);const tbody=el("tbody");
 for(const q of split.questions){const tr=el("tr");tr.append(el("td",q.title));
 for(const id of split.branch_ids){const a=q.answers[id],td=el("td");
@@ -19,11 +19,12 @@ for(const sid of a.source_ids||[]){const s=sourceMap.get(sid);if(s)refs.append(s
 td.append(refs);tr.append(td);}
 tbody.append(tr);}
 table.append(tbody);wrap.append(table);body.append(wrap,el("p",split.caveat,"summary"));show();}
-function render(d){const nodeMap=new Map(d.nodes.map(n=>[n.id,n])),splitMap=new Map(d.splits.map(s=>[s.parent_id,s])),srcMap=new Map(d.sources.map(s=>[s.id,s]));
+function render(d){const nodeMap=new Map(d.nodes.map(n=>[n.id,n])),splitMap=new Map(),srcMap=new Map(d.sources.map(s=>[s.id,s]));
+for(const s of d.splits){const list=splitMap.get(s.parent_id)||[];list.push(s);splitMap.set(s.parent_id,list);}
 function branch(id,seen=new Set()){if(seen.has(id))throw Error("Цикл в графе");const next=new Set(seen);next.add(id);
 const n=nodeMap.get(id);if(!n)throw Error("Отсутствует узел "+id);
 const li=el("li"),btn=el("button",undefined,"node "+id);btn.type="button";btn.append(el("span",n.period,"period"),el("strong",n.title),el("small",n.description));btn.onclick=()=>showNode(n);li.append(btn);
-const split=splitMap.get(id);if(split){li.append(el("div",undefined,"spine"));const b=el("button","● "+split.title,"split");b.type="button";b.append(el("small","Нажмите для сравнения · "+split.period));b.onclick=()=>showSplit(split,srcMap);li.append(b);const ul=el("ul");for(const child of split.branch_ids)ul.append(branch(child,next));li.append(ul);}return li;}
+const splits=splitMap.get(id)||[];for(const split of splits){li.append(el("div",undefined,"spine"));const b=el("button","● "+split.title,"split");b.type="button";b.append(el("small","Нажмите для сравнения · "+split.period));b.onclick=()=>showSplit(split,srcMap,nodeMap);li.append(b);const ul=el("ul");for(const child of split.branch_ids)ul.append(branch(child,next));li.append(ul);}return li;}
 const tree=el("ul",undefined,"tree");tree.append(branch(d.root_id));$("graph").replaceChildren(tree);
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
 for(const split of d.splits)for(const q of split.open_questions)todo.append(el("li",q));
