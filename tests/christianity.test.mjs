@@ -75,7 +75,7 @@ test("browser renderer connects earlier Roman controversy to later Arian crisis"
   if(!roots.has(id))roots.set(id,new Element("div"));return roots.get(id);
  }};
  const app=readFileSync(new URL("../christianity/app.mjs",import.meta.url),"utf8");
- const code=app.replace('import {createView} from "./model.mjs";',"").split('\nfetch("./data/graph.jsonld')[0];
+ const code=app.replace(/^import \{createView\} from "\.\/model\.mjs(?:\?[^"]*)?";\n/,"").split('\nfetch("./data/graph.jsonld')[0];
  assert.ok(code.includes("function render(d)"));
  runInNewContext(code+"\nrender(view);",{document,view});
  const displayed=[];
