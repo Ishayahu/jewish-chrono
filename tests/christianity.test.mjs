@@ -23,11 +23,24 @@ test("every semantic connection is resolvable",()=>{
   for(const n of records)for(const key of keys)if(n[key]!==undefined)for(const v of [].concat(n[key]))checkRef(v);
 });
 test("historical positions, questions and evidence are preserved",()=>{
-  const v=createView(d);assert.equal(v.nodes.length,3);assert.equal(v.splits.length,1);
-  assert.equal(v.splits[0].questions.length,4);assert.equal(v.splits[0].branch_ids.length,2);
-  assert.ok(v.splits[0].open_questions.some(x=>x.includes("Адама")));
+  const v=createView(d);assert.ok(v.nodes.length>=6);assert.ok(v.splits.length>=2);
+  const arian=v.splits.find(s=>s.id.endsWith("/arius-nicaea"));
+  const roman=v.splits.find(s=>s.id.endsWith("/roman-father-son"));
+  assert.ok(arian);assert.ok(roman);
+  assert.equal(arian.questions.length,4);assert.equal(arian.branch_ids.length,2);
+  assert.ok(arian.open_questions.some(x=>x.includes("Адама")));
+  assert.equal(roman.questions.length,3);assert.equal(roman.branch_ids.length,3);
+  assert.ok(roman.open_questions.some(x=>x.includes("Феодот")));
+  assert.equal(roman.parent_id,arian.parent_id);
+  for(const q of roman.questions)for(const id of roman.branch_ids)assert.ok(q.answers[id],"Missing Roman comparison cell: "+id);
+  const byParent=new Map();
+  for(const split of v.splits){const list=byParent.get(split.parent_id)||[];list.push(split);byParent.set(split.parent_id,list);}
+  assert.equal(byParent.get(v.root_id).length,2,"Both controversies should branch from the common root");
+  const reachable=new Set();
+  const visit=(id,ancestry=new Set())=>{assert.ok(!ancestry.has(id),"Cycle in visible tree");reachable.add(id);const next=new Set(ancestry);next.add(id);for(const split of byParent.get(id)||[])for(const child of split.branch_ids)visit(child,next);};
+  visit(v.root_id);assert.equal(reachable.size,v.nodes.length,"Every position must be accessible from the root");
   assert.equal(ofType("ReasoningLink").length,3);
-  assert.ok(ofType("OpenResearchQuestion").length>=6);
+  assert.ok(ofType("OpenResearchQuestion").length>=7);
   assert.equal(ofType("Source").filter(s=>s.category==="research_project").length,6);
   const q=ofType("ComparativeQuestion").find(x=>x.questionCode==="salvation");
   const arius=ofType("PositionClaim").find(x=>x.respondsTo===q["@id"]&&x.position.endsWith("/arius"));
@@ -39,7 +52,7 @@ test("source kind and human review are independent",()=>{
  for(const n of records.filter(x=>["PositionClaim","ReasoningLink","OpenResearchQuestion"].includes(x["@type"]))){assert.ok(["source","interpretation","work_needed"].includes(n.evidenceStatus));assert.ok(["verified","not_reviewed"].includes(n.humanReviewStatus));if(n.humanReviewStatus==="verified"){assert.ok(n.reviewedBy);assert.ok(n.reviewedAt);}}
 });
 test("reasoning links are interpretations, not proven implication",()=>{const relations=new Set(["motivates","supports","challenges","contradicts","depends_on"]);for(const e of ofType("ReasoningLink")){assert.ok(relations.has(e.relationKind));assert.equal(e.evidenceStatus,"interpretation");}});
-test("browser view references canonical JSON-LD only",()=>{const app=readFileSync(new URL("../christianity/app.mjs",import.meta.url),"utf8");assert.ok(app.includes('fetch("./data/graph.jsonld")'));assert.ok(!app.includes("splits.json"));});
+test("browser view references canonical JSON-LD only",()=>{const app=readFileSync(new URL("../christianity/app.mjs",import.meta.url),"utf8");assert.match(app,/fetch\("\.\/data\/graph\.jsonld(?:\?[^"]*)?"/);assert.ok(app.includes('const choices=el("ul",undefined,"controversy-branches")'));assert.ok(!app.includes("splits.json"));});
 
 test("published identifiers pass JSON Schema URI regexp",()=>{const schema=JSON.parse(readFileSync(new URL("../christianity/data/schema.json",import.meta.url),"utf8"));const re=new RegExp(schema.properties["@graph"].items.properties["@id"].pattern);for(const n of records)assert.ok(re.test(n["@id"]),n["@id"]);});
 
