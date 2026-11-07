@@ -1,4 +1,4 @@
-import {createView} from "./model.mjs";
+import {createView} from "./model.mjs?v=20261107-5";
 const $=id=>document.getElementById(id);
 const el=(tag,text,cls)=>{const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;};
 const dialog=$("dialog");$("close").onclick=()=>dialog.close();dialog.addEventListener("click",e=>{if(e.target===dialog)dialog.close();});
@@ -34,4 +34,4 @@ const counter=$("graph-coverage");if(counter)counter.textContent=d.splits.length
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
 for(const split of d.splits)for(const q of split.open_questions)todo.append(el("li",q));
 for(const s of d.sources){const li=el("li");li.append(sourceLink(s),el("small",s.type),el("small",s.human_review_status==="verified"?"Человеком проверено":"Человеком не проверено"));if(s.relevance)li.append(el("small","Для чего полезен: "+s.relevance));if(s.limitations)li.append(el("small","Ограничения: "+s.limitations));if(s.machine_access_note)li.append(el("small","Машиночитаемость: "+s.machine_access_note));if(s.data_repository_file_url){const ref=el("small");ref.append(sourceLink({url:s.data_repository_file_url,title:"Исходные данные в GitHub"}));li.append(ref);}sources.append(li);}}
-fetch("./data/graph.jsonld?v=20261107-2",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(createView).then(render).catch(e=>$("graph").textContent="Не удалось загрузить граф: "+e.message);
+fetch("./data/graph.jsonld?v=20261107-5",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(createView).then(render).catch(e=>$("graph").textContent="Не удалось загрузить граф: "+e.message);
