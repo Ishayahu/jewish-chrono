@@ -72,18 +72,25 @@
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#atlas/main",
       "@type": "HistoricalAtlas",
       "label": "Граф христианских расколов",
-      "rootPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "rootPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
       "schemaVersion": 5,
-      "updated": "2026-11-06",
-      "semanticVersion": "1.2.0",
-      "description": "Машиночитаемый исторический граф решений, доводов и первоисточников. Ссылки и человеческая проверка различаются. Добавлена сквозная матрица вопросов и авторских позиций без дублирующей базы данных."
+      "updated": "2026-11-07",
+      "semanticVersion": "1.2.1",
+      "description": "Единый историко-богословский JSON-LD: римский спор предшествует арианскому; продолжение доникейской дискуссии соединяет их."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
+      "@type": "DoctrinalPosition",
+      "label": "Раннехристианская традиция",
+      "period": "II век, до римских споров",
+      "description": "Общий исторический фон различных представлений об Отце и Сыне. Позднейшие ветви показывают богословские споры и продолжение дискуссии, а не разделение единой организации."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
       "@type": "DoctrinalPosition",
       "label": "Доникейское христианство",
-      "period": "до начала IV века",
-      "description": "Несколько богословских подходов к отношениям Отца и Сына; до Ария тоже существовали разногласия."
+      "period": "III — начало IV века",
+      "description": "Продолжение доникейской христианской дискуссии за пределами одной формулы римского спора; здесь позже возникает арианский кризис. Не считать эту ветвь единой оформленной богословской школой."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/arius",
@@ -927,12 +934,13 @@
       "label": "Римский спор о единстве Отца и Сына",
       "period": "конец II — начало III века",
       "issue": "Как совместить единобожие с наличием Отца и Сына?",
-      "caveat": "Сравниваются богословские ответы, а не отдельные церкви. «Савеллий» — условное имя модели. Эпигон и Клеомен пока рассматриваются как передатчики традиции, не отдельные доктринальные ветви.",
-      "previousPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "caveat": "Сравниваются богословские ответы, а не отдельные церкви. «Савеллий» — условное имя модели. Эпигон и Клеомен пока рассматриваются как передатчики традиции, не отдельные доктринальные ветви. Ветвь «Доникейское христианство» означает продолжение широкой дискуссии, а не доказанное происхождение всего христианства от одной римской полемики; от неё начинается отдельный позднейший арианский кризис.",
+      "previousPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
       "resultingPositions": [
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/noetus",
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/sabellius-model",
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/callistus"
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/callistus",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early"
       ],
       "relatedResearchProjects": [
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/diadoche",
@@ -1090,6 +1098,39 @@
       "citedSources": [
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/hippolytus-refutation-ix"
       ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--unity--early",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--unity",
+      "text": "Продолжающаяся доникейская традиция не имела единой унифицированной формулы; способы объяснения единобожия требуют рассмотрения по отдельным авторам.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [],
+      "note": "Собирательная ветвь продолжения дискуссии; не индивидуальная доктрина."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--names--early",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--names",
+      "text": "Названия «Отец» и «Сын» объяснялись разными авторами по-разному. Одну формулу для всех доникейских авторов приписывать нельзя.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [],
+      "note": "Собирательная ветвь продолжения дискуссии; не индивидуальная доктрина."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/roman-father-son--interaction--early",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--interaction",
+      "text": "Не установлено одно общее толкование диалога и молитвы Иисуса Отцу для всех доникейских авторов; предстоит сравнивать конкретные тексты.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [],
+      "note": "Собирательная ветвь продолжения дискуссии; не индивидуальная доктрина."
     }
   ]
 }
