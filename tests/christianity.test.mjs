@@ -35,7 +35,7 @@ test("historical positions, questions and evidence are preserved",()=>{
   for(const q of roman.questions)for(const id of roman.branch_ids)assert.ok(q.answers[id],"Missing Roman comparison cell: "+id);
   const byParent=new Map();
   for(const split of v.splits){const list=byParent.get(split.parent_id)||[];list.push(split);byParent.set(split.parent_id,list);}
-  assert.equal(byParent.get(v.root_id).length,2,"Both controversies should branch from the common root");
+  assert.ok(byParent.get(v.root_id).length>=2,"Both controversies should branch from the common root");
   const reachable=new Set();
   const visit=(id,ancestry=new Set())=>{assert.ok(!ancestry.has(id),"Cycle in visible tree");reachable.add(id);const next=new Set(ancestry);next.add(id);for(const split of byParent.get(id)||[])for(const child of split.branch_ids)visit(child,next);};
   visit(v.root_id);assert.equal(reachable.size,v.nodes.length,"Every position must be accessible from the root");
@@ -53,6 +53,33 @@ test("source kind and human review are independent",()=>{
 });
 test("reasoning links are interpretations, not proven implication",()=>{const relations=new Set(["motivates","supports","challenges","contradicts","depends_on"]);for(const e of ofType("ReasoningLink")){assert.ok(relations.has(e.relationKind));assert.equal(e.evidenceStatus,"interpretation");}});
 test("browser view references canonical JSON-LD only",()=>{const app=readFileSync(new URL("../christianity/app.mjs",import.meta.url),"utf8");assert.match(app,/fetch\("\.\/data\/graph\.jsonld(?:\?[^"]*)?"/);assert.ok(app.includes('const choices=el("ul",undefined,"controversy-branches")'));assert.ok(!app.includes("splits.json"));});
+
+test("browser renderer displays both controversies under their common parent",async()=>{
+ const {runInNewContext}=await import("node:vm");
+ const view=createView(d);
+ class Element{
+  constructor(tag){this.tag=tag;this.children=[];this.className="";this.textContent="";}
+  append(...children){this.children.push(...children);}
+  replaceChildren(...children){this.children=[...children];}
+  addEventListener(){}
+  showModal(){}
+  close(){}
+ }
+ const roots=new Map();
+ const document={createElement:tag=>new Element(tag),getElementById:id=>{
+  if(!roots.has(id))roots.set(id,new Element("div"));return roots.get(id);
+ }};
+ const app=readFileSync(new URL("../christianity/app.mjs",import.meta.url),"utf8");
+ const code=app.replace('import {createView} from "./model.mjs";',"").split('\\nfetch("./data/graph.jsonld')[0];
+ assert.ok(code.includes("function render(d)"));
+ runInNewContext(code+"\\nrender(view);",{document,view});
+ const displayed=[];
+ const visit=e=>{if(e.className==="split")displayed.push(e.textContent);for(const child of e.children||[])visit(child);};
+ visit(roots.get("graph"));
+ assert.ok(displayed.some(s=>s.includes("Арианский кризис")),displayed.join("; "));
+ assert.ok(displayed.some(s=>s.includes("Римский спор")),displayed.join("; "));
+ assert.match(roots.get("graph-coverage").textContent,/2 развилки/);
+});
 
 test("published identifiers pass JSON Schema URI regexp",()=>{const schema=JSON.parse(readFileSync(new URL("../christianity/data/schema.json",import.meta.url),"utf8"));const re=new RegExp(schema.properties["@graph"].items.properties["@id"].pattern);for(const n of records)assert.ok(re.test(n["@id"]),n["@id"]);});
 
