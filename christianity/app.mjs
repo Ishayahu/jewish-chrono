@@ -24,8 +24,12 @@ for(const s of d.splits){const list=splitMap.get(s.parent_id)||[];list.push(s);s
 function branch(id,seen=new Set()){if(seen.has(id))throw Error("Цикл в графе");const next=new Set(seen);next.add(id);
 const n=nodeMap.get(id);if(!n)throw Error("Отсутствует узел "+id);
 const li=el("li"),btn=el("button",undefined,"node "+id);btn.type="button";btn.append(el("span",n.period,"period"),el("strong",n.title),el("small",n.description));btn.onclick=()=>showNode(n);li.append(btn);
-const splits=splitMap.get(id)||[];for(const split of splits){li.append(el("div",undefined,"spine"));const b=el("button","● "+split.title,"split");b.type="button";b.append(el("small","Нажмите для сравнения · "+split.period));b.onclick=()=>showSplit(split,srcMap,nodeMap);li.append(b);const ul=el("ul");for(const child of split.branch_ids)ul.append(branch(child,next));li.append(ul);}return li;}
+const splits=splitMap.get(id)||[];
+if(splits.length){const choices=el("ul",undefined,"controversy-branches");
+for(const split of splits){const item=el("li",undefined,"controversy-item");const b=el("button","● "+split.title,"split");b.type="button";b.append(el("small","Нажмите для сравнения · "+split.period));b.onclick=()=>showSplit(split,srcMap,nodeMap);item.append(b);const ul=el("ul");for(const child of split.branch_ids)ul.append(branch(child,next));item.append(ul);choices.append(item);}
+li.append(choices);}return li;}
 const tree=el("ul",undefined,"tree");tree.append(branch(d.root_id));$("graph").replaceChildren(tree);
+const counter=$("graph-coverage");if(counter)counter.textContent=d.splits.length+" развилки · "+d.nodes.length+" позиций";
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
 for(const split of d.splits)for(const q of split.open_questions)todo.append(el("li",q));
 for(const s of d.sources){const li=el("li");li.append(sourceLink(s),el("small",s.type),el("small",s.human_review_status==="verified"?"Человеком проверено":"Человеком не проверено"));if(s.relevance)li.append(el("small","Для чего полезен: "+s.relevance));if(s.limitations)li.append(el("small","Ограничения: "+s.limitations));if(s.machine_access_note)li.append(el("small","Машиночитаемость: "+s.machine_access_note));if(s.data_repository_file_url){const ref=el("small");ref.append(sourceLink({url:s.data_repository_file_url,title:"Исходные данные в GitHub"}));li.append(ref);}sources.append(li);}}
