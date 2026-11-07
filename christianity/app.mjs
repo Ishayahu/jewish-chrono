@@ -28,6 +28,7 @@ const splits=splitMap.get(id)||[];
 if(splits.length){const choices=el("ul",undefined,"controversy-branches");
 for(const split of splits){const item=el("li",undefined,"controversy-item");const b=el("button","● "+split.title,"split");b.type="button";b.append(el("small","Нажмите для сравнения · "+split.period));b.onclick=()=>showSplit(split,srcMap,nodeMap);item.append(b);const ul=el("ul");for(const child of split.branch_ids)ul.append(branch(child,next));item.append(ul);choices.append(item);}
 li.append(choices);}return li;}
+const index=$("split-index");if(index){index.replaceChildren();for(const split of d.splits){const b=el("button",split.title,"split-shortcut");b.type="button";b.onclick=()=>showSplit(split,srcMap,nodeMap);index.append(b);}}
 const tree=el("ul",undefined,"tree");tree.append(branch(d.root_id));$("graph").replaceChildren(tree);
 const counter=$("graph-coverage");if(counter)counter.textContent=d.splits.length+" развилки · "+d.nodes.length+" позиций";
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
