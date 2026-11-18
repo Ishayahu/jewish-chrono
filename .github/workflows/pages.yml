@@ -37,7 +37,7 @@ jobs:
       - name: Check chronology logic and semantic graph
         run: node --test tests/*.test.mjs
       - name: Check JavaScript syntax
-        run: node --check src/app.mjs && node --check src/model.mjs && node --check christianity/app.mjs && node --check christianity/model.mjs
+        run: node --check src/app.mjs && node --check src/model.mjs && node --check christianity/app.mjs && node --check christianity/model.mjs && node --check finance/app.js
       - name: Check hidden XML metadata XSLT templates
         run: |
           python3 - <<'PY'
