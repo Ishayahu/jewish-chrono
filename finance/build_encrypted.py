@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 SID='1nQNEresKTI0b5LzVhmZQhT0AFLmqWhKNlz369CIoCPU'
-ranges=["'Финансовая позиция'!A1:B50","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40"]
+ranges=["'Финансовая позиция'!A1:B53","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40"]
 def main():
  c=service_account.Credentials.from_service_account_info(json.loads(os.environ['FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON']),scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'])
  r=AuthorizedSession(c).get(f'https://sheets.googleapis.com/v4/spreadsheets/{SID}/values:batchGet',params=[('ranges',x) for x in ranges]+[('valueRenderOption','UNFORMATTED_VALUE')],timeout=45)
@@ -23,7 +23,7 @@ def main():
  for i,(start,end) in enumerate([(dt.date(2026,11,21),dt.date(2026,12,20)),(dt.date(2026,12,21),dt.date(2027,1,20))]):
   budgets=[{'name':name,'limit':v(b,row,col+i if row in (35,36,37,38,39) else col)*factor,'spent':0} for name,row,col,factor in cats] if today<start else []
   cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}','income':v(b,17,i+1),'expenses':v(b,16,i+1),'possibleReturn':v(b,19,i+1),'budgets':budgets})
- report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':None,'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5]),'received':n(dayrow[6])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
+ report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,52),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5]),'received':n(dayrow[6])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
  pw=os.environ['FINANCE_OWNER_PASSWORD']
  if len(pw)<16:raise ValueError('Password too short')
  salt,iv=secrets.token_bytes(16),secrets.token_bytes(12)
