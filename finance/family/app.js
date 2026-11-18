@@ -22,6 +22,7 @@ async function unlock(password){
   if(!Number.isFinite(b.limit))continue;
   box.append(line(b.name,b.spent===null?'Лимит '+rub(b.limit):'Осталось '+rub(b.limit-b.spent)+' из '+rub(b.limit)));
  }
+ if(Array.isArray(c.unmappedExpenses)&&c.unmappedExpenses.length){const total=c.unmappedExpenses.reduce((sum,x)=>sum+x.amount,0);box.append(line('Расходы без однозначной категории',rub(total)));const note=document.createElement('p');note.className='muted';note.textContent='Не распределено операций: '+c.unmappedExpenses.length+'. Эти суммы не вычтены из лимитов категорий и требуют сверки.';box.append(note)}
 }
 $('unlock').addEventListener('submit',async e=>{e.preventDefault();$('error').textContent='';try{await unlock($('password').value)}catch(err){$('error').textContent=err.name==='OperationError'?'Неверный пароль':err.message}finally{$('password').value=''}});
 $('lock').addEventListener('click',()=>location.reload());
