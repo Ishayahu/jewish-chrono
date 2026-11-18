@@ -31,7 +31,7 @@ jobs:
         run: |
           test -n "$FINANCE_OWNER_PASSWORD" || { echo 'Missing FINANCE_OWNER_PASSWORD secret'; exit 1; }
           test -n "$FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON" || { echo 'Missing FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON secret'; exit 1; }
-          python3 -m pip install --quiet google-auth requests cryptography
+          python3 -m pip install --quiet --user google-auth requests cryptography
           python3 finance/build_encrypted.py
       - name: Stage existing site and refreshed encrypted finance
         run: |
