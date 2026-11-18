@@ -16,12 +16,12 @@ export function createView(doc){
       for(const claim of one(records,"PositionClaim").filter(x=>x.respondsTo===q["@id"])){
         const id=claim.position;
         if(answers[id])throw Error("Несколько ответов одной стороны на "+q["@id"]);
-        answers[id]={status:claim.evidenceStatus,text:claim.text,human_review_status:claim.humanReviewStatus,note:claim.note||"",source_ids:refs(claim.citedSources).map(x=>x["@id"])};
+        answers[id]={status:claim.evidenceStatus,text:claim.text,human_review_status:claim.humanReviewStatus,note:claim.note||"",source_ids:refs(claim.citedSources).map(x=>x["@id"]),objections:claim.objections||[]};
       }
       for(const id of c.resultingPositions)if(!answers[id])throw Error("Не найден ответ для "+id);
       return {id:q["@id"],title:q.label,answers};
     });
-    return {id:c["@id"],title:c.label,period:c.period,issue:c.issue,caveat:c.caveat,parent_id:c.previousPosition,branch_ids:c.resultingPositions,questions,open_questions:one(records,"OpenResearchQuestion").filter(x=>x.inControversy===c["@id"]).map(x=>x.label)};
+    return {id:c["@id"],title:c.label,period:c.period,issue:c.issue,caveat:c.caveat,reviewLayout:c.reviewLayout||null,parent_id:c.previousPosition,branch_ids:c.resultingPositions,questions,open_questions:one(records,"OpenResearchQuestion").filter(x=>x.inControversy===c["@id"]).map(x=>x.label)};
   });
   refs([atlas.rootPosition]);
   // Order controversies by their place in the history, not by their JSON-LD record order.
