@@ -2,6 +2,9 @@ name: Test, sync chronology XML and deploy Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'finance/**'
+      - '.github/workflows/finance.yml'
   workflow_dispatch:
   schedule:
     - cron: '17 */3 * * *'
@@ -10,7 +13,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: chronology-pages
+  group: site-pages-deploy
   cancel-in-progress: false
 jobs:
   deploy:
@@ -20,9 +23,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout chronology website
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Checkout public XML text database
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: Ishayahu/jewTeX_TEXTS_DB
           ref: master
@@ -71,7 +74,7 @@ jobs:
             python3 -m pip install --quiet --user google-auth requests cryptography
             python3 finance/build_encrypted.py
           else
-            echo 'Owner finance report: waiting for Google Sheets read-only credentials; existing test fixture retained.'
+            echo 'Finance credentials missing; refusing to publish stale demo data'; exit 1
           fi
       - name: Stage GitHub Pages artifact
         run: |
@@ -80,11 +83,11 @@ jobs:
           cp -R src data christianity dist/
           cp -R finance dist/
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Upload static site
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: dist
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
