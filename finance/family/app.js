@@ -24,5 +24,17 @@ async function unlock(password){
  }
  if(Array.isArray(c.unmappedExpenses)&&c.unmappedExpenses.length){const total=c.unmappedExpenses.reduce((sum,x)=>sum+x.amount,0);box.append(line('Расходы без однозначной категории',rub(total)));const note=document.createElement('p');note.className='muted';note.textContent='Не распределено операций: '+c.unmappedExpenses.length+'. Эти суммы не вычтены из лимитов категорий и требуют сверки.';box.append(note)}
 }
-$('unlock').addEventListener('submit',async e=>{e.preventDefault();$('error').textContent='';try{await unlock($('password').value)}catch(err){$('error').textContent=err.name==='OperationError'?'Неверный пароль':err.message}finally{$('password').value=''}});
-$('lock').addEventListener('click',()=>location.reload());
+const STORAGE_KEY='finance.family.password';
+function savedPassword(){try{return localStorage.getItem(STORAGE_KEY)}catch{return null}}
+function rememberPassword(password){try{localStorage.setItem(STORAGE_KEY,password)}catch{}}
+function forgetPassword(){try{localStorage.removeItem(STORAGE_KEY)}catch{}}
+async function restoreSession(){
+ const password=savedPassword();if(!password)return;
+ try{await unlock(password)}catch(err){
+  if(err.name==='OperationError')forgetPassword();
+  $('error').textContent=err.name==='OperationError'?'Сохранённый пароль больше не подходит. Введите пароль заново.':'Не удалось автоматически загрузить отчёт: '+err.message;
+ }
+}
+$('unlock').addEventListener('submit',async e=>{e.preventDefault();$('error').textContent='';const password=$('password').value;try{await unlock(password);rememberPassword(password)}catch(err){$('error').textContent=err.name==='OperationError'?'Неверный пароль':err.message}finally{$('password').value=''}});
+$('lock').addEventListener('click',()=>{forgetPassword();location.reload()});
+restoreSession();
