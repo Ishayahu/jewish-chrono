@@ -16,7 +16,7 @@ export function createView(doc){
       for(const claim of one(records,"PositionClaim").filter(x=>x.respondsTo===q["@id"])){
         const id=claim.position;
         if(answers[id])throw Error("Несколько ответов одной стороны на "+q["@id"]);
-        answers[id]={status:claim.evidenceStatus,text:claim.text,human_review_status:claim.humanReviewStatus,note:claim.note||"",source_ids:refs(claim.citedSources).map(x=>x["@id"]),objections:claim.objections||[]};
+        answers[id]={status:claim.evidenceStatus,text:claim.text,human_review_status:claim.humanReviewStatus,note:claim.note||"",source_ids:refs(claim.citedSources).map(x=>x["@id"]),objections:(claim.objections||[]).map(o=>({...o,references:(o.references||[]).map(r=>{const s=refs([r.source])[0];if(s["@type"]!=="Source")throw Error("Источник ответа не является Source: "+r.source);return {...r};})}))};
       }
       for(const id of c.resultingPositions)if(!answers[id])throw Error("Не найден ответ для "+id);
       return {id:q["@id"],title:q.label,answers};

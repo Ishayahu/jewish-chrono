@@ -20,6 +20,7 @@ test("one canonical JSON-LD knowledge file",()=>{
 });
 test("every semantic connection is resolvable",()=>{
   const keys=["rootPosition","previousPosition","resultingPositions","relatedResearchProjects","position","inControversy","respondsTo","citedSources","fromClaim","toClaim","relatedClaims","topic","author","question","historicalClaim"];
+ for(const claim of records.filter(n=>n["@type"]==="PositionClaim"))for(const o of claim.objections||[])for(const r of o.references||[])checkRef(r.source);
   for(const n of records)for(const key of keys)if(n[key]!==undefined)for(const v of [].concat(n[key]))checkRef(v);
 });
 test("historical positions, questions and evidence are preserved",()=>{
@@ -44,6 +45,8 @@ test("historical positions, questions and evidence are preserved",()=>{
   assert.ok(!jerusalem.open_questions.some(x=>x.includes("Корнилий получил Духа до крещения")),"Resolved baptism objection is no longer open");
   assert.ok(!jerusalem.open_questions.some(x=>x.includes("случай Корнилия")),"Generalization objection has been resolved");
   assert.ok(!jerusalem.open_questions.some(x=>x.includes("очищение сердца")),"Heart-cleansing objection has been resolved");
+  assert.ok(!jerusalem.open_questions.some(x=>x.includes("ярмо")),"Yoke interpretation objection is resolved");
+  assert.ok(jerusalem.open_questions.some(x=>x.includes("тшува")),"Repentance question remains open");
   for(const q of roman.questions)for(const id of roman.branch_ids)assert.ok(q.answers[id],"Missing Roman comparison cell: "+id);
   const byParent=new Map();
   for(const split of v.splits){const list=byParent.get(split.parent_id)||[];list.push(split);byParent.set(split.parent_id,list);}
@@ -66,10 +69,12 @@ test("Jerusalem objections and responses are individual, status-aware records",(
  const get=key=>split.questions.find(q=>q.id.endsWith("--"+key)).answers[split.branch_ids[1]].objections;
  const spirit=get("spirit"),yoke=get("yoke"),grace=get("grace"),signs=get("signs");
  assert.equal(spirit.length,4);assert.ok(spirit.every(o=>o.status==="resolved"));
- assert.equal(yoke.length,2);assert.ok(yoke.every(o=>o.status==="open"));
+ assert.equal(yoke.length,2);assert.equal(yoke[0].status,"resolved");assert.equal(yoke[1].status,"open");
  assert.equal(grace.length,3);assert.equal(signs.length,2);
  for(const o of [...spirit,...yoke,...grace,...signs]){
   assert.ok(o.id&&o.text&&o.answer&&["resolved","tentative","open"].includes(o.status));
+  assert.ok(o.references?.length,"Every objection answer has cited sources: "+o.id);
+  for(const ref of o.references){checkRef(ref.source);assert.equal(byId.get(ref.source)["@type"],"Source");assert.ok(byId.get(ref.source).url);assert.ok(ref.locator);}
  }
  assert.ok(grace[0].answer.includes("Павла"));
 });
@@ -125,6 +130,10 @@ test("browser renderer connects earlier Roman controversy to later Arian crisis"
  assert.equal(allNodes.filter(n=>n.className==="objection-pair").length,11);
  assert.equal(allNodes.filter(n=>n.className==="objection-challenge").length,11);
  assert.equal(allNodes.filter(n=>n.className==="objection-reply").length,11);
+ assert.equal(allNodes.filter(n=>n.tag==="details"&&n.className==="objection-pair").length,11);
+ assert.equal(allNodes.filter(n=>n.tag==="summary"&&n.className==="objection-challenge").length,11);
+ assert.ok(allNodes.filter(n=>n.tag==="details").every(n=>!n.open),"All objection pairs collapsed by default");
+ assert.ok(allNodes.some(n=>n.className==="reply-sources"&&n.children.some(c=>c.tag==="a")),"Citations shown within each expanded response");
  assert.ok(allNodes.some(n=>n.className.startsWith("reply-kicker")&&n.textContent.includes("Снято")));
  assert.ok(roots.get("graph-coverage").textContent.startsWith(view.splits.length+" развил"));
 });

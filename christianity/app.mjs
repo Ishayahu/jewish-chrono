@@ -1,4 +1,4 @@
-import {createView} from "./model.mjs?v=20261119-1";
+import {createView} from "./model.mjs?v=20261119-2";
 const $=id=>document.getElementById(id);
 const el=(tag,text,cls)=>{const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;};
 const dialog=$("dialog");$("close").onclick=()=>dialog.close();dialog.addEventListener("click",e=>{if(e.target===dialog)dialog.close();});
@@ -16,17 +16,28 @@ function claimContent(a,sourceMap){
  item.append(refs);
  return item;
 }
-function renderObjections(objections){
+function renderObjections(objections,sourceMap){
  const group=el("section",undefined,"objections-group");
- group.append(el("h4","Возражения и ответы","objections-heading"));
+ group.append(el("h4","Возражения и ответы · нажмите, чтобы раскрыть","objections-heading"));
  for(let i=0;i<objections.length;i++){
-  const o=objections[i],pair=el("article",undefined,"objection-pair");
-  const challenge=el("div",undefined,"objection-challenge");
-  challenge.append(el("span","ВОЗРАЖЕНИЕ "+(i+1),"objection-kicker"),el("p",o.text,"objection-body"));
+  const o=objections[i],pair=el("details",undefined,"objection-pair");
+  // Native <details>: both objection and answer remain hidden until user expands.
+  const statusText=o.status==="resolved"?"Снято":o.status==="tentative"?"Предварительно":"Открыто";
+  const summary=el("summary",undefined,"objection-challenge");
+  summary.append(el("span","ВОЗРАЖЕНИЕ "+(i+1)+" · "+statusText,"objection-kicker "+o.status),el("span",o.text,"objection-body"));
   const reply=el("div",undefined,"objection-reply");
-  const statusText=o.status==="resolved"?"Снято":o.status==="tentative"?"Ответ предварительный":"Вопрос открыт";
-  reply.append(el("span","ОТВЕТ · "+statusText,"reply-kicker "+o.status),el("p",o.answer,"reply-body"));
-  pair.append(challenge,reply);group.append(pair);
+  reply.append(el("span","ОТВЕТ · "+(o.status==="resolved"?"Снято":o.status==="tentative"?"Ответ предварительный":"Вопрос открыт"),"reply-kicker "+o.status),el("p",o.answer,"reply-body"));
+  if(o.references?.length){
+   const refs=el("div",undefined,"reply-sources");
+   refs.append(el("span","Источники и основания ответа","reply-sources-title"));
+   for(const entry of o.references){
+    const s=sourceMap.get(entry.source);
+    if(!s||!s.url)throw Error("Не найден источник ответа: "+entry.source);
+    refs.append(sourceLink(s,s.title+(entry.locator?" · "+entry.locator:"")));
+   }
+   reply.append(refs);
+  }
+  pair.append(summary,reply);group.append(pair);
  }
  return group;
 }
@@ -47,7 +58,7 @@ function showSplit(split,sourceMap,nodeMap){
     const a=q.answers[id];position.append(claimContent(a,sourceMap));positions.append(position);
    }
    section.append(positions);
-   for(const id of split.branch_ids)if(q.answers[id].objections?.length)section.append(renderObjections(q.answers[id].objections));
+   for(const id of split.branch_ids)if(q.answers[id].objections?.length)section.append(renderObjections(q.answers[id].objections,sourceMap));
    sequence.append(section);
   }
   body.append(sequence,el("p",split.caveat,"summary"));show();return;
@@ -78,4 +89,4 @@ const counter=$("graph-coverage");if(counter)counter.textContent=d.splits.length
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
 for(const split of d.splits)for(const q of split.open_questions)todo.append(el("li",q));
 for(const s of d.sources){const li=el("li");li.append(sourceLink(s),el("small",s.type),el("small",s.human_review_status==="verified"?"Человеком проверено":"Человеком не проверено"));if(s.relevance)li.append(el("small","Для чего полезен: "+s.relevance));if(s.limitations)li.append(el("small","Ограничения: "+s.limitations));if(s.machine_access_note)li.append(el("small","Машиночитаемость: "+s.machine_access_note));if(s.data_repository_file_url){const ref=el("small");ref.append(sourceLink({url:s.data_repository_file_url,title:"Исходные данные в GitHub"}));li.append(ref);}sources.append(li);}}
-fetch("./data/graph.jsonld?v=20261119-1",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(createView).then(render).catch(e=>$("graph").textContent="Не удалось загрузить граф: "+e.message);
+fetch("./data/graph.jsonld?v=20261119-2",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(createView).then(render).catch(e=>$("graph").textContent="Не удалось загрузить граф: "+e.message);

@@ -65,6 +65,10 @@
     "historicalClaim": {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/historicalClaim",
       "@type": "@id"
+    },
+    "source": {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#vocab/objectionSource",
+      "@type": "@id"
     }
   },
   "@graph": [
@@ -1293,31 +1297,87 @@
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10",
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-11"
       ],
-      "note": "По итогам обсуждения с пользователем четыре первоначальных возражения признаны снятыми в рамках интерпретации намеренного Божьего знамения (Деян. 10:44–48; 15:8–9). Это аналитический вывод нашего разбора, не утверждение о согласии всех исторических толкователей. Златоуст рассматривает видимое получение Духа до крещения как свидетельство принятия язычников Богом.",
+      "note": "Четыре первоначальных возражения сняты в нашем разборе: разворачивайте карточки, чтобы видеть обоснование и источники. Это согласованная интерпретация намеренного Божьего знамения, не утверждение о единодушии всех толкователей.",
       "objections": [
         {
           "id": "balaam",
           "text": "Дух Божий сходил и на Билама. Почему дарование Духа здесь свидетельствует об одобрении Богом?",
           "answer": "В рассказе о Корнилии это не просто появление Духа у необычного человека: Бог намеренно посылает Духа во время проповеди Петра и делает дар видимым для свидетелей. Контекст представляет событие именно как Божье подтверждение принятия язычников.",
-          "status": "resolved"
+          "status": "resolved",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10",
+              "locator": "10:44–46"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-11",
+              "locator": "11:15–18"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-24",
+              "locator": "Толкование Деян. 10:44–48"
+            }
+          ]
         },
         {
           "id": "baptism",
           "text": "Корнилий получил Духа до крещения, но был крещён позже. Почему нельзя так же потребовать обрезания впоследствии?",
           "answer": "Крещение и принятие Моисеева закона — разные вопросы. Знамение показывает достаточность веры для принятия язычников Богом без обязательного перехода под Закон. Поэтому из последующего крещения не следует необходимость последующего обрезания.",
-          "status": "resolved"
+          "status": "resolved",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10",
+              "locator": "10:44–48"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-24",
+              "locator": "Комментарий к Деян. 10:44–48"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+              "locator": "Комментарий к Деян. 15:8–11"
+            }
+          ]
         },
         {
           "id": "generalization",
           "text": "Можно ли из единственного случая Корнилия сделать вывод для всех обращающихся язычников?",
           "answer": "Этот эпизод рассматривается не как статистический пример, а как намеренное знамение Бога, раскрывающее принцип принятия язычников. Для такого свидетельства не требуется серия аналогичных случаев.",
-          "status": "resolved"
+          "status": "resolved",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10",
+              "locator": "10:44–48"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+              "locator": "15:7–11"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+              "locator": "Комментарий к Деян. 15:8–9"
+            }
+          ]
         },
         {
           "id": "purity",
           "text": "Почему получение Духа свидетельствует об «очищении сердца верой»?",
           "answer": "В обсуждаемой интерпретации слова Петра поясняют значение знамения: Бог признал веру язычников достаточной для их принятия, без предварительного принятия всего Моисеева закона. Не требуется отдельно доказывать буквально наблюдаемое внутреннее «очищение».",
-          "status": "resolved"
+          "status": "resolved",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+              "locator": "15:8–9"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+              "locator": "Комментарий к Деян. 15:8–9"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/theophylact-15",
+              "locator": "Толкование Деян. 15:9"
+            }
+          ]
         }
       ]
     },
@@ -1354,19 +1414,47 @@
       "citedSources": [
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
       ],
-      "note": "Отдельное прежнее возражение о том, что историческая неудача якобы автоматически отменяет дальнейшее соблюдение заповедей, пользователь снял: не восстанавливать его.",
+      "note": "Возражение 2А снято в рамках согласованной реконструкции назначения Закона у Златоуста; вопрос 2Б о тшуве и прощении пока открыт. Ранее снятое возражение об исторической неудаче Закона не восстанавливать.",
       "objections": [
         {
           "id": "meaning",
           "text": "Что означает, что ни предки, ни евреи не смогли понести «ярмо»: неспособность соблюдать заповеди или невозможность достичь спасения через них?",
-          "answer": "Окончательное толкование пока не согласовано. Нужно проверить точное значение фразы и контекст у Петра, не смешивая исполнение заповедей и оправдание через Закон.",
-          "status": "open"
+          "answer": "В нашей реконструкции позиции Златоуста «не могли понести» означает не принципиальную невозможность исполнить каждую заповедь, а неспособность Закона обеспечить надёжный путь спасения для людей. Закон был дан как временное средство сдерживать грех и готовить ко Христу (Гал. 3:19–25), а после прихода Христа и дара Духа его прежняя функция перестаёт быть обязательной (Гал. 5:18). Поэтому возлагать всю эту систему на язычников ради спасения нет необходимости. Оценка Закона как неэффективного массового пути спасения — наш аналитический вывод, а не дословная формулировка Златоуста.",
+          "status": "resolved",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+              "locator": "15:10–11"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+              "locator": "Беседа 32, толкование Деян. 15:10"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/gal-3",
+              "locator": "3:10–12, 3:19–25"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-galatians",
+              "locator": "Глава 3 (Гал. 3:19–25); глава 5 (Гал. 5:18)"
+            }
+          ]
         },
         {
           "id": "teshuva",
           "text": "Почему при оценке невозможности спасения через Закон не учитываются тшува и прощение?",
           "answer": "В нашем разборе этот вопрос ещё не получил ответа; текст Петра сам по себе не разъясняет роль покаяния и прощения.",
-          "status": "open"
+          "status": "open",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+              "locator": "15:10–11"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+              "locator": "Беседа 32, толкование Деян. 15:10"
+            }
+          ]
         }
       ]
     },
@@ -1409,19 +1497,53 @@
           "id": "must",
           "text": "Почему спасение милостью Иисуса означает, что Моисеев закон не должен быть обязательным условием спасения?",
           "answer": "Возможная параллель Павла (Гал. 5:2–4): обрезание, принимаемое как самостоятельный путь оправдания через Закон, означает отказ от спасения через Христа. Это объяснение Павла; пока не приписываем его Петру.",
-          "status": "tentative"
+          "status": "tentative",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+              "locator": "15:11"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/gal-5",
+              "locator": "5:2–4"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-galatians",
+              "locator": "Глава 5 (Гал. 5:2–4)"
+            }
+          ]
         },
         {
           "id": "combine",
           "text": "Почему нельзя одновременно рассчитывать на милость Иисуса и соблюдать прежние заповеди?",
           "answer": "Различаем исполнение отдельных заповедей и принятие всего Закона как необходимого основания спасения. Но насколько это различие объясняет слова Петра, ещё не установлено.",
-          "status": "open"
+          "status": "open",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/gal-5",
+              "locator": "5:2–6"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-galatians",
+              "locator": "Глава 5 (Гал. 5:2–6)"
+            }
+          ]
         },
         {
           "id": "authority",
           "text": "Чем обосновано утверждение, что спасение происходит именно через милость Иисуса?",
           "answer": "В рамках речи Петра это утверждение высказано как общая вера его слушателей; независимое обоснование пока не разбирали.",
-          "status": "open"
+          "status": "open",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+              "locator": "15:11"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+              "locator": "Беседа 32, толкование Деян. 15:11"
+            }
+          ]
         }
       ]
     },
@@ -1464,28 +1586,34 @@
           "id": "miracles",
           "text": "Доказывают ли чудеса среди язычников правильность предлагаемого учения?",
           "answer": "Они поддерживают рассказ о действии Бога среди язычников и усиливают свидетельство Петра. Но Лука не приводит полного аргумента Варнавы и Павла, поэтому степень доказательности их выступления требует осторожности.",
-          "status": "tentative"
+          "status": "tentative",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+              "locator": "15:12"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+              "locator": "Беседа 32, толкование Деян. 15:12"
+            }
+          ]
         },
         {
           "id": "later-law",
           "text": "Почему из рассказа о чудесах следует отсутствие обязанности принять Закон Моисея впоследствии?",
           "answer": "В Деян. 15:12 самостоятельного логического перехода не приводится. Возможный ответ опирается на уже разобранное намеренное знамение у Корнилия, а не на неизвестную нам речь Варнавы и Павла.",
-          "status": "tentative"
+          "status": "tentative",
+          "references": [
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+              "locator": "15:8–12"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+              "locator": "Беседа 32, толкование Деян. 15:8–12"
+            }
+          ]
         }
-      ]
-    },
-    {
-      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--yoke",
-      "@type": "OpenResearchQuestion",
-      "label": "Что значит неспособность понести «ярмо»: невозможно соблюдать заповеди или нельзя спастись их исполнением?",
-      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
-      "relatedClaims": [
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--yoke--continuation"
-      ],
-      "evidenceStatus": "work_needed",
-      "humanReviewStatus": "not_reviewed",
-      "citedSources": [
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
       ]
     },
     {
@@ -1558,6 +1686,24 @@
       "citedSources": [
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
       ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/gal-3",
+      "@type": "Source",
+      "label": "Послание Павла к Галатам, глава 3",
+      "url": "https://bible.usccb.org/bible/galatians/3",
+      "category": "primary",
+      "sourceDescription": "Гал. 3:10–12, 19–25 о Законе и временном детоводительстве.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-galatians",
+      "@type": "Source",
+      "label": "Иоанн Златоуст, «Толкование на послание к Галатам», главы 3 и 5",
+      "url": "https://azbyka.ru/otechnik/Ioann_Zlatoust/tolkovanie-na-poslanie-k-galatam/",
+      "category": "primary",
+      "sourceDescription": "Древнее толкование о временном назначении Закона (Гал. 3:19–25) и водительстве Духа (Гал. 5:18).",
+      "humanReviewStatus": "not_reviewed"
     }
   ]
 }

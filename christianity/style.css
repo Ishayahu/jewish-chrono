@@ -53,3 +53,20 @@
  .argument-positions{grid-template-columns:1fr}
  .objection-challenge,.objection-reply{padding:11px 12px}
 }
+
+/* Source-backed objection accordions: native keyboard-accessible details, collapsed by default. */
+.objection-pair{display:block}
+.objection-pair>summary{display:block;list-style:none;cursor:pointer;position:relative;padding-right:42px}
+.objection-pair>summary::-webkit-details-marker{display:none}
+.objection-pair>summary::after{content:"⌄";position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:23px;font-weight:800;color:#8e6d44;transition:transform .16s ease}
+.objection-pair[open]>summary::after{transform:translateY(-50%) rotate(180deg)}
+.objection-pair>summary:hover{background:#fff0dd}
+.objection-pair>summary:focus-visible{outline:3px solid #54b0d0;outline-offset:-3px}
+.objection-pair .objection-body{display:block}
+.objection-kicker.resolved{color:#386f62}
+.objection-kicker.tentative{color:#7a632d}
+.objection-kicker.open{color:#865a32}
+.reply-sources{margin-top:13px;border-top:1px solid #c9dfe3;padding-top:11px;display:flex;flex-direction:column;gap:6px}
+.reply-sources-title{font-size:11px;font-weight:750;color:#456979}
+.reply-sources a{font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+@media(prefers-reduced-motion:reduce){.objection-pair>summary::after{transition:none}}
