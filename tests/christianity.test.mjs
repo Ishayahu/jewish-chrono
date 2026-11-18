@@ -42,7 +42,8 @@ test("historical positions, questions and evidence are preserved",()=>{
   assert.equal(jerusalem.questions.length,5);
   assert.ok(!jerusalem.open_questions.some(x=>x.includes("Билам")),"Resolved Balaam objection is no longer open");
   assert.ok(!jerusalem.open_questions.some(x=>x.includes("Корнилий получил Духа до крещения")),"Resolved baptism objection is no longer open");
-  assert.ok(jerusalem.open_questions.some(x=>x.includes("случай Корнилия")),"The generalization question remains open");
+  assert.ok(!jerusalem.open_questions.some(x=>x.includes("случай Корнилия")),"Generalization objection has been resolved");
+  assert.ok(!jerusalem.open_questions.some(x=>x.includes("очищение сердца")),"Heart-cleansing objection has been resolved");
   for(const q of roman.questions)for(const id of roman.branch_ids)assert.ok(q.answers[id],"Missing Roman comparison cell: "+id);
   const byParent=new Map();
   for(const split of v.splits){const list=byParent.get(split.parent_id)||[];list.push(split);byParent.set(split.parent_id,list);}
@@ -58,6 +59,19 @@ test("historical positions, questions and evidence are preserved",()=>{
   const q=ofType("ComparativeQuestion").find(x=>x.questionCode==="salvation");
   const arius=ofType("PositionClaim").find(x=>x.respondsTo===q["@id"]&&x.position.endsWith("/arius"));
   assert.equal(arius.evidenceStatus,"work_needed");
+});
+test("Jerusalem objections and responses are individual, status-aware records",()=>{
+ const split=createView(d).splits.find(s=>s.id.endsWith("/jerusalem-council"));
+ assert.equal(split.reviewLayout,"argument-review");
+ const get=key=>split.questions.find(q=>q.id.endsWith("--"+key)).answers[split.branch_ids[1]].objections;
+ const spirit=get("spirit"),yoke=get("yoke"),grace=get("grace"),signs=get("signs");
+ assert.equal(spirit.length,4);assert.ok(spirit.every(o=>o.status==="resolved"));
+ assert.equal(yoke.length,2);assert.ok(yoke.every(o=>o.status==="open"));
+ assert.equal(grace.length,3);assert.equal(signs.length,2);
+ for(const o of [...spirit,...yoke,...grace,...signs]){
+  assert.ok(o.id&&o.text&&o.answer&&["resolved","tentative","open"].includes(o.status));
+ }
+ assert.ok(grace[0].answer.includes("Павла"));
 });
 test("source kind and human review are independent",()=>{
  const kinds=new Set(["primary","secondary_study","research_project"]);
@@ -104,6 +118,14 @@ test("browser renderer connects earlier Roman controversy to later Arian crisis"
  assert.ok(shortcuts.some(s=>s.includes("Арианский кризис")));
  assert.ok(shortcuts.some(s=>s.includes("Римский спор")));
  assert.ok(shortcuts.some(s=>s.includes("Иерусалиме")));
+ const councilButton=roots.get("split-index").children.find(b=>b.textContent.includes("Иерусалиме"));
+ assert.ok(typeof councilButton.onclick==="function");
+ councilButton.onclick();
+ const allNodes=flatten(roots.get("dialog-body"));
+ assert.equal(allNodes.filter(n=>n.className==="objection-pair").length,11);
+ assert.equal(allNodes.filter(n=>n.className==="objection-challenge").length,11);
+ assert.equal(allNodes.filter(n=>n.className==="objection-reply").length,11);
+ assert.ok(allNodes.some(n=>n.className.startsWith("reply-kicker")&&n.textContent.includes("Снято")));
  assert.ok(roots.get("graph-coverage").textContent.startsWith(view.splits.length+" развил"));
 });
 
