@@ -5,20 +5,64 @@ const dialog=$("dialog");$("close").onclick=()=>dialog.close();dialog.addEventLi
 const show=()=>dialog.showModal();
 function sourceLink(s,label){const a=el("a",label||s.title);a.href=s.url;a.target="_blank";a.rel="noopener noreferrer";return a;}
 function showNode(node){$("dialog-title").textContent=node.title;$("dialog-subtitle").textContent=node.period;$("dialog-body").replaceChildren(el("p",node.description,"summary"));show();}
-function showSplit(split,sourceMap,nodeMap){$("dialog-title").textContent=split.title;$("dialog-subtitle").textContent="Разделение · "+split.period;
-const body=$("dialog-body");body.replaceChildren(el("p",split.issue,"summary"));
-const wrap=el("div",undefined,"tablescroll"),table=el("table",undefined,"compare"),head=el("thead"),hr=el("tr");
-for(const name of ["Вопрос",...split.branch_ids.map(id=>nodeMap.get(id)?.title||"Позиция")])hr.append(el("th",name));
-head.append(hr);table.append(head);const tbody=el("tbody");
-for(const q of split.questions){const tr=el("tr");tr.append(el("td",q.title));
-for(const id of split.branch_ids){const a=q.answers[id],td=el("td");
-td.append(el("span",a.status==="source"?"Первоисточник":a.status==="interpretation"?"Интерпретация":"work_needed","badge "+a.status));if(a.status==="source")td.append(el("span",a.human_review_status==="verified"?"Проверено человеком":"Человеком не проверено","badge "+(a.human_review_status==="verified"?"source":"work_needed")));
-td.append(el("div",a.text));if(a.note)td.append(el("p",a.note,"note"));
-const refs=el("div",undefined,"refs");
-for(const sid of a.source_ids||[]){const s=sourceMap.get(sid);if(s)refs.append(sourceLink(s,"↗ "+s.title.split(" — ")[0]));}
-td.append(refs);tr.append(td);}
-tbody.append(tr);}
-table.append(tbody);wrap.append(table);body.append(wrap,el("p",split.caveat,"summary"));show();}
+function claimContent(a,sourceMap){
+ const item=el("div",undefined,"claim-content");
+ item.append(el("span",a.status==="source"?"Первоисточник":a.status==="interpretation"?"Интерпретация":"work_needed","badge "+a.status));
+ if(a.status==="source")item.append(el("span",a.human_review_status==="verified"?"Проверено человеком":"Человеком не проверено","badge "+(a.human_review_status==="verified"?"source":"work_needed")));
+ item.append(el("p",a.text,"claim-text"));
+ if(a.note)item.append(el("p",a.note,"note"));
+ const refs=el("div",undefined,"refs");
+ for(const sid of a.source_ids||[]){const s=sourceMap.get(sid);if(s)refs.append(sourceLink(s,"↗ "+s.title.split(" — ")[0]));}
+ item.append(refs);
+ return item;
+}
+function renderObjections(objections){
+ const group=el("section",undefined,"objections-group");
+ group.append(el("h4","Возражения и ответы","objections-heading"));
+ for(let i=0;i<objections.length;i++){
+  const o=objections[i],pair=el("article",undefined,"objection-pair");
+  const challenge=el("div",undefined,"objection-challenge");
+  challenge.append(el("span","ВОЗРАЖЕНИЕ "+(i+1),"objection-kicker"),el("p",o.text,"objection-body"));
+  const reply=el("div",undefined,"objection-reply");
+  const statusText=o.status==="resolved"?"Снято":o.status==="tentative"?"Ответ предварительный":"Вопрос открыт";
+  reply.append(el("span","ОТВЕТ · "+statusText,"reply-kicker "+o.status),el("p",o.answer,"reply-body"));
+  pair.append(challenge,reply);group.append(pair);
+ }
+ return group;
+}
+function showSplit(split,sourceMap,nodeMap){
+ $("dialog-title").textContent=split.title;
+ $("dialog-subtitle").textContent="Обсуждение · "+split.period;
+ const body=$("dialog-body");
+ body.replaceChildren(el("p",split.issue,"summary"));
+ if(split.reviewLayout==="argument-review"){
+  const sequence=el("div",undefined,"argument-sequence");
+  for(const q of split.questions){
+   const section=el("section",undefined,"argument-section");
+   section.append(el("h3",q.title,"argument-title"));
+   const positions=el("div",undefined,"argument-positions");
+   for(const id of split.branch_ids){
+    const position=el("div",undefined,"argument-position");
+    position.append(el("h4",nodeMap.get(id)?.title||"Позиция","position-title"));
+    const a=q.answers[id];position.append(claimContent(a,sourceMap));positions.append(position);
+   }
+   section.append(positions);
+   for(const id of split.branch_ids)if(q.answers[id].objections?.length)section.append(renderObjections(q.answers[id].objections));
+   sequence.append(section);
+  }
+  body.append(sequence,el("p",split.caveat,"summary"));show();return;
+ }
+ const wrap=el("div",undefined,"tablescroll"),table=el("table",undefined,"compare"),head=el("thead"),hr=el("tr");
+ for(const name of ["Вопрос",...split.branch_ids.map(id=>nodeMap.get(id)?.title||"Позиция")])hr.append(el("th",name));
+ head.append(hr);table.append(head);
+ const tbody=el("tbody");
+ for(const q of split.questions){
+  const tr=el("tr");tr.append(el("td",q.title));
+  for(const id of split.branch_ids){const td=el("td");td.append(claimContent(q.answers[id],sourceMap));tr.append(td);}
+  tbody.append(tr);
+ }
+ table.append(tbody);wrap.append(table);body.append(wrap,el("p",split.caveat,"summary"));show();
+}
 function render(d){const nodeMap=new Map(d.nodes.map(n=>[n.id,n])),splitMap=new Map(),srcMap=new Map(d.sources.map(s=>[s.id,s]));
 for(const s of d.splits){const list=splitMap.get(s.parent_id)||[];list.push(s);splitMap.set(s.parent_id,list);}
 function branch(id,seen=new Set()){if(seen.has(id))throw Error("Цикл в графе");const next=new Set(seen);next.add(id);
