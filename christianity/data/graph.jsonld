@@ -72,18 +72,18 @@
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#atlas/main",
       "@type": "HistoricalAtlas",
       "label": "Граф христианских расколов",
-      "rootPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
+      "rootPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/apostolic-jerusalem",
       "schemaVersion": 5,
-      "updated": "2026-11-07",
-      "semanticVersion": "1.2.1",
-      "description": "Единый историко-богословский JSON-LD: римский спор предшествует арианскому; продолжение доникейской дискуссии соединяет их."
+      "updated": "2026-11-18",
+      "semanticVersion": "1.3.0",
+      "description": "Единый историко-богословский JSON-LD: Иерусалимское собрание I века предшествует римскому спору и арианскому кризису. Ветви могут отражать спорные позиции, а не церковные расколы."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
       "@type": "DoctrinalPosition",
-      "label": "Раннехристианская традиция",
-      "period": "II век, до римских споров",
-      "description": "Общий исторический фон различных представлений об Отце и Сыне. Позднейшие ветви показывают богословские споры и продолжение дискуссии, а не разделение единой организации."
+      "label": "Принятие язычников без гиюра → ранняя традиция",
+      "period": "I–II века",
+      "description": "Линия дальнейшей раннехристианской истории после решения о возможности принимать неевреев без обязательного перехода в иудаизм. Не однородная церковь и не доказанный консенсус всех последующих общин."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/early",
@@ -1131,6 +1131,427 @@
       "humanReviewStatus": "not_reviewed",
       "citedSources": [],
       "note": "Собирательная ветвь продолжения дискуссии; не индивидуальная доктрина."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/apostolic-jerusalem",
+      "@type": "DoctrinalPosition",
+      "label": "Иерусалимская община до собрания",
+      "period": "I век, до ок. 49 года",
+      "description": "Ранняя община последователей Иисуса в еврейской среде. Спор о принятии язычников — не формальное создание двух отдельных церквей."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/jerusalem-law-required",
+      "@type": "DoctrinalPosition",
+      "label": "Обрезание и Закон обязательны",
+      "period": "ок. 49 года",
+      "description": "Позиция некоторых верующих из фарисеев (Деян. 15:1, 5), а не всей Иерусалимской общины: язычники должны обрезаться и соблюдать Закон Моисея."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "@type": "Controversy",
+      "label": "Апостольское собрание в Иерусалиме",
+      "period": "ок. 48–50 года",
+      "issue": "Сохранилась ли после воскресения Иисуса обязанность исполнять заповеди? Узкий предмет Деян. 15: обязательно ли неевреям принять обрезание и весь Закон Моисея, чтобы присоединиться к общине и получить спасение?",
+      "caveat": "Это богословский спор, не уже оформленный церковный раскол. Деяния не стенограмма: речь Петра — 15:7–11, Варнава и Павел упоминаются в 15:12, аргументы оппонентов в прениях не переданы. «Гиюр» — современное аналитическое обозначение полного перехода, без утверждений о точной обрядовой процедуре I века. Обязанности уверовавших евреев — отдельный открытый вопрос. Речь Иакова и итоговое послание здесь ещё не разобраны.",
+      "previousPosition": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/apostolic-jerusalem",
+      "resultingPositions": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/jerusalem-law-required",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+      "@type": "Source",
+      "label": "Деяния 15:1–29",
+      "url": "https://bible.usccb.org/bible/acts/15",
+      "category": "primary",
+      "sourceDescription": "Первичный текст рассказа о споре и собрании.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10",
+      "@type": "Source",
+      "label": "Деяния 10:44–48 — Корнилий",
+      "url": "https://bible.usccb.org/bible/acts/10",
+      "category": "primary",
+      "sourceDescription": "Сошествие Духа до крещения, говорение на языках и крещение после него.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-11",
+      "@type": "Source",
+      "label": "Деяния 11:1–18 — объяснение Петра",
+      "url": "https://bible.usccb.org/bible/acts/11",
+      "category": "primary",
+      "sourceDescription": "Повторное изложение Петром случая Корнилия.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/gal-5",
+      "@type": "Source",
+      "label": "Послание Павла к Галатам 5:2–6",
+      "url": "https://bible.usccb.org/bible/galatians/5",
+      "category": "primary",
+      "sourceDescription": "Павел об идеологическом обрезании как основании оправдания; не аргумент самого Петра.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/num-24",
+      "@type": "Source",
+      "label": "Бемидбар (Числа) 24:2 — Билам",
+      "url": "https://www.sefaria.org/Numbers.24.2",
+      "category": "primary",
+      "sourceDescription": "Контрпример: Дух Божий сошёл и на Билама.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+      "@type": "Source",
+      "label": "Иоанн Златоуст, беседа 32 на Деяния",
+      "url": "https://azbyka.ru/otechnik/Ioann_Zlatoust/besedy-na-dejanija-apostolskie/32",
+      "category": "primary",
+      "sourceDescription": "Древнее толкование речи Петра, дарования Духа и Закона.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-24",
+      "@type": "Source",
+      "label": "Иоанн Златоуст, беседа 24 на Деяния",
+      "url": "https://azbyka.ru/otechnik/Ioann_Zlatoust/besedy-na-dejanija-apostolskie/24",
+      "category": "primary",
+      "sourceDescription": "Древнее толкование истории Корнилия.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/theophylact-15",
+      "@type": "Source",
+      "label": "Феофилакт Охридский, толкование Деяний 15",
+      "url": "https://azbyka.ru/otechnik/Feofilakt_Bolgarskij/tolkovanie-na-dejanija-svjatykh-apostolov/15",
+      "category": "primary",
+      "sourceDescription": "Византийское толкование очищения сердца верой и духовного обрезания.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--requirement",
+      "@type": "ComparativeQuestion",
+      "label": "Обязателен ли язычникам Закон Моисея и обрезание?",
+      "questionCode": "jerusalem-requirement",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--requirement--required",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/jerusalem-law-required",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--requirement",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Некоторые люди из Иудеи заявляли: без обрезания по Моисею нельзя спастись (15:1). Некоторые уверовавшие фарисеи требовали и обрезания, и соблюдения всего Закона (15:5).",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Реконструкция как полноценного перехода в иудаизм допустима, но последовательность всех обрядов здесь не приведена."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--requirement--continuation",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--requirement",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Пётр выступает против возложения «ярма» Закона на язычников и утверждает спасение благодатью Иисуса (15:10–11).",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Слова Петра о том, что Бог поручил ему проповедовать язычникам (15:7), — предисловие, не самостоятельный довод."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--spirit",
+      "@type": "ComparativeQuestion",
+      "label": "Довод Петра 1: что доказывает дар Святого Духа? (15:8–9)",
+      "questionCode": "jerusalem-spirit",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--spirit--required",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/jerusalem-law-required",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--spirit",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Ответ оппонентов на этот довод не сохранён.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Не придумывать третью историческую позицию «только обрезание без принятия Закона»."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--spirit--continuation",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--spirit",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Бог, знающий сердца, дал необрезанным язычникам Святого Духа, как и еврейским ученикам, не сделав различия и очистив их сердца верой.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-11"
+      ],
+      "note": "Наши вопросы: (А) Билам тоже получил Духа Божьего (Чис. 24:2) — доказывает ли дар полное одобрение? (Б) Корнилия крестили после дарования Духа — почему нельзя требовать обрезания позже? (В) Как из отдельного случая следует общее правило? (Г) Почему видимый дар подтверждает очищение сердца? Златоуст и Феофилакт дают толкования, но их аргументы ещё исследуются."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--yoke",
+      "@type": "ComparativeQuestion",
+      "label": "Довод Петра 2: что означает «ярмо», которого не смогли понести? (15:10)",
+      "questionCode": "jerusalem-yoke",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--yoke--required",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/jerusalem-law-required",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--yoke",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Как оппоненты отвечали на это описание Закона, неизвестно.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Наличие у оппонентов требования исполнить Закон не раскрывает их ответа Петру."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--yoke--continuation",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--yoke",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Пётр говорит, что ни предки, ни нынешние евреи не смогли понести ярмо Закона, и спрашивает, зачем испытывать Бога, возлагая его на язычников.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Наши вопросы: (А) Речь о невозможности соблюсти все заповеди или о неспособности достичь спасения через их исполнение? (Б) Как это соотносится с тшувой и прощением? Ранее снятое возражение о ненужности дальнейшего соблюдения заповедей сюда НЕ возвращать."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--grace",
+      "@type": "ComparativeQuestion",
+      "label": "Довод Петра 3: как соотносятся спасение благодатью и Закон? (15:11)",
+      "questionCode": "jerusalem-grace",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--grace--required",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/jerusalem-law-required",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--grace",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Систематический ответ оппонентов на аргумент о благодати в Деян. 15 не сохранён.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Не утверждать без доказательств, что оппоненты отрицали Божью милость: они требовали обрезания и соблюдения Закона."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--grace--continuation",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--grace",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Пётр: «Благодатью Господа Иисуса спасёмся, как и они». Греч. χάρις — милость, благоволение; в 15:8–9 употреблено выражение «дал им Духа», а не слово χάρις.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Наши вопросы: (А) Почему спасение милостью исключает обязанность заповедей? (Б) Почему нельзя совместить милость и их исполнение? (В) На чём основан сам способ спасения? Параллель Павла, НЕ слова Петра: Гал. 5:2–6 — идеологическое обрезание как выбор Закона вместо Христа в качестве основания оправдания. Это возможный ответ, а не уже доказанная идентичность их мыслей."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--signs",
+      "@type": "ComparativeQuestion",
+      "label": "Что добавляют Варнава и Павел в 15:12?",
+      "questionCode": "jerusalem-signs",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--signs--required",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/jerusalem-law-required",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--signs",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Ответ на свидетельство о чудесах не передан.",
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Нельзя восстанавливать аргументы оппонентов по одному лишь молчанию собрания."
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--signs--continuation",
+      "@type": "PositionClaim",
+      "position": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman",
+      "respondsTo": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--signs",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "text": "Варнава и Павел рассказывают о знамениях и чудесах, совершённых Богом через них среди язычников. Лука не передаёт текст их речи.",
+      "evidenceStatus": "source",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ],
+      "note": "Похоже на подкрепление аргумента Петра, но в 15:12 не сказано, что все обращённые говорили на языках или получили Духа подобно Корнилию. Наши вопросы: что доказывают чудеса и почему они исключают последующее принятие Закона?"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--balaam",
+      "@type": "OpenResearchQuestion",
+      "label": "Билам (Бемидбар 24:2): достаточно ли получение Духа для вывода о полном Божьем одобрении?",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--spirit--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/num-24",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--baptism",
+      "@type": "OpenResearchQuestion",
+      "label": "Корнилий получил Духа до крещения, но после был крещён (Деян. 10:44–48): почему обрезание исключено как последующее требование?",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--spirit--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--generalization",
+      "@type": "OpenResearchQuestion",
+      "label": "Почему случай Корнилия можно считать общим правилом для всех обращённых язычников?",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--spirit--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--purity",
+      "@type": "OpenResearchQuestion",
+      "label": "Как очищение сердца верой связано с «духовным обрезанием» у Златоуста и Феофилакта и насколько это аргумент самого Петра?",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--spirit--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/theophylact-15"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--yoke",
+      "@type": "OpenResearchQuestion",
+      "label": "Что значит неспособность понести «ярмо»: невозможно соблюдать заповеди или нельзя спастись их исполнением?",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--yoke--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--teshuva",
+      "@type": "OpenResearchQuestion",
+      "label": "Где в этом аргументе учтены тшува и прощение?",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--yoke--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--grace-law",
+      "@type": "OpenResearchQuestion",
+      "label": "Почему милость Христа не допускает принятия Закона как альтернативного основания оправдания? Гал. 5:2–6 — параллель Павла, не атрибутировать Петру.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--grace--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/gal-5"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--missing-opponents",
+      "@type": "OpenResearchQuestion",
+      "label": "Какие доводы высказывали оппоненты во время продолжительных прений? Деян. 15 не сохраняют их ответы.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--requirement--required"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--jewish-law",
+      "@type": "OpenResearchQuestion",
+      "label": "Сохранилась ли обязанность соблюдения Торы для самих уверовавших евреев? Отделить от вопроса о неевреях.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--requirement--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ]
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--james",
+      "@type": "OpenResearchQuestion",
+      "label": "Как выступление Иакова (15:13–21) и итоговое послание (15:22–29) обосновывают конкретные обязанности язычников? Пока не разобрано.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--requirement--continuation"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
+      ]
     }
   ]
 }
