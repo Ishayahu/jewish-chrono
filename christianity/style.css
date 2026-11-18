@@ -25,3 +25,31 @@
 .split-shortcut{background:#eaf3f5;color:#245467;border:1px solid #bad5dc;border-radius:10px;padding:9px 12px;text-align:left;cursor:pointer;font-size:13px;font-weight:700}
 .split-shortcut:hover{background:#dbecef}
 @media(max-width:700px){.split-index{flex-direction:column}.split-shortcut{width:100%}.controversy-branches{flex-direction:column!important;gap:22px}.controversy-branches>li:before,.controversy-branches>li:after{display:none}}
+
+/* Jerusalem argument review: separate argument, challenge, and response; mobile-first. */
+.argument-sequence{display:grid;gap:20px;margin-top:15px}
+.argument-section{border:1px solid #dce5e8;border-radius:14px;padding:17px;background:#fff}
+.argument-title{margin:0 0 14px;font-size:17px;line-height:1.4;color:#234457}
+.argument-positions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.argument-position{padding:13px 14px;border:1px solid #e1e9ec;border-radius:10px;background:#f6f9fa;min-width:0}
+.position-title{font-size:12px;line-height:1.45;color:#315d71;margin:0 0 10px;font-weight:750}
+.claim-text{font-size:14px;line-height:1.55;margin:4px 0 10px}
+.claim-content .badge{margin-right:6px}
+.objections-group{margin-top:15px}
+.objections-heading{font-size:14px;color:#264b5a;margin:0 0 12px}
+.objection-pair{border:1px solid #d7e3e8;border-radius:12px;overflow:hidden;margin:0 0 12px}
+.objection-challenge{padding:12px 15px;background:#fff8ef;border-left:4px solid #bc8c4c}
+.objection-reply{padding:12px 15px;background:#f0f7f8;border-left:4px solid #5b92a5;border-top:1px solid #d7e3e8}
+.objection-kicker,.reply-kicker{display:block;font-size:10px;font-weight:850;letter-spacing:.085em;text-transform:uppercase}
+.objection-kicker{color:#865a32}
+.reply-kicker{color:#386f7b}
+.reply-kicker.open{color:#705e57}
+.reply-kicker.tentative{color:#755f2d}
+.objection-body,.reply-body{font-size:14px;line-height:1.6;margin:5px 0 0;overflow-wrap:anywhere}
+.argument-section .note{line-height:1.55}
+@media(max-width:700px){
+ .argument-section{padding:13px 10px}
+ .argument-title{font-size:16px}
+ .argument-positions{grid-template-columns:1fr}
+ .objection-challenge,.objection-reply{padding:11px 12px}
+}
