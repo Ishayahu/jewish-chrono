@@ -1,0 +1,51 @@
+name: Refresh encrypted finance dashboard
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'finance/**'
+      - '.github/workflows/finance.yml'
+  schedule:
+    - cron: '11 4,10,16,22 * * *'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: site-pages-deploy
+  cancel-in-progress: false
+jobs:
+  finance:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout published website files
+        uses: actions/checkout@v5
+      - name: Generate private finance report
+        env:
+          FINANCE_OWNER_PASSWORD: ${{ secrets.FINANCE_OWNER_PASSWORD }}
+          FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          test -n "$FINANCE_OWNER_PASSWORD" || { echo 'Missing FINANCE_OWNER_PASSWORD secret'; exit 1; }
+          test -n "$FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON" || { echo 'Missing FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON secret'; exit 1; }
+          python3 -m pip install --quiet google-auth requests cryptography
+          python3 finance/build_encrypted.py
+      - name: Stage existing site and refreshed encrypted finance
+        run: |
+          mkdir -p dist
+          cp index.html .nojekyll dist/
+          cp -R src data christianity dist/
+          cp -R finance dist/
+          rm -f dist/finance/build_encrypted.py
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
