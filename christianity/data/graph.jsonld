@@ -1414,7 +1414,7 @@
       "citedSources": [
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
       ],
-      "note": "Возражение 2А снято в рамках согласованной реконструкции назначения Закона у Златоуста; вопрос 2Б о тшуве и прощении пока открыт. Ранее снятое возражение об исторической неудаче Закона не восстанавливать.",
+      "note": "Возражение 2А снято в рамках согласованной реконструкции Златоуста. Возражение 2Б о тшуве остаётся ОТКРЫТЫМ: сохранена проверяемая гипотеза о временном прощении / отсрочке наказания и окончательном искуплении Христом. Златоуст в Евр. 9:21–22 говорит о неполном прежнем жертвенном очищении, но ещё не доказано, что он относит это ко всякой тшуве. Ранее снятое возражение об исторической неудаче Закона не восстанавливать.",
       "objections": [
         {
           "id": "meaning",
@@ -1442,8 +1442,8 @@
         },
         {
           "id": "teshuva",
-          "text": "Почему при оценке невозможности спасения через Закон не учитываются тшува и прощение?",
-          "answer": "В нашем разборе этот вопрос ещё не получил ответа; текст Петра сам по себе не разъясняет роль покаяния и прощения.",
+          "text": "Если тшува и Божье прощение уже действовали до Иисуса, почему нельзя было продолжать пользоваться этим путём вместе с исполнением Закона?",
+          "answer": "ВОПРОС ОТКРЫТ. Златоуст признаёт Божье прощение до Христа. Предварительная гипотеза: прежнее прощение могло означать отсрочку наказания, тогда как смерть Христа принесла окончательное искупление. В подтверждение Златоуст (беседа 16 на Евр. 9:15–23) называет прежнее жертвенное очищение неполным, а смерть Христа — основанием полного очищения; в беседе 7 на Рим. 3:25–26 говорит о Божьем долготерпении. Но он НЕ утверждает прямо, что вся прежняя тшува, включая раскаяние Давида, давала лишь отсрочку. Нужно проверить это различие прежде, чем считать ответ найденным.",
           "status": "open",
           "references": [
             {
@@ -1453,6 +1453,22 @@
             {
               "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
               "locator": "Беседа 32, толкование Деян. 15:10"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-hebrews-16",
+              "locator": "Беседа 16, §§1–2; Евр. 9:15 и 9:21–22"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-romans-7",
+              "locator": "Беседа 7, комментарий к Рим. 3:25–26"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/romans-3",
+              "locator": "3:25–26"
+            },
+            {
+              "source": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/mishnah-yoma-8-8",
+              "locator": "8:8 — аналогия, не источник учения Златоуста"
             }
           ]
         }
@@ -1619,7 +1635,7 @@
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--teshuva",
       "@type": "OpenResearchQuestion",
-      "label": "Где в этом аргументе учтены тшува и прощение?",
+      "label": "Если тшува приносила прощение до Христа, почему нельзя было продолжать этот путь? Была ли это лишь отсрочка до искупления Христом?",
       "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
       "relatedClaims": [
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--yoke--continuation"
@@ -1627,8 +1643,13 @@
       "evidenceStatus": "work_needed",
       "humanReviewStatus": "not_reviewed",
       "citedSources": [
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
-      ]
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-hebrews-16",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-romans-7",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/romans-3",
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/mishnah-yoma-8-8"
+      ],
+      "researchNote": "Открытая гипотеза пользователя: подобно различию тшува/Йом-Кипур (Мишна Йома 8:8, применительно к более тяжким грехам), прежнее прощение могло временно приостанавливать наказание, а смерть Христа совершать окончательное искупление. Проверено: Златоуст (Евр. 9:15–23, беседа 16) признаёт несовершенным прежнее жертвенное очищение; на Рим. 3:25–26 говорит о долготерпении. НЕ подтверждено, что он распространял эту схему на всякое реальное прощение через покаяние (напр., Давида). Не объявлять ответ найденным; отличать Божью милость и полное искупление, а также жертвенную очистку от личного покаяния."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--grace-law",
@@ -1703,6 +1724,42 @@
       "url": "https://azbyka.ru/otechnik/Ioann_Zlatoust/tolkovanie-na-poslanie-k-galatam/",
       "category": "primary",
       "sourceDescription": "Древнее толкование о временном назначении Закона (Гал. 3:19–25) и водительстве Духа (Гал. 5:18).",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-hebrews-16",
+      "@type": "Source",
+      "label": "Иоанн Златоуст, беседа 16 на Евреям 9:15–23",
+      "url": "https://www.odinblago.ru/sv_otci/ioann_zlatoust/12_1/16",
+      "category": "primary",
+      "sourceDescription": "Златоуст различает неполное прежнее жертвенное очищение и духовное очищение через смерть Христа; это не прямое утверждение, что вся ветхозаветная тшува лишь отсрочивала наказание.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-romans-7",
+      "@type": "Source",
+      "label": "Иоанн Златоуст, беседа 7 на Римлянам 3",
+      "url": "https://azbyka.ru/otechnik/Ioann_Zlatoust/besedy-na-poslanie-k-rimljanam/7",
+      "category": "primary",
+      "sourceDescription": "Комментарий к Рим. 3:25–26 о долготерпении Бога и накопившихся грехах.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/romans-3",
+      "@type": "Source",
+      "label": "Римлянам 3:25–26 — прежние грехи и долготерпение",
+      "url": "https://bible.usccb.org/bible/romans/3",
+      "category": "primary",
+      "sourceDescription": "Текст Павла о ранее совершённых грехах и Божьем долготерпении.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/mishnah-yoma-8-8",
+      "@type": "Source",
+      "label": "Мишна Йома 8:8 — тшува и Йом-Кипур",
+      "url": "https://www.sefaria.org/Mishnah_Yoma.8.8",
+      "category": "primary",
+      "sourceDescription": "Иудейская параллель: тшува искупает менее тяжкие нарушения, а при тяжких приостанавливает наказание до Йом-Кипура.",
       "humanReviewStatus": "not_reviewed"
     }
   ]
