@@ -37,7 +37,7 @@ def main():
  encrypt_report(report,os.environ['FINANCE_OWNER_PASSWORD'],'finance/data/owner.enc')
  # Only family-appropriate fields go into the separate ciphertext.
  start_at=[dt.datetime(2026,11,21,18,tzinfo=ZoneInfo('Europe/Moscow')),dt.datetime(2026,12,21,0,tzinfo=ZoneInfo('Europe/Moscow'))]
- active=next((i for i,st in enumerate(start_at) if now>=st and (i==len(start_at)-1 or now<start_at[i+1])),None)
+ active=next((i for i,st in enumerate(start_at) if now>=st and now<(start_at[i+1] if i+1<len(start_at) else dt.datetime(2027,1,21,0,tzinfo=ZoneInfo('Europe/Moscow')))),None)
  family={'asOf':report['asOf'],'cycle':None}
  if active is not None:
   c=cycles[active]
