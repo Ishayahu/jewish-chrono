@@ -1196,15 +1196,6 @@
       "humanReviewStatus": "not_reviewed"
     },
     {
-      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/num-24",
-      "@type": "Source",
-      "label": "Бемидбар (Числа) 24:2 — Билам",
-      "url": "https://www.sefaria.org/Numbers.24.2",
-      "category": "primary",
-      "sourceDescription": "Контрпример: Дух Божий сошёл и на Билама.",
-      "humanReviewStatus": "not_reviewed"
-    },
-    {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/chrysostom-32",
       "@type": "Source",
       "label": "Иоанн Златоуст, беседа 32 на Деяния",
@@ -1301,7 +1292,7 @@
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10",
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-11"
       ],
-      "note": "Наши вопросы: (А) Билам тоже получил Духа Божьего (Чис. 24:2) — доказывает ли дар полное одобрение? (Б) Корнилия крестили после дарования Духа — почему нельзя требовать обрезания позже? (В) Как из отдельного случая следует общее правило? (Г) Почему видимый дар подтверждает очищение сердца? Златоуст и Феофилакт дают толкования, но их аргументы ещё исследуются."
+      "note": "Пересмотр возражений (19.11.2026): контрпример Билама снят — в случае Корнилия Дух сошёл непосредственно от Бога во время проповеди Петра (10:44–46), что Пётр и свидетели восприняли как целенаправленное положительное свидетельство. Возражение «почему тогда крестили?» также снято как смешивающее признание язычников Богом без предварительного соблюдения Закона и отдельный вопрос о последующих христианских обрядах. У Златоуста видимые знамения удостоверяют дар Духа и достаточность веры для первоначального принятия Богом без обязательного обрезания. Открытые вопросы: (А) в какой мере отдельный случай устанавливает общее правило для всех язычников? (Б) как именно видимое знамение подтверждает очищение сердца верой? Златоуст и Феофилакт комментируют этот переход; подробная оценка продолжается."
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/jerusalem-council--yoke",
@@ -1407,35 +1398,6 @@
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
       ],
       "note": "Похоже на подкрепление аргумента Петра, но в 15:12 не сказано, что все обращённые говорили на языках или получили Духа подобно Корнилию. Наши вопросы: что доказывают чудеса и почему они исключают последующее принятие Закона?"
-    },
-    {
-      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--balaam",
-      "@type": "OpenResearchQuestion",
-      "label": "Билам (Бемидбар 24:2): достаточно ли получение Духа для вывода о полном Божьем одобрении?",
-      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
-      "relatedClaims": [
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--spirit--continuation"
-      ],
-      "evidenceStatus": "work_needed",
-      "humanReviewStatus": "not_reviewed",
-      "citedSources": [
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/num-24",
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15"
-      ]
-    },
-    {
-      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--baptism",
-      "@type": "OpenResearchQuestion",
-      "label": "Корнилий получил Духа до крещения, но после был крещён (Деян. 10:44–48): почему обрезание исключено как последующее требование?",
-      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/jerusalem-council",
-      "relatedClaims": [
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/jerusalem-council--spirit--continuation"
-      ],
-      "evidenceStatus": "work_needed",
-      "humanReviewStatus": "not_reviewed",
-      "citedSources": [
-        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-10"
-      ]
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/jerusalem-council--generalization",
