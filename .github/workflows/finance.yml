@@ -7,7 +7,7 @@ on:
       - 'finance/**'
       - '.github/workflows/finance.yml'
   schedule:
-    - cron: '11 4,10,16,22 * * *'
+    - cron: '11 4,10,15,16,22 * * *'
 permissions:
   contents: read
   pages: write
@@ -27,8 +27,10 @@ jobs:
       - name: Generate private finance report
         env:
           FINANCE_OWNER_PASSWORD: ${{ secrets.FINANCE_OWNER_PASSWORD }}
+          WIFE_PASSWORD: ${{ secrets.WIFE_PASSWORD }}
           FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: |
+          test -n "$WIFE_PASSWORD" || { echo 'Missing WIFE_PASSWORD secret'; exit 1; }
           test -n "$FINANCE_OWNER_PASSWORD" || { echo 'Missing FINANCE_OWNER_PASSWORD secret'; exit 1; }
           test -n "$FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON" || { echo 'Missing FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON secret'; exit 1; }
           python3 -m pip install --quiet --user google-auth requests cryptography
