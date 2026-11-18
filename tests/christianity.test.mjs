@@ -26,20 +26,26 @@ test("historical positions, questions and evidence are preserved",()=>{
   const v=createView(d);assert.ok(v.nodes.length>=7);assert.ok(v.splits.length>=2);
   const arian=v.splits.find(s=>s.id.endsWith("/arius-nicaea"));
   const roman=v.splits.find(s=>s.id.endsWith("/roman-father-son"));
-  assert.ok(arian);assert.ok(roman);
+  const jerusalem=v.splits.find(s=>s.id.endsWith("/jerusalem-council"));
+  assert.ok(arian);assert.ok(roman);assert.ok(jerusalem);
   assert.equal(arian.questions.length,4);assert.equal(arian.branch_ids.length,2);
   assert.ok(arian.open_questions.some(x=>x.includes("Адама")));
   assert.equal(roman.questions.length,3);assert.equal(roman.branch_ids.length,4);
   assert.ok(roman.open_questions.some(x=>x.includes("Феодот")));
-  assert.equal(roman.parent_id,v.root_id,"Roman dispute must start at historical root");
+  assert.equal(jerusalem.parent_id,v.root_id,"Jerusalem is the historical root");
+  assert.ok(jerusalem.branch_ids.includes(roman.parent_id),"Jerusalem continues into the Roman controversy");
   assert.ok(roman.branch_ids.includes(arian.parent_id),"Pre-Nicene continuation connects Roman and Arian crises");
   assert.ok(arian.parent_id.endsWith("/early"),"Arian crisis must start after the pre-Nicene continuation");
-  assert.equal(v.splits[0].id,roman.id,"Chronology: Roman before Arian");
-  assert.equal(v.splits[1].id,arian.id);
+  assert.equal(v.splits[0].id,jerusalem.id,"Jerusalem first");
+  assert.equal(v.splits[1].id,roman.id,"Roman second");
+  assert.equal(v.splits[2].id,arian.id,"Arian third");
+  assert.equal(jerusalem.questions.length,5);
+  assert.ok(jerusalem.open_questions.some(x=>x.includes("Билам")));
   for(const q of roman.questions)for(const id of roman.branch_ids)assert.ok(q.answers[id],"Missing Roman comparison cell: "+id);
   const byParent=new Map();
   for(const split of v.splits){const list=byParent.get(split.parent_id)||[];list.push(split);byParent.set(split.parent_id,list);}
-  assert.equal(byParent.get(v.root_id).length,1,"Only Roman controversy may directly leave the root");
+  assert.equal(byParent.get(v.root_id).length,1,"Only Jerusalem controversy directly leaves root");
+  assert.equal(byParent.get(roman.parent_id).length,1,"Roman controversy follows Jerusalem");
   assert.equal(byParent.get(arian.parent_id).length,1,"Arian controversy must continue from the pre-Nicene branch");
   const reachable=new Set();
   const visit=(id,ancestry=new Set())=>{assert.ok(!ancestry.has(id),"Cycle in visible tree");reachable.add(id);const next=new Set(ancestry);next.add(id);for(const split of byParent.get(id)||[])for(const child of split.branch_ids)visit(child,next);};
@@ -87,11 +93,15 @@ test("browser renderer connects earlier Roman controversy to later Arian crisis"
  const romanItem=flatten(roots.get("graph")).find(e=>e.className==="controversy-item"&&e.children[0]?.textContent?.includes("Римский спор"));
  assert.ok(romanItem,"Roman split must exist");
  assert.ok(flatten(romanItem).some(e=>e.className==="split"&&e.textContent.includes("Арианский кризис")),"Arian split must be nested in the Roman continuation");
+ const councilItem=flatten(roots.get("graph")).find(e=>e.className==="controversy-item"&&e.children[0]?.textContent?.includes("Иерусалиме"));
+ assert.ok(councilItem,"Jerusalem council exists");
+ assert.ok(flatten(councilItem).some(e=>e.className==="split"&&e.textContent.includes("Римский спор")),"Roman controversy nested in Jerusalem continuation");
  const firstNode=flatten(roots.get("graph")).find(e=>e.className.startsWith("node "));
- assert.ok(firstNode.children.some(c=>c.textContent==="Раннехристианская традиция"),"Correct historical root");
+ assert.ok(firstNode.children.some(c=>c.textContent==="Иерусалимская община до собрания"),"Correct historical root");
  const shortcuts=roots.get("split-index").children.map(e=>e.textContent);
  assert.ok(shortcuts.some(s=>s.includes("Арианский кризис")));
  assert.ok(shortcuts.some(s=>s.includes("Римский спор")));
+ assert.ok(shortcuts.some(s=>s.includes("Иерусалиме")));
  assert.ok(roots.get("graph-coverage").textContent.startsWith(view.splits.length+" развил"));
 });
 
