@@ -46,7 +46,7 @@ async function restoreSession(){
   }
   return;
  }
- try{await unlock(key)}
+ try{await unlock(key);clearLegacy()}
  catch(err){
   if(err.name==='OperationError'){await deleteKey(KEY_ID);$('error').textContent='Сохранённый ключ не подходит. Введите пароль заново.'}
   else $('error').textContent='Не удалось загрузить отчёт: '+err.message;
