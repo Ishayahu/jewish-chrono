@@ -68,9 +68,10 @@ jobs:
       - name: Generate encrypted owner report (when Google access configured)
         env:
           FINANCE_OWNER_PASSWORD: ${{ secrets.FINANCE_OWNER_PASSWORD }}
+          WIFE_PASSWORD: ${{ secrets.WIFE_PASSWORD }}
           FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: |
-          if [ -n "$FINANCE_OWNER_PASSWORD" ] && [ -n "$FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON" ]; then
+          if [ -n "$FINANCE_OWNER_PASSWORD" ] && [ -n "$WIFE_PASSWORD" ] && [ -n "$FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON" ]; then
             python3 -m pip install --quiet --user google-auth requests cryptography
             python3 finance/build_encrypted.py
           else
