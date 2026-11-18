@@ -40,7 +40,9 @@ test("historical positions, questions and evidence are preserved",()=>{
   assert.equal(v.splits[1].id,roman.id,"Roman second");
   assert.equal(v.splits[2].id,arian.id,"Arian third");
   assert.equal(jerusalem.questions.length,5);
-  assert.ok(jerusalem.open_questions.some(x=>x.includes("Билам")));
+  assert.ok(!jerusalem.open_questions.some(x=>x.includes("Билам")),"Resolved Balaam objection is no longer open");
+  assert.ok(!jerusalem.open_questions.some(x=>x.includes("Корнилий получил Духа до крещения")),"Resolved baptism objection is no longer open");
+  assert.ok(jerusalem.open_questions.some(x=>x.includes("случай Корнилия")),"The generalization question remains open");
   for(const q of roman.questions)for(const id of roman.branch_ids)assert.ok(q.answers[id],"Missing Roman comparison cell: "+id);
   const byParent=new Map();
   for(const split of v.splits){const list=byParent.get(split.parent_id)||[];list.push(split);byParent.set(split.parent_id,list);}
