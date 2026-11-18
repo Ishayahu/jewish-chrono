@@ -1,13 +1,14 @@
+import {importPassword,loadKey,saveKey,deleteKey} from '../auth-store.js';
 const $=id=>document.getElementById(id);
 const rub=n=>new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:2}).format(n);
 function line(a,b){const x=document.createElement('div');x.className='line';const l=document.createElement('span');l.textContent=a;const v=document.createElement('b');v.textContent=b;x.append(l,v);return x}
-async function unlock(password){
+async function unlock(keyMaterial){
  const response=await fetch('../data/family.enc',{cache:'no-store'});
  if(!response.ok)throw Error('Семейный отчёт пока не опубликован');
  const env=await response.json();
  if(env.v!==1||env.kdf!=='PBKDF2-SHA256'||env.cipher!=='AES-256-GCM'||env.iterations<600000)throw Error('Неподдерживаемый формат отчёта');
  const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
- const keyMaterial=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);
+ 
  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(env.salt),iterations:env.iterations,hash:'SHA-256'},keyMaterial,{name:'AES-GCM',length:256},false,['decrypt']);
  const clear=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(env.iv)},key,b64(env.ciphertext));
  const data=JSON.parse(new TextDecoder().decode(clear));
@@ -24,17 +25,42 @@ async function unlock(password){
  }
  if(Array.isArray(c.unmappedExpenses)&&c.unmappedExpenses.length){const total=c.unmappedExpenses.reduce((sum,x)=>sum+x.amount,0);box.append(line('Расходы без однозначной категории',rub(total)));const note=document.createElement('p');note.className='muted';note.textContent='Не распределено операций: '+c.unmappedExpenses.length+'. Эти суммы не вычтены из лимитов категорий и требуют сверки.';box.append(note)}
 }
-const STORAGE_KEY='finance.family.password';
-function savedPassword(){try{return localStorage.getItem(STORAGE_KEY)}catch{return null}}
-function rememberPassword(password){try{localStorage.setItem(STORAGE_KEY,password)}catch{}}
-function forgetPassword(){try{localStorage.removeItem(STORAGE_KEY)}catch{}}
+
+const KEY_ID='family', LEGACY_KEY='finance.family.password';
+function clearLegacy(){try{localStorage.removeItem(LEGACY_KEY)}catch{}}
 async function restoreSession(){
- const password=savedPassword();if(!password)return;
- try{await unlock(password)}catch(err){
-  if(err.name==='OperationError')forgetPassword();
-  $('error').textContent=err.name==='OperationError'?'Сохранённый пароль больше не подходит. Введите пароль заново.':'Не удалось автоматически загрузить отчёт: '+err.message;
+ let key;
+ try{key=await loadKey(KEY_ID)}catch(err){$('error').textContent='Хранилище ключей недоступно: '+err.message;return}
+ if(!key){
+  let password=null;try{password=localStorage.getItem(LEGACY_KEY)}catch{}
+  if(password){
+   try{
+    const candidate=await importPassword(password);
+    await unlock(candidate);
+    await saveKey(KEY_ID,candidate);
+    clearLegacy();
+   }catch(err){
+    if(err.name==='OperationError')clearLegacy();
+    $('error').textContent='Не удалось восстановить сохранённый вход: '+err.message;
+   }
+  }
+  return;
+ }
+ try{await unlock(key)}
+ catch(err){
+  if(err.name==='OperationError'){await deleteKey(KEY_ID);$('error').textContent='Сохранённый ключ не подходит. Введите пароль заново.'}
+  else $('error').textContent='Не удалось загрузить отчёт: '+err.message;
  }
 }
-$('unlock').addEventListener('submit',async e=>{e.preventDefault();$('error').textContent='';const password=$('password').value;try{await unlock(password);rememberPassword(password)}catch(err){$('error').textContent=err.name==='OperationError'?'Неверный пароль':err.message}finally{$('password').value=''}});
-$('lock').addEventListener('click',()=>{forgetPassword();location.reload()});
+$('unlock').addEventListener('submit',async e=>{
+ e.preventDefault();$('error').textContent='';
+ try{
+  const key=await importPassword($('password').value);
+  await unlock(key);
+  await saveKey(KEY_ID,key);
+  clearLegacy();
+ }catch(err){$('error').textContent=err.name==='OperationError'?'Неверный пароль или повреждённые данные.':err.message}
+ finally{$('password').value=''}
+});
+$('lock').addEventListener('click',async()=>{try{await deleteKey(KEY_ID);clearLegacy();location.reload()}catch(err){$('error').textContent='Не удалось удалить ключ: '+err.message;alert('Не удалось завершить выход: '+err.message)}});
 restoreSession();
