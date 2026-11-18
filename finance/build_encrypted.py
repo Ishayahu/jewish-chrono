@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 SID='1nQNEresKTI0b5LzVhmZQhT0AFLmqWhKNlz369CIoCPU'
-ranges=["'Финансовая позиция'!A1:B53","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:N1000"]
+ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:N1000"]
 def encrypt_report(report,password,filename):
  if len(password)<12:raise ValueError('Password too short')
  salt,iv=secrets.token_bytes(16),secrets.token_bytes(12)
@@ -70,7 +70,7 @@ def main():
   spent,unmapped=actuals(start,min(end,today)) if today>=start else ({},[])
   budgets=[{'name':name,'limit':(500*(5 if i==0 else 4) if name=='Хор' else v(b,row,col+i if row in (35,36,37,38,39) else col)*factor),'spent':spent.get(name,0.0)} for name,row,col,factor in cats]
   cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}','income':v(b,17,i+1),'expenses':v(b,16,i+1),'possibleReturn':v(b,19,i+1),'budgets':budgets,'unmappedExpenses':unmapped})
- report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,52),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5]),'received':n(dayrow[6])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
+ report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,55),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5]),'received':n(dayrow[6])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
 
  encrypt_report(report,os.environ['FINANCE_OWNER_PASSWORD'],'finance/data/owner.enc')
  # Only family-appropriate fields go into the separate ciphertext.
