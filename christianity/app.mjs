@@ -41,11 +41,32 @@ function renderObjections(objections,sourceMap){
  }
  return group;
 }
+function imperialSummary(context){return (context?.rulers||[]).map(r=>r.name).join(" · ");}
+function renderImperialContext(context,sourceMap){
+ const section=el("section",undefined,"imperial-context");
+ section.append(el("h3",context.heading,"imperial-heading"));
+ const strip=el("div",undefined,"imperial-rulers");
+ for(const ruler of context.rulers){
+  const item=el("div",undefined,"imperial-ruler");
+  item.append(el("strong",ruler.name),el("span",ruler.reign,"imperial-years"),el("small",ruler.jurisdiction));
+  strip.append(item);
+ }
+ section.append(strip,el("p",context.scope,"imperial-note"));
+ const refs=el("div",undefined,"imperial-sources");
+ for(const id of context.sourceIds||[]){
+  const source=sourceMap.get(id);
+  if(!source||!source.url)throw Error("Не найден источник императорской хронологии: "+id);
+  refs.append(sourceLink(source,"Источник: "+source.title));
+ }
+ section.append(refs);
+ return section;
+}
 function showSplit(split,sourceMap,nodeMap){
  $("dialog-title").textContent=split.title;
  $("dialog-subtitle").textContent="Обсуждение · "+split.period;
  const body=$("dialog-body");
  body.replaceChildren(el("p",split.issue,"summary"));
+ if(split.imperialContext)body.append(renderImperialContext(split.imperialContext,sourceMap));
  if(split.reviewLayout==="argument-review"){
   const sequence=el("div",undefined,"argument-sequence");
   for(const q of split.questions){
@@ -81,9 +102,10 @@ const n=nodeMap.get(id);if(!n)throw Error("Отсутствует узел "+id)
 const li=el("li"),btn=el("button",undefined,"node "+id);btn.type="button";btn.append(el("span",n.period,"period"),el("strong",n.title),el("small",n.description));btn.onclick=()=>showNode(n);li.append(btn);
 const splits=splitMap.get(id)||[];
 if(splits.length){const choices=el("ul",undefined,"controversy-branches");
-for(const split of splits){const item=el("li",undefined,"controversy-item");const b=el("button","● "+split.title,"split");b.type="button";b.append(el("small","Нажмите для сравнения · "+split.period));b.onclick=()=>showSplit(split,srcMap,nodeMap);item.append(b);const ul=el("ul");for(const child of split.branch_ids)ul.append(branch(child,next));item.append(ul);choices.append(item);}
+for(const split of splits){const item=el("li",undefined,"controversy-item");const b=el("button","● "+split.title,"split");b.type="button";b.append(el("small","Нажмите для сравнения · "+split.period));
+if(split.imperialContext)b.append(el("small","Императоры: "+imperialSummary(split.imperialContext),"imperial-inline"));b.onclick=()=>showSplit(split,srcMap,nodeMap);item.append(b);const ul=el("ul");for(const child of split.branch_ids)ul.append(branch(child,next));item.append(ul);choices.append(item);}
 li.append(choices);}return li;}
-const index=$("split-index");if(index){index.replaceChildren();for(const split of d.splits){const b=el("button",split.title,"split-shortcut");b.type="button";b.onclick=()=>showSplit(split,srcMap,nodeMap);index.append(b);}}
+const index=$("split-index");if(index){index.replaceChildren();for(const split of d.splits){const b=el("button",split.title,"split-shortcut");b.type="button";if(split.imperialContext)b.append(el("small","Императоры: "+imperialSummary(split.imperialContext),"imperial-shortcut"));b.onclick=()=>showSplit(split,srcMap,nodeMap);index.append(b);}}
 const tree=el("ul",undefined,"tree");tree.append(branch(d.root_id));$("graph").replaceChildren(tree);
 const counter=$("graph-coverage");if(counter)counter.textContent=d.splits.length+" развилки · "+d.nodes.length+" позиций";
 const todo=$("todo"),sources=$("sources");todo.replaceChildren();sources.replaceChildren();
