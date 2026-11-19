@@ -279,7 +279,51 @@
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/church-in-conversation",
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/fideograph",
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/doctrinelab"
-      ]
+      ],
+      "imperialContext": {
+        "heading": "Императорская власть во время арианского кризиса",
+        "scope": "Основные правители, влиявшие на Восток в 318–381 годах. Правление империей нередко делили несколько императоров; западные соправители приведены не полностью. Последовательность не означает единой богословской позиции правителей.",
+        "rulers": [
+          {
+            "name": "Лициний",
+            "reign": "308–324",
+            "jurisdiction": "Восток с 313 года"
+          },
+          {
+            "name": "Константин I",
+            "reign": "306–337",
+            "jurisdiction": "Вся империя с 324 года"
+          },
+          {
+            "name": "Констанций II",
+            "reign": "337–361",
+            "jurisdiction": "Восток; единолично с 353 года"
+          },
+          {
+            "name": "Юлиан",
+            "reign": "361–363",
+            "jurisdiction": "Вся империя"
+          },
+          {
+            "name": "Иовиан",
+            "reign": "363–364",
+            "jurisdiction": "Вся империя"
+          },
+          {
+            "name": "Валент",
+            "reign": "364–378",
+            "jurisdiction": "Восток"
+          },
+          {
+            "name": "Феодосий I",
+            "reign": "379–395",
+            "jurisdiction": "Восток"
+          }
+        ],
+        "sourceIds": [
+          "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/roman-emperors-ucl"
+        ]
+      }
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/arius-nicaea--salvation",
@@ -953,7 +997,42 @@
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/church-in-conversation",
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/fideograph",
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/doctrinelab"
-      ]
+      ],
+      "imperialContext": {
+        "heading": "Императорская власть в эпоху спора",
+        "scope": "Датировка самого римского богословского спора приблизительная (конец II — начало III века). Указаны основные императоры соответствующей эпохи, а не исчерпывающий список кратких соправлений и правлений.",
+        "rulers": [
+          {
+            "name": "Коммод",
+            "reign": "180–192",
+            "jurisdiction": "Римская империя"
+          },
+          {
+            "name": "Септимий Север",
+            "reign": "193–211",
+            "jurisdiction": "Римская империя"
+          },
+          {
+            "name": "Каракалла",
+            "reign": "211–217",
+            "jurisdiction": "Римская империя"
+          },
+          {
+            "name": "Макрин",
+            "reign": "217–218",
+            "jurisdiction": "Римская империя"
+          },
+          {
+            "name": "Элагабал",
+            "reign": "218–222",
+            "jurisdiction": "Римская империя"
+          }
+        ],
+        "sourceIds": [
+          "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/roman-emperors-ucl",
+          "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/roman-empire-met"
+        ]
+      }
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#comparison-question/roman-father-son--unity",
@@ -1162,7 +1241,21 @@
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/jerusalem-law-required",
         "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#position/pre-roman"
       ],
-      "reviewLayout": "argument-review"
+      "reviewLayout": "argument-review",
+      "imperialContext": {
+        "heading": "Императорская власть на момент собрания",
+        "scope": "Римская империя; Иудея находилась под властью Рима. Император не являлся участником собрания.",
+        "rulers": [
+          {
+            "name": "Клавдий",
+            "reign": "41–54",
+            "jurisdiction": "Римская империя"
+          }
+        ],
+        "sourceIds": [
+          "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/roman-emperors-ucl"
+        ]
+      }
     },
     {
       "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/acts-15",
@@ -1844,6 +1937,24 @@
       "url": "https://azbyka.ru/otechnik/Ioann_Zlatoust/besedy-na-poslanie-k-rimljanam/25",
       "category": "primary",
       "sourceDescription": "Принявшие Христа евреи продолжали соблюдать пищевые предписания; Златоуст толкует их как немощь и предостерегает от резких укоров.",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/roman-emperors-ucl",
+      "@type": "Source",
+      "label": "University College London — Roman Emperors",
+      "url": "https://www.ucl.ac.uk/museums-static/digitalegypt/chronology/romanemperor.html",
+      "category": "secondary_study",
+      "sourceDescription": "Справочная хронология римских императоров, включая периоды соправления",
+      "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#source/roman-empire-met",
+      "@type": "Source",
+      "label": "Metropolitan Museum of Art — The Roman Empire (27 B.C.–393 A.D.)",
+      "url": "https://www.metmuseum.org/de/essays/the-roman-empire-27-b-c-393-a-d",
+      "category": "secondary_study",
+      "sourceDescription": "Исторический обзор и даты правления императоров династии Северов",
       "humanReviewStatus": "not_reviewed"
     }
   ]
