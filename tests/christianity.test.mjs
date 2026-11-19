@@ -140,7 +140,7 @@ test("browser renderer connects earlier Roman controversy to later Arian crisis"
  assert.ok(shortcuts.some(s=>s.includes("Арианский кризис")));
  assert.ok(shortcuts.some(s=>s.includes("Римский спор")));
  assert.ok(shortcuts.some(s=>s.includes("Иерусалиме")));
- assert.ok(shortcuts.some(s=>s.includes("Константин I")),"Imperial names visible without opening a controversy");
+ assert.ok(roots.get("split-index").children.some(b=>b.children.some(c=>c.className==="imperial-shortcut"&&c.textContent.includes("Константин I"))),"Imperial names visible without opening a controversy");
  const councilButton=roots.get("split-index").children.find(b=>b.textContent.includes("Иерусалиме"));
  assert.ok(typeof councilButton.onclick==="function");
  councilButton.onclick();
