@@ -63,6 +63,23 @@ test("historical positions, questions and evidence are preserved",()=>{
   const arius=ofType("PositionClaim").find(x=>x.respondsTo===q["@id"]&&x.position.endsWith("/arius"));
   assert.equal(arius.evidenceStatus,"work_needed");
 });
+test("political rulers are an independent sourced context on every controversy",()=>{
+ const v=createView(d);
+ assert.equal(v.splits.length,3);
+ for(const split of v.splits){
+  const ctx=split.imperialContext;
+  assert.ok(ctx?.heading&&ctx.scope,"Missing imperial context: "+split.title);
+  assert.ok(ctx.rulers.length,"Missing rulers: "+split.title);
+  assert.ok(ctx.sourceIds.length,"Missing sources: "+split.title);
+  for(const ruler of ctx.rulers)assert.ok(ruler.name&&ruler.reign&&ruler.jurisdiction);
+  for(const id of ctx.sourceIds){checkRef(id);assert.equal(byId.get(id)["@type"],"Source");}
+ }
+ const arian=v.splits.find(s=>s.id.endsWith("/arius-nicaea"));
+ const jerusalem=v.splits.find(s=>s.id.endsWith("/jerusalem-council"));
+ assert.ok(arian.imperialContext.rulers.some(r=>r.name==="Константин I"&&r.reign==="306–337"));
+ assert.ok(arian.imperialContext.rulers.some(r=>r.name==="Феодосий I"));
+ assert.equal(jerusalem.imperialContext.rulers[0].name,"Клавдий");
+});
 test("Jerusalem objections and responses are individual, status-aware records",()=>{
  const split=createView(d).splits.find(s=>s.id.endsWith("/jerusalem-council"));
  assert.equal(split.reviewLayout,"argument-review");
@@ -123,10 +140,13 @@ test("browser renderer connects earlier Roman controversy to later Arian crisis"
  assert.ok(shortcuts.some(s=>s.includes("Арианский кризис")));
  assert.ok(shortcuts.some(s=>s.includes("Римский спор")));
  assert.ok(shortcuts.some(s=>s.includes("Иерусалиме")));
+ assert.ok(shortcuts.some(s=>s.includes("Константин I")),"Imperial names visible without opening a controversy");
  const councilButton=roots.get("split-index").children.find(b=>b.textContent.includes("Иерусалиме"));
  assert.ok(typeof councilButton.onclick==="function");
  councilButton.onclick();
  const allNodes=flatten(roots.get("dialog-body"));
+ assert.equal(allNodes.filter(n=>n.className==="imperial-context").length,1);
+ assert.ok(allNodes.some(n=>n.className==="imperial-ruler"&&n.children.some(c=>c.textContent==="Клавдий")));
  assert.equal(allNodes.filter(n=>n.className==="objection-pair").length,11);
  assert.equal(allNodes.filter(n=>n.className==="objection-challenge").length,11);
  assert.equal(allNodes.filter(n=>n.className==="objection-reply").length,11);
