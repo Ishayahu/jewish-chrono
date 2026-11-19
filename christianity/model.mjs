@@ -21,7 +21,13 @@ export function createView(doc){
       for(const id of c.resultingPositions)if(!answers[id])throw Error("Не найден ответ для "+id);
       return {id:q["@id"],title:q.label,answers};
     });
-    return {id:c["@id"],title:c.label,period:c.period,issue:c.issue,caveat:c.caveat,reviewLayout:c.reviewLayout||null,parent_id:c.previousPosition,branch_ids:c.resultingPositions,questions,open_questions:one(records,"OpenResearchQuestion").filter(x=>x.inControversy===c["@id"]).map(x=>x.label)};
+    const imperialContext=c.imperialContext||null;
+    if(imperialContext){
+      if(!Array.isArray(imperialContext.rulers)||!imperialContext.rulers.length)throw Error("Нет императоров для "+c["@id"]);
+      for(const ruler of imperialContext.rulers)if(!ruler.name||!ruler.reign||!ruler.jurisdiction)throw Error("Неполная запись об императоре: "+c["@id"]);
+      for(const source of refs(imperialContext.sourceIds))if(source["@type"]!=="Source")throw Error("Источник императоров не является Source");
+    }
+    return {id:c["@id"],title:c.label,period:c.period,issue:c.issue,caveat:c.caveat,reviewLayout:c.reviewLayout||null,parent_id:c.previousPosition,branch_ids:c.resultingPositions,questions,imperialContext,open_questions:one(records,"OpenResearchQuestion").filter(x=>x.inControversy===c["@id"]).map(x=>x.label)};
   });
   refs([atlas.rootPosition]);
   // Order controversies by their place in the history, not by their JSON-LD record order.
