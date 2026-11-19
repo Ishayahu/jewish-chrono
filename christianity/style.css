@@ -70,3 +70,17 @@
 .reply-sources-title{font-size:11px;font-weight:750;color:#456979}
 .reply-sources a{font-size:12px;line-height:1.45;overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){.objection-pair>summary::after{transition:none}}
+
+/* Imperial authority is an independent contextual layer, never a theological branch. */
+.split .imperial-inline{color:#cfe4e7;line-height:1.45;max-width:320px}
+.imperial-shortcut{display:block;margin-top:5px;font-size:11px;font-weight:500;line-height:1.45;color:#5d7e89}
+.imperial-context{padding:14px 15px;background:#f3f7fa;border:1px solid #d5e2e8;border-radius:12px;margin:14px 0 19px}
+.imperial-heading{font-size:14px;color:#35576a;margin:0 0 12px}
+.imperial-rulers{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;padding-bottom:6px}
+.imperial-ruler{flex:0 0 140px;background:white;border:1px solid #d2e0e6;border-top:3px solid #8296ad;border-radius:9px;padding:10px 11px;text-align:left}
+.imperial-ruler strong{display:block;font-size:13px;color:#284b60;line-height:1.35}
+.imperial-years{display:block;font-size:12px;font-weight:800;color:#527f98;margin:3px 0}
+.imperial-ruler small{display:block;font-size:11px;line-height:1.4;color:#667c88}
+.imperial-note{font-size:12px;line-height:1.55;color:#59717e;margin:10px 0 7px}
+.imperial-sources{display:flex;flex-wrap:wrap;gap:10px;font-size:11px}
+@media(max-width:700px){.imperial-context{padding:12px 10px}.imperial-ruler{flex-basis:126px}}
