@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 SID='1nQNEresKTI0b5LzVhmZQhT0AFLmqWhKNlz369CIoCPU'
-ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:N1000"]
+ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:N1000","'Утренняя цель — новая схема'!A4:I400"]
 def encrypt_report(report,password,filename):
  if len(password)<12:raise ValueError('Password too short')
  salt,iv=secrets.token_bytes(16),secrets.token_bytes(12)
@@ -20,13 +20,18 @@ def main():
  c=service_account.Credentials.from_service_account_info(json.loads(os.environ['FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON']),scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'])
  r=AuthorizedSession(c).get(f'https://sheets.googleapis.com/v4/spreadsheets/{SID}/values:batchGet',params=[('ranges',x) for x in ranges]+[('valueRenderOption','UNFORMATTED_VALUE')],timeout=45)
  r.raise_for_status()
- p,d,b,operations=[x.get('values',[]) for x in r.json()['valueRanges']]
+ p,d,b,operations,daily=[x.get('values',[]) for x in r.json()['valueRanges']]
  def n(x):
   if isinstance(x,bool) or not isinstance(x,(int,float)):raise ValueError('Invalid numeric cell')
   return round(float(x),2)
  def v(rows,row,col=1):return n(rows[row-1][col])
  now=dt.datetime.now(ZoneInfo('Europe/Moscow'));today=now.date()
- dayrow=next((x for x in d[1:] if x and x[0]==today.strftime('%d.%m.%Y')),None)
+ dayrow=next((x for x in daily[1:] if x and x[0]==today.strftime('%d.%m.%Y')),None)
+ if dayrow is None and today<dt.date(2026,11,21):
+  dayrow=next((x for x in d[1:] if x and x[0]==today.strftime('%d.%m.%Y')),None)
+  legacy_day=True
+ else:
+  legacy_day=False
  cats=[('Шаббат',5,2,4),('Продукты',6,2,1),('Прочие дети',7,2,1),('Бытовая химия',8,2,1),('Аренда',35,1,1),('Психолог',36,1,1),('Седжаро',37,1,1),('Прочее лечение',38,1,1),('Уход за собой',39,1,1),('Развозка',29,1,1),('Хор',30,1,1)]
 
  def parse_date(x):
@@ -70,7 +75,7 @@ def main():
   spent,unmapped=actuals(start,min(end,today)) if today>=start else ({},[])
   budgets=[{'name':name,'limit':(500*(5 if i==0 else 4) if name=='Хор' else v(b,row,col+i if row in (35,36,37,38,39) else col)*factor),'spent':spent.get(name,0.0)} for name,row,col,factor in cats]
   cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}','income':v(b,17,i+1),'expenses':v(b,16,i+1),'possibleReturn':v(b,19,i+1),'budgets':budgets,'unmappedExpenses':unmapped})
- report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,55),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5]),'received':n(dayrow[6])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
+ report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,55),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5] if legacy_day else dayrow[3]),'received':n(dayrow[6] if legacy_day else dayrow[4])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
 
  encrypt_report(report,os.environ['FINANCE_OWNER_PASSWORD'],'finance/data/owner.enc')
  # Only family-appropriate fields go into the separate ciphertext.
