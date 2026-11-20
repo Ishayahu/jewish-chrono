@@ -76,24 +76,29 @@ def main():
   y=date.year+(date.month-1+months)//12
   m=(date.month-1+months)%12+1
   return dt.date(y,m,21)
- base=cycle_start(today)
+ def sheet_date(value):
+  if isinstance(value,(int,float)):
+   return dt.date(1899,12,30)+dt.timedelta(days=int(value))
+  if isinstance(value,str):
+   return dt.datetime.strptime(value,'%d.%m.%Y').date()
+  raise ValueError('Invalid rolling cycle date')
  categories=[str(rolling[row-1][0]) for row in range(6,17)]
  cycles=[]
  for i in range(3):
-  start=shift_month(base,i)
-  end=shift_month(base,i+1)-dt.timedelta(days=1)
+  start=sheet_date(rolling[2][i+1])
+  end=sheet_date(rolling[3][i+1])
+  if end<start or (i>0 and start!=sheet_date(rolling[3][i])+dt.timedelta(days=1)):
+   raise ValueError('Rolling budget dates are inconsistent')
   spent,unmapped=actuals(start,min(end,today)) if today>=start else ({},[])
   budgets=[]
   for row,name in enumerate(categories,6):
    limit=v(rolling,row,i+1)
    prepaid=sum(n(x[3]) for x in rolling[17:] if len(x)>3 and str(x[1]).strip()==start.strftime('%d.%m.%Y') and str(x[2]).strip()==name and isinstance(x[3],(int,float)))
    budgets.append({'name':name,'limit':limit,'spent':round(spent.get(name,0)+prepaid,2),'prepaid':prepaid})
-  # Forecasts in the legacy sheet are specific to Nov/Dec and Dec/Jan, not rolling.
-  legacy_index=0 if start==dt.date(2026,11,21) else 1 if start==dt.date(2026,12,21) else None
+  income=v(rolling,33,i+1)
+  expenses=v(rolling,35,i+1)
   cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}',
-   'income':v(b,17,legacy_index+1) if legacy_index is not None else None,
-   'expenses':v(b,16,legacy_index+1) if legacy_index is not None else None,
-   'possibleReturn':v(b,19,legacy_index+1) if legacy_index is not None else None,
+   'income':income,'expenses':expenses,'possibleReturn':None,
    'budgets':budgets,'unmappedExpenses':unmapped})
  report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,55),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5] if legacy_day else dayrow[3]),'received':n(dayrow[6] if legacy_day else dayrow[4])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
 
