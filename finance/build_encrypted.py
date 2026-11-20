@@ -73,7 +73,12 @@ def main():
  cycles=[]
  for i,(start,end) in enumerate([(dt.date(2026,11,21),dt.date(2026,12,20)),(dt.date(2026,12,21),dt.date(2027,1,20))]):
   spent,unmapped=actuals(start,min(end,today)) if today>=start else ({},[])
-  budgets=[{'name':name,'limit':(500*(5 if i==0 else 4) if name=='Хор' else v(b,row,col+i if row in (35,36,37,38,39) else col)*factor),'spent':spent.get(name,0.0)} for name,row,col,factor in cats]
+  budgets=[]
+  for name,row,col,factor in cats:
+   limit=500*(5 if i==0 else 4) if name=='Хор' else v(b,row,col+i if row in (35,36,37,38,39) else col)*factor
+   prepaid=v(b,39,4 if i==0 else 6) if name=='Уход за собой' else 0.0
+   actual=spent.get(name,0.0)
+   budgets.append({'name':name,'limit':limit,'spent':round(actual+prepaid,2),'prepaid':prepaid})
   cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}','income':v(b,17,i+1),'expenses':v(b,16,i+1),'possibleReturn':v(b,19,i+1),'budgets':budgets,'unmappedExpenses':unmapped})
  report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,55),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5] if legacy_day else dayrow[3]),'received':n(dayrow[6] if legacy_day else dayrow[4])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
 
