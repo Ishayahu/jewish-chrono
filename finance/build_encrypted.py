@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 SID='1nQNEresKTI0b5LzVhmZQhT0AFLmqWhKNlz369CIoCPU'
-ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:N1000","'Утренняя цель — новая схема'!A4:I400"]
+ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:N1000","'Утренняя цель — новая схема'!A4:I400","'Бюджет — скользящие циклы'!A1:J200"]
 def encrypt_report(report,password,filename):
  if len(password)<12:raise ValueError('Password too short')
  salt,iv=secrets.token_bytes(16),secrets.token_bytes(12)
@@ -20,7 +20,7 @@ def main():
  c=service_account.Credentials.from_service_account_info(json.loads(os.environ['FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON']),scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'])
  r=AuthorizedSession(c).get(f'https://sheets.googleapis.com/v4/spreadsheets/{SID}/values:batchGet',params=[('ranges',x) for x in ranges]+[('valueRenderOption','UNFORMATTED_VALUE')],timeout=45)
  r.raise_for_status()
- p,d,b,operations,daily=[x.get('values',[]) for x in r.json()['valueRanges']]
+ p,d,b,operations,daily,rolling=[x.get('values',[]) for x in r.json()['valueRanges']]
  def n(x):
   if isinstance(x,bool) or not isinstance(x,(int,float)):raise ValueError('Invalid numeric cell')
   return round(float(x),2)
@@ -70,28 +70,42 @@ def main():
    else:unmapped.append({'row':ix,'amount':amount,'category':str(x[6]),'subcategory':str(x[7])})
   return spent,unmapped
 
+ def cycle_start(day):
+  return dt.date(day.year,day.month,21) if day.day>=21 else (dt.date(day.year-1,12,21) if day.month==1 else dt.date(day.year,day.month-1,21))
+ def shift_month(date,months):
+  y=date.year+(date.month-1+months)//12
+  m=(date.month-1+months)%12+1
+  return dt.date(y,m,21)
+ base=cycle_start(today)
+ categories=[str(rolling[row-1][0]) for row in range(6,17)]
  cycles=[]
- for i,(start,end) in enumerate([(dt.date(2026,11,21),dt.date(2026,12,20)),(dt.date(2026,12,21),dt.date(2027,1,20))]):
+ for i in range(3):
+  start=shift_month(base,i)
+  end=shift_month(base,i+1)-dt.timedelta(days=1)
   spent,unmapped=actuals(start,min(end,today)) if today>=start else ({},[])
   budgets=[]
-  for name,row,col,factor in cats:
-   limit=500*(5 if i==0 else 4) if name=='Хор' else v(b,row,col+i if row in (35,36,37,38,39) else col)*factor
-   prepaid=v(b,39,4 if i==0 else 6) if name=='Уход за собой' else 0.0
-   actual=spent.get(name,0.0)
-   budgets.append({'name':name,'limit':limit,'spent':round(actual+prepaid,2),'prepaid':prepaid})
-  cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}','income':v(b,17,i+1),'expenses':v(b,16,i+1),'possibleReturn':v(b,19,i+1),'budgets':budgets,'unmappedExpenses':unmapped})
+  for row,name in enumerate(categories,6):
+   limit=v(rolling,row,i+1)
+   prepaid=sum(n(x[3]) for x in rolling[17:] if len(x)>3 and str(x[1]).strip()==start.strftime('%d.%m.%Y') and str(x[2]).strip()==name and isinstance(x[3],(int,float)))
+   budgets.append({'name':name,'limit':limit,'spent':round(spent.get(name,0)+prepaid,2),'prepaid':prepaid})
+  # Forecasts in the legacy sheet are specific to Nov/Dec and Dec/Jan, not rolling.
+  legacy_index=0 if start==dt.date(2026,11,21) else 1 if start==dt.date(2026,12,21) else None
+  cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}',
+   'income':v(b,17,legacy_index+1) if legacy_index is not None else None,
+   'expenses':v(b,16,legacy_index+1) if legacy_index is not None else None,
+   'possibleReturn':v(b,19,legacy_index+1) if legacy_index is not None else None,
+   'budgets':budgets,'unmappedExpenses':unmapped})
  report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,55),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5] if legacy_day else dayrow[3]),'received':n(dayrow[6] if legacy_day else dayrow[4])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
 
  encrypt_report(report,os.environ['FINANCE_OWNER_PASSWORD'],'finance/data/owner.enc')
  # Only family-appropriate fields go into the separate ciphertext.
- start_at=[dt.datetime(2026,11,21,18,tzinfo=ZoneInfo('Europe/Moscow')),dt.datetime(2026,12,21,0,tzinfo=ZoneInfo('Europe/Moscow'))]
- active=next((i for i,st in enumerate(start_at) if now>=st and now<(start_at[i+1] if i+1<len(start_at) else dt.datetime(2027,1,21,0,tzinfo=ZoneInfo('Europe/Moscow')))),None)
+ active=0 if today>=dt.date(2026,11,21) else None
  family={'asOf':report['asOf'],'cycle':None}
  if active is not None:
-  c=cycles[active]
-  adjustment=500 if active==0 else 0
-  family['cycle']={'label':c['label'],'income':c['income'],'expenses':c['expenses']+adjustment,
-                   'possibleReturn':c['possibleReturn'],'budgets':c['budgets'],'unmappedExpenses':c['unmappedExpenses']}
+  current=next((x for x in cycles if x['label'].startswith(f'{cycle_start(today):%d.%m.%Y}')),None)
+  if current:
+   family['cycle']={'label':current['label'],'income':current['income'],'expenses':current['expenses'],
+    'possibleReturn':current['possibleReturn'],'budgets':current['budgets'],'unmappedExpenses':current['unmappedExpenses']}
  encrypt_report(family,os.environ['WIFE_PASSWORD'],'finance/data/family.enc')
  print('Owner and family encrypted reports created')
 
