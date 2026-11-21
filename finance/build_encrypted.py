@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 SID='1nQNEresKTI0b5LzVhmZQhT0AFLmqWhKNlz369CIoCPU'
-ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:N1000","'Утренняя цель — новая схема'!A4:I400","'Бюджет — скользящие циклы'!A1:J200"]
+ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:R1000","'Утренняя цель — новая схема'!A4:I400","'Бюджет — скользящие циклы'!A1:J200"]
 def encrypt_report(report,password,filename):
  if len(password)<12:raise ValueError('Password too short')
  salt,iv=secrets.token_bytes(16),secrets.token_bytes(12)
@@ -56,16 +56,19 @@ def main():
   if category=='личные расходы' and 'уход за собой' in sub:return 'Уход за собой'
   return None
  def actuals(start,end):
+  # Q is the budget cycle assigned to the transaction; A is the payment date.
+  # R is the explicit budget category. Never add a second prepaid amount.
   spent={name:0.0 for name,_,_,_ in cats}
   unmapped=[]
   for ix,x in enumerate(operations[1:],2):
-   date=parse_date(x[0] if x else None)
+   date=parse_date(x[16] if len(x)>16 and x[16] else (x[15] if len(x)>15 and x[15] else (x[0] if x else None)))
    if date is None or not start<=date<=end:continue
    if len(x)<10 or str(x[1]).strip()!='Расход' or str(x[4]).strip()!='RUB' or str(x[5]).strip()!='Совершено' or str(x[9]).strip()!='Факт':continue
    try:amount=n(x[3])
    except (ValueError,TypeError):continue
    if amount<0:continue
-   name=classify(x)
+   explicit=str(x[17]).strip() if len(x)>17 else ''
+   name=({'Покупки к Шаббату':'Шаббат','Шаббат':'Шаббат'}.get(explicit,explicit) if explicit in {item[0] for item in cats}|{'Покупки к Шаббату'} else classify(x))
    if name:spent[name]=round(spent[name]+amount,2)
    else:unmapped.append({'row':ix,'amount':amount,'category':str(x[6]),'subcategory':str(x[7])})
   return spent,unmapped
@@ -93,8 +96,7 @@ def main():
   budgets=[]
   for row,name in enumerate(categories,6):
    limit=v(rolling,row,i+1)
-   prepaid=sum(n(x[3]) for x in rolling[17:] if len(x)>3 and str(x[1]).strip()==start.strftime('%d.%m.%Y') and str(x[2]).strip()==name and isinstance(x[3],(int,float)))
-   budgets.append({'name':name,'limit':limit,'spent':round(spent.get(name,0)+prepaid,2),'prepaid':prepaid})
+   budgets.append({'name':name,'limit':limit,'spent':round(spent.get(name,0),2),'prepaid':0})
   income=v(rolling,33,i+1)
   expenses=v(rolling,35,i+1)
   cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}',
