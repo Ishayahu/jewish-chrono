@@ -22,7 +22,12 @@ def main():
  r.raise_for_status()
  p,d,b,operations,daily,rolling=[x.get('values',[]) for x in r.json()['valueRanges']]
  def n(x):
-  if isinstance(x,bool) or not isinstance(x,(int,float)):raise ValueError('Invalid numeric cell')
+  if isinstance(x,bool):raise ValueError('Invalid numeric cell')
+  if isinstance(x,str):
+   x=x.replace('\u00a0','').replace(' ','').replace(',','.')
+   try:x=float(x)
+   except ValueError:raise ValueError('Invalid numeric cell')
+  if not isinstance(x,(int,float)):raise ValueError('Invalid numeric cell')
   return round(float(x),2)
  def v(rows,row,col=1):return n(rows[row-1][col])
  now=dt.datetime.now(ZoneInfo('Europe/Moscow'));today=now.date()
