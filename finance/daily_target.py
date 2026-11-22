@@ -181,10 +181,20 @@ def ensure_daily_target(session,sid,ops,daily,rolling,now):
    "replacement":"__finance_write_probe_20261123_no_match__",
    "sheetId":SHEET_ID,"matchCase":True}}]},timeout=45)
  probe.raise_for_status()
- if now.hour<5:return daily,live
+ # The live forecast is meaningful before 05:00; always publish it independently
+ # of whether today's *fixed* target exists. Do not reset any daily target here.
+ live_forecast_request={"updateCells":{"range":{
+  "sheetId":871589126,"startRowIndex":55,"endRowIndex":56,
+  "startColumnIndex":1,"endColumnIndex":2},
+  "rows":[{"values":[cellval(live)]}],"fields":"userEnteredValue"}}
+ if now.hour<5:
+  response=session.post(f"https://sheets.googleapis.com/v4/spreadsheets/{sid}:batchUpdate",
+   json={"requests":[live_forecast_request]},timeout=45)
+  response.raise_for_status()
+  return daily,live
  rows=rows_by_date(daily)
  existing=rows.get(today)
- actions=[]
+ actions=[live_forecast_request]
  added={}
  if not existing or len(existing[1])<4 or existing[1][3] in ("",None):
   if existing:
