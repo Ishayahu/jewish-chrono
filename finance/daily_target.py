@@ -138,6 +138,13 @@ def ensure_daily_target(session,sid,ops,daily,rolling,now):
  plan=plan_from_rolling(rolling,1,cycle_opening(start,daily,ops))
  if day(plan["start"])!=start:raise ValueError("Rolling budget date differs from Moscow cycle")
  live=forecast(plan,ops,today+dt.timedelta(days=1))
+ # Verify this GitHub Actions service account has spreadsheet EDIT permission even
+ # before the first 05:00 fixation. A no-match replace does not modify cells.
+ probe=session.post(f"https://sheets.googleapis.com/v4/spreadsheets/{sid}:batchUpdate",
+  json={"requests":[{"findReplace":{"find":"__finance_write_probe_20261123_no_match__",
+   "replacement":"__finance_write_probe_20261123_no_match__",
+   "sheetId":SHEET_ID,"matchCase":True}}]},timeout=45)
+ probe.raise_for_status()
  if now.hour<5:return daily,live
  rows=rows_by_date(daily)
  existing=rows.get(today)
