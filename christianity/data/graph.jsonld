@@ -1956,6 +1956,19 @@
       "category": "secondary_study",
       "sourceDescription": "Исторический обзор и даты правления императоров династии Северов",
       "humanReviewStatus": "not_reviewed"
+    },
+    {
+      "@id": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#research-question/arius-nicaea--worship-created-son",
+      "@type": "OpenResearchQuestion",
+      "label": "Возможный ответ на обвинение Ария в поклонении творению: различение почитания (προσκύνησις) и богослужения (λατρεία). Если допустимо почитать сотворённых ангелов и святых, почему почитание сотворённого Сына обязательно считать богослужением творению? Необходимо доказать, что Сыну воздавалась именно λατρεία, а не относительное почитание, направленное через Него к Отцу.",
+      "inControversy": "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#controversy/arius-nicaea",
+      "relatedClaims": [
+        "https://ishayahu.github.io/jewish-chrono/christianity/data/graph.jsonld#claim/arius-nicaea--danger--nicene"
+      ],
+      "evidenceStatus": "work_needed",
+      "humanReviewStatus": "not_reviewed",
+      "citedSources": [],
+      "note": "Исследовательское возражение пользователя, не позиция, документально приписанная Арию. Проверить у Афанасия «Против ариан» II §§23–24 контекст аргумента, раннеарианские свидетельства о богослужебном статусе Сына, семантику προσκυνέω/λατρεύω в IV веке; отдельно сопоставить позднее различение почитания и служения на II Никейском соборе 787 года. Не переносить без доказательств терминологию VIII века в IV век; сравнение с иконопочитанием — поздняя аналитическая аналогия, а не исторический ответ Ария."
     }
   ]
 }
