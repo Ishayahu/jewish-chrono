@@ -185,6 +185,7 @@ def ensure_daily_target(session,sid,ops,daily,rolling,now):
  rows=rows_by_date(daily)
  existing=rows.get(today)
  actions=[]
+ added={}
  if not existing or len(existing[1])<4 or existing[1][3] in ("",None):
   if existing:
    rownum=existing[0]
@@ -197,6 +198,7 @@ def ensure_daily_target(session,sid,ops,daily,rolling,now):
     date=latest+dt.timedelta(days=step)
     if date<start:continue
     last+=1
+    added[date]=last
     if last>400:raise ValueError("Daily goal grid is full")
     opening,remaining,target=daily_target(plan,ops,date)
     actions.append({"copyPaste":{"source":range_for(last-1,0,9),
@@ -212,8 +214,9 @@ def ensure_daily_target(session,sid,ops,daily,rolling,now):
  actions.append(update_row(rownum,8,[live,now.strftime("%d.%m.%Y %H:%M:%S МСК")]))
  # Preserve the current cycle's plan snapshot to reconstruct a rollover.
  first=rows.get(start)
- if first:
-  actions.append(update_row(first[0],10,[json.dumps(plan,ensure_ascii=False,separators=(",",":"))]))
+ first_row=first[0] if first else added.get(start)
+ if first_row:
+  actions.append(update_row(first_row,10,[json.dumps(plan,ensure_ascii=False,separators=(",",":"))]))
  if actions:
   response=session.post(f"https://sheets.googleapis.com/v4/spreadsheets/{sid}:batchUpdate",
                         json={"requests":actions},timeout=45)
