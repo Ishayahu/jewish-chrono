@@ -98,6 +98,42 @@ def forecast(plan,ops,before):
  pending_inc=max(ZERO,money(plan["regular"])-salary)+max(ZERO,money(plan["lessons"])-lessons)
  return money(money(plan["opening"])+actual_exp+pending_exp-actual_inc-pending_inc)
 
+def extra_daily_income(plan,ops,today):
+ """Only available RUB earnings not already included in planned salaries/lessons.
+ Reimbursements change the overall deficit but must not create a debt-saving bonus."""
+ start=day(plan["start"])
+ planned_lessons=money(plan["lessons"])
+ allocated_lessons=ZERO
+ eligible=ZERO
+ items=[]
+ for r in ops[1:]:
+  if len(r)<12 or str(r[1]).strip()!="Приход" or str(r[4]).strip()!="RUB":continue
+  if str(r[5]).strip()!="Совершено" or str(r[9]).strip()!="Факт":continue
+  cash=day(r[0])
+  if cash is None or not start<=cash<=today:continue
+  items.append((cash,r))
+ items.sort(key=lambda pair:pair[0])
+ for cash,r in items:
+  amount=money(r[3])
+  note=str(r[11]).casefold()
+  if "получено чистыми" in note:available=amount
+  elif "доступно 80%" in note:available=money(amount*Decimal(".8"))
+  else:available=money(amount*Decimal(".7"))
+  sub=str(r[7] if len(r)>7 else "").strip().casefold()
+  category=str(r[6] if len(r)>6 else "").strip().casefold()
+  title=str(r[2] if len(r)>2 else "").strip().casefold()
+  if "плановая зарплата" in note:extra=ZERO
+  elif sub=="уроки":
+   still_planned=max(ZERO,planned_lessons-allocated_lessons)
+   planned_part=min(still_planned,available)
+   allocated_lessons+=planned_part
+   extra=available-planned_part
+  elif "компенсац" in title or "возмещен" in title or "компенсац" in sub or category=="целевые поступления":
+   extra=ZERO
+  else:extra=available
+  if cash==today:eligible+=extra
+ return money(eligible)
+
 def rows_by_date(daily):
  return {day(r[0]):(i+4,r) for i,r in enumerate(daily) if r and day(r[0])}
 
@@ -169,6 +205,9 @@ def ensure_daily_target(session,sid,ops,daily,rolling,now):
    rownum=last
  else:
   rownum=existing[0]
+ # E is the extra earned money, not the already-budgeted salary / lesson forecast.
+ # Write a number to cover text-valued numerics such as "1293,70".
+ actions.append(update_row(rownum,4,[extra_daily_income(plan,ops,today)]))
  # Only live forecast / timestamp may change after the target has been fixed.
  actions.append(update_row(rownum,8,[live,now.strftime("%d.%m.%Y %H:%M:%S МСК")]))
  # Preserve the current cycle's plan snapshot to reconstruct a rollover.
