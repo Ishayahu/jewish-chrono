@@ -68,7 +68,8 @@ def main():
   spent={name:0.0 for name,_,_,_ in cats}
   unmapped=[]
   for ix,x in enumerate(operations[1:],2):
-   date=parse_date(x[16] if len(x)>16 and x[16] else (x[15] if len(x)>15 and x[15] else (x[0] if x else None)))
+   # Q may hold a formula error; fall back to assigned-cycle date P, then cash date A.
+   date=next((d0 for d0 in (parse_date(x[16] if len(x)>16 else None),parse_date(x[15] if len(x)>15 else None),parse_date(x[0] if x else None)) if d0 is not None),None)
    if date is None or not start<=date<=end:continue
    if len(x)<10 or str(x[1]).strip()!='Расход' or str(x[4]).strip()!='RUB' or str(x[5]).strip()!='Совершено' or str(x[9]).strip()!='Факт':continue
    try:amount=n(x[3])
