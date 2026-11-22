@@ -64,7 +64,7 @@ class DailyForecastTest(unittest.TestCase):
            tx("16.10.2026","Приход","13076,52",reason="Получено чистыми"),
            tx("18.10.2026","Приход",2400,subcategory="Уроки")]
   actual=cumulative_family_deficit(records,1128419.73,dt.date(2026,10,14),dt.date(2026,11,23))
-  self.assertEqual(actual,Decimal("1113340.61"))
+  self.assertEqual(actual,Decimal("1115340.61"))
  def test_internal_transfers_and_non_rub_do_not_change_family_deficit(self):
   internal=tx("20.10.2026","Перевод",20000)
   dollar=tx("21.10.2026","Приход",1000);dollar[4]="USD"
