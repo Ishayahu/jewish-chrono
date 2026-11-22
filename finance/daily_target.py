@@ -72,8 +72,9 @@ def forecast(plan,ops,before):
   if cash is None or cash>=before:continue
   direction=str(r[1]).strip()
   if direction not in ("Приход","Расход"):continue
+  # A signed RUB amount can be a confirmed refund/reversal (e.g. -339.98 RUB).
+  # Keep it signed so the underlying payment is not counted twice.
   amount=money(r[3])
-  if amount<0:raise ValueError("Negative transaction")
   if direction=="Расход":
    name=classify(r,budgets)
    assigned=day(r[15]) if len(r)>15 and r[15] else None
