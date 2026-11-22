@@ -50,6 +50,11 @@ class DailyForecastTest(unittest.TestCase):
  def test_compensation_not_profit(self):
   r=tx("23.11.2026","Приход","1293,70",subcategory="Компенсация за еду",reason="Получено чистыми")
   self.assertEqual(extra_daily_income(PLAN,[[],r],dt.date(2026,11,23)),Decimal("0.00"))
+ def test_lessons_above_plan_are_extra(self):
+  short_plan=dict(PLAN,lessons=1680.0)
+  records=[[],tx("23.11.2026","Приход",2400,subcategory="Уроки"),
+           tx("23.11.2026","Приход",2400,subcategory="Уроки")]
+  self.assertEqual(extra_daily_income(short_plan,records,dt.date(2026,11,23)),Decimal("1680.00"))
  def test_prepayment_not_counted_twice(self):
   r=tx("19.11.2026","Расход",6000,subcategory="Уход за собой",category="Личные расходы",assigned="21.11.2026")
   self.assertEqual(forecast(PLAN,[[],r],dt.date(2026,11,23)),self.baseline()-6000)
