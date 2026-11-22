@@ -2,7 +2,7 @@
 import datetime as dt
 import unittest
 from decimal import Decimal
-from finance.daily_target import forecast,daily_target,cycle_start,next_cycle
+from finance.daily_target import forecast,daily_target,cycle_start,next_cycle,extra_daily_income
 
 PLAN={"start":"21.11.2026","end":"20.12.2026","opening":37862.85,
       "budgets":{"Аренда":185000.0,"Прочие дети":5000.0,"Уход за собой":20000.0},
@@ -42,6 +42,14 @@ class DailyForecastTest(unittest.TestCase):
   self.assertEqual(daily_target(PLAN,[[],r],dt.date(2026,11,23)),
                    daily_target(PLAN,[],dt.date(2026,11,23)))
   self.assertEqual(forecast(PLAN,[[],r],dt.date(2026,11,24)),self.baseline()-8000)
+ def test_extra_income_excludes_budgeted_salary_and_lessons(self):
+  earned=[[],tx("23.11.2026","Приход",36075,reason="Плановая зарплата"),
+          tx("23.11.2026","Приход",2400,subcategory="Уроки"),
+          tx("23.11.2026","Приход",1000,reason="Получено чистыми")]
+  self.assertEqual(extra_daily_income(PLAN,earned,dt.date(2026,11,23)),Decimal("1000.00"))
+ def test_compensation_not_profit(self):
+  r=tx("23.11.2026","Приход","1293,70",subcategory="Компенсация за еду",reason="Получено чистыми")
+  self.assertEqual(extra_daily_income(PLAN,[[],r],dt.date(2026,11,23)),Decimal("0.00"))
  def test_prepayment_not_counted_twice(self):
   r=tx("19.11.2026","Расход",6000,subcategory="Уход за собой",category="Личные расходы",assigned="21.11.2026")
   self.assertEqual(forecast(PLAN,[[],r],dt.date(2026,11,23)),self.baseline()-6000)
