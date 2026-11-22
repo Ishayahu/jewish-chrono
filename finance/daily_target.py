@@ -98,6 +98,31 @@ def forecast(plan,ops,before):
  pending_inc=max(ZERO,money(plan["regular"])-salary)+max(ZERO,money(plan["lessons"])-lessons)
  return money(money(plan["opening"])+actual_exp+pending_exp-actual_inc-pending_inc)
 
+
+def cumulative_family_deficit(ops,baseline,snapshot_date,through_date):
+ """Historical family-wide deficit adjusted only by confirmed RUB cash flows.
+
+ The archived deficit is a dated snapshot, not this budget cycle's zero.
+ Do not add debt balances, internal transfers or forecast transactions.
+ """
+ deficit=money(baseline)
+ for r in ops[1:]:
+  if len(r)<12:continue
+  if str(r[4]).strip()!="RUB" or str(r[5]).strip()!="Совершено" or str(r[9]).strip()!="Факт":continue
+  cash=day(r[0])
+  if cash is None or cash<=snapshot_date or cash>through_date:continue
+  direction=str(r[1]).strip()
+  if direction not in ("Приход","Расход"):continue
+  # Some confirmed historical cash entries are text numerics such as "1677,40".
+  amount=money(r[3])
+  if direction=="Расход":
+   deficit+=amount  # Signed refunds subtract from recorded expenses.
+  else:
+   note=str(r[11]).casefold()
+   portion=Decimal("1") if "получено чистыми" in note else (Decimal(".8") if "доступно 80%" in note else Decimal(".7"))
+   deficit-=amount*portion
+ return money(deficit)
+
 def extra_daily_income(plan,ops,today):
  """Only available RUB earnings not already included in planned salaries/lessons.
  Reimbursements change the overall deficit but must not create a debt-saving bonus."""
