@@ -2,7 +2,7 @@
 import datetime as dt
 import unittest
 from decimal import Decimal
-from finance.daily_target import forecast,daily_target,cycle_start,next_cycle,extra_daily_income
+from finance.daily_target import forecast,daily_target,cycle_start,next_cycle,extra_daily_income,cumulative_family_deficit
 
 PLAN={"start":"21.11.2026","end":"20.12.2026","opening":37862.85,
       "budgets":{"Аренда":185000.0,"Прочие дети":5000.0,"Уход за собой":20000.0},
@@ -58,6 +58,18 @@ class DailyForecastTest(unittest.TestCase):
  def test_prepayment_not_counted_twice(self):
   r=tx("19.11.2026","Расход",6000,subcategory="Уход за собой",category="Личные расходы",assigned="21.11.2026")
   self.assertEqual(forecast(PLAN,[[],r],dt.date(2026,11,23)),self.baseline()-6000)
+ def test_cumulative_family_deficit_from_historical_snapshot(self):
+  records=[[],tx("14.10.2026","Приход",10000,reason="Получено чистыми"),
+           tx("15.10.2026","Расход","1677,40"),
+           tx("16.10.2026","Приход","13076,52",reason="Получено чистыми"),
+           tx("18.10.2026","Приход",2400,subcategory="Уроки")]
+  actual=cumulative_family_deficit(records,1128419.73,dt.date(2026,10,14),dt.date(2026,11,23))
+  self.assertEqual(actual,Decimal("1113340.61"))
+ def test_internal_transfers_and_non_rub_do_not_change_family_deficit(self):
+  internal=tx("20.10.2026","Перевод",20000)
+  dollar=tx("21.10.2026","Приход",1000);dollar[4]="USD"
+  unconfirmed=tx("22.10.2026","Расход",4000);unconfirmed[5]="Ожидается"
+  self.assertEqual(cumulative_family_deficit([[],internal,dollar,unconfirmed],100000,dt.date(2026,10,14),dt.date(2026,11,23)),Decimal("100000.00"))
  def test_cycle_ends(self):
   self.assertEqual(cycle_start(dt.date(2026,12,20)),dt.date(2026,11,21))
   self.assertEqual(next_cycle(dt.date(2026,12,21)),dt.date(2027,1,21))
