@@ -5,8 +5,9 @@ from google.auth.transport.requests import AuthorizedSession
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
+from daily_target import ensure_daily_target
 SID='1nQNEresKTI0b5LzVhmZQhT0AFLmqWhKNlz369CIoCPU'
-ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:R1000","'Утренняя цель — новая схема'!A4:I400","'Бюджет — скользящие циклы'!A1:J200"]
+ranges=["'Финансовая позиция'!A1:B55","'Дневное распределение'!A4:K130","'Бюджет — с 21.11.2026'!A1:D40","'Операции'!A1:R1000","'Утренняя цель — новая схема'!A4:L400","'Бюджет — скользящие циклы'!A1:J200"]
 def encrypt_report(report,password,filename):
  if len(password)<12:raise ValueError('Password too short')
  salt,iv=secrets.token_bytes(16),secrets.token_bytes(12)
@@ -17,7 +18,7 @@ def encrypt_report(report,password,filename):
  Path(filename).write_text(json.dumps(out))
 
 def main():
- c=service_account.Credentials.from_service_account_info(json.loads(os.environ['FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON']),scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'])
+ c=service_account.Credentials.from_service_account_info(json.loads(os.environ['FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON']),scopes=['https://www.googleapis.com/auth/spreadsheets'])
  r=AuthorizedSession(c).get(f'https://sheets.googleapis.com/v4/spreadsheets/{SID}/values:batchGet',params=[('ranges',x) for x in ranges]+[('valueRenderOption','UNFORMATTED_VALUE')],timeout=45)
  r.raise_for_status()
  p,d,b,operations,daily,rolling=[x.get('values',[]) for x in r.json()['valueRanges']]
@@ -31,6 +32,7 @@ def main():
   return round(float(x),2)
  def v(rows,row,col=1):return n(rows[row-1][col])
  now=dt.datetime.now(ZoneInfo('Europe/Moscow'));today=now.date()
+ daily,current_deficit=ensure_daily_target(AuthorizedSession(c),SID,operations,daily,rolling,now)
  dayrow=next((x for x in daily[1:] if x and x[0]==today.strftime('%d.%m.%Y')),None)
  if dayrow is None and today<dt.date(2026,11,21):
   dayrow=next((x for x in d[1:] if x and x[0]==today.strftime('%d.%m.%Y')),None)
@@ -107,7 +109,7 @@ def main():
   cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}',
    'income':income,'expenses':expenses,'possibleReturn':None,
    'budgets':budgets,'unmappedExpenses':unmapped})
- report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,55),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5] if legacy_day else dayrow[3]),'received':n(dayrow[6] if legacy_day else dayrow[4])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
+ report={'asOf':now.strftime('%d.%m.%Y %H:%M МСК'),'balance':v(p,28),'deficit':max(0,float(current_deficit)) if current_deficit is not None else v(p,8),'rubDebts':[{'name':name,'amount':v(p,row)} for name,row in [('Цдока МЕОЦ',9),('Маме',10),('Бюджет МЕОЦ',11),('Собственный ГМАХ',12)]],'usdDebt':v(p,13),'rate':v(b,13),'savedRub':v(p,55),'reserveTargetRub':v(p,26),'day':{'target':n(dayrow[5] if legacy_day else dayrow[3]),'received':n(dayrow[6] if legacy_day else dayrow[4])} if dayrow else None,'cycles':cycles,'children':[{'name':name,'amount':v(p,row)} for name,row in [('Дочь',47),('Леви',48),('Давид',49)]],'installments':[{'name':'Алиса с экраном','count':2,'payment':v(p,45)/2},{'name':'Алиса в гостиной','count':4,'payment':v(p,46)/4}]}
 
  encrypt_report(report,os.environ['FINANCE_OWNER_PASSWORD'],'finance/data/owner.enc')
  # Only family-appropriate fields go into the separate ciphertext.
