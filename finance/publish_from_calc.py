@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T15:20:00+03:00
+# VERSION: 2026-11-23T15:55:00+03:00
 """Standalone publisher for encrypted financial dashboards from saved local Calc.
 
 Only ONE Python file is needed. No Windows CMD launcher or second Python module.
@@ -38,11 +38,18 @@ from datetime import timedelta
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 import xml.etree.ElementTree as ET
 import zipfile
+import re
 
 # Inlined local Calc model: this script is completely standalone.
 SHEET = 'Семейные Траты'
 FIRST_BLOCK = 640
 BLOCK_SIZE = 14
+# Named ODS sources requested by the user. Values stay on the local machine.
+SOURCE_CELLS = {
+    'Мои': ('C50','C57','C68'),
+    'Сводка': ('I23','I14','I17','I9'),
+    'ГМАХ мой': ('C5',),
+}
 RUB_PER_USD = Decimal('60')
 T = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}'
 O = '{urn:oasis:names:tc:opendocument:xmlns:office:1.0}'
@@ -92,15 +99,24 @@ class Workbook:
         self.path=Path(path)
         if not self.path.is_file(): raise CalcError(f'Workbook not found: {self.path}')
         self.cells={}
+        self.source_values={}
         if self.path.suffix.lower()=='.ods': self._read_ods()
         elif self.path.suffix.lower() in ('.xlsx','.xls','.xlsb'):
             try:from python_calamine import CalamineWorkbook
             except ImportError as exc:raise CalcError('Install python-calamine to read Excel files; ODS needs no extra parser') from exc
-            sheet=CalamineWorkbook.from_path(str(path)).get_sheet_by_name(SHEET)
+            excel=CalamineWorkbook.from_path(str(path))
+            sheet=excel.get_sheet_by_name(SHEET)
             for ri,row in enumerate(sheet.to_python(skip_empty_area=False),1):
                 if ri<FIRST_BLOCK:continue
                 for ci,value in enumerate(row):
                     if value is not None and value!='':self.cells[(ri,ci)]=value
+            for source_sheet, refs in SOURCE_CELLS.items():
+                data=excel.get_sheet_by_name(source_sheet).to_python(skip_empty_area=False)
+                for ref in refs:
+                    match=re.fullmatch(r'([A-Z]+)([0-9]+)',ref)
+                    row_idx=int(match.group(2))-1; col_idx=colindex(match.group(1))
+                    if row_idx<len(data) and col_idx<len(data[row_idx]):
+                        self.source_values[(source_sheet,ref)]=data[row_idx][col_idx]
         else:raise CalcError('Supported formats: saved .ods, .xlsx, .xls and .xlsb')
 
     def _read_ods(self):
@@ -139,6 +155,51 @@ class Workbook:
                                 self.cells[(rn,ci+d)]=val
                 ci+=count
             if ri>10000:break
+        # Read only the precise extra cells needed for debts and savings.
+        # Never expose individual household values in the GitHub source.
+        for source_sheet, refs in SOURCE_CELLS.items():
+            extra=next((e for e in root.iter(T+'table') if e.get(T+'name')==source_sheet),None)
+            if extra is None:
+                raise CalcError(f"Required sheet not found: {source_sheet}")
+            wanted={(int(re.search(r'[0-9]+',ref).group()),colindex(re.match(r'[A-Z]+',ref).group())):ref
+                    for ref in refs}
+            max_row=max(row for row,col in wanted)
+            ri=0
+            for row in extra:
+                if row.tag!=T+'table-row':continue
+                repeat=int(row.get(T+'number-rows-repeated','1'))
+                first,last=ri+1,ri+repeat
+                ri=last
+                if first>max_row:break
+                requested=[(r,c,ref) for (r,c),ref in wanted.items() if first<=r<=last]
+                if not requested:continue
+                ci=0
+                for cell in row:
+                    if cell.tag not in (T+'table-cell',T+'covered-table-cell'):continue
+                    count=int(cell.get(T+'number-columns-repeated','1'))
+                    matched=[(r,ref) for r,c,ref in requested if ci<=c<ci+count]
+                    if matched:
+                        kind=cell.get(O+'value-type')
+                        if kind=='error':
+                            val='#FORMULA-ERROR '+''.join(cell.itertext())[:80]
+                        elif kind in ('float','percentage','currency'):
+                            val=cell.get(O+'value')
+                        elif kind=='date':
+                            val=cell.get(O+'date-value')
+                        elif kind=='boolean':
+                            val=cell.get(O+'boolean-value')=='true'
+                        else:
+                            val=cell.get(O+'string-value')
+                            if val is None:
+                                val=' '.join(''.join(p.itertext()) for p in cell.findall(TX+'p'))
+                        for _,ref in matched:
+                            self.source_values[(source_sheet,ref)]=val
+                    ci+=count
+
+    def source_num(self,source_sheet,ref):
+        if (source_sheet,ref) not in self.source_values:
+            raise CalcError(f"Missing cached source cell {source_sheet}!{ref}; save the workbook.")
+        return money(self.source_values[(source_sheet,ref)],f"{source_sheet}!{ref}")
 
     def cell(self,col,row,required=True):
         x=self.cells.get((row,colindex(col)))
@@ -262,10 +323,10 @@ class PublisherError(ValueError):
     pass
 
 def build_report(book: Workbook, *, today: date, previous: dict | None=None):
-    """Use Calc for three cycles; retain unrelated dashboard fields from prior snapshot.
+    """Read budget, savings and liabilities from cached local Calc values.
 
-    Current source workbook has NO verified cells for personal debts, savings,
-    previous whole-family deficit or payments received *today*. Do not invent them.
+    Children goals, instalments and valuation FX rate are the only inherited
+    fields left until their own Calc sources are mapped.
     """
     cycles = cycles_from_book(book, today)
     prev = previous or {}
@@ -273,9 +334,44 @@ def build_report(book: Workbook, *, today: date, previous: dict | None=None):
     report['cycles'] = cycles
     report['deficit'] = max(0., -cycles[0]['signedResult'])
     report['budgetRate'] = 60
+    # The household deficit is a separate accounting zero-point. Do not
+    # derive it by subtracting cycle income and expenses.
+    report['familyDeficit'] = float(max(ZERO,book.source_num('Мои','C68')))
+    tinkoff = book.source_num('Мои','C50')
+    sberbank = book.source_num('Мои','C57')
+    if tinkoff<0 or sberbank<0:
+        raise CalcError('Savings balances must not be negative (Мои!C50/C57).')
+    report['savingsAccounts'] = [
+        {'name':'Т-Банк','amount':float(tinkoff),'source':'Мои!C50'},
+        {'name':'Сбербанк','amount':float(sberbank),'source':'Мои!C57'},
+    ]
+    report['savedRub'] = float(money(tinkoff+sberbank,'savings total'))
+    # On the supplied 23-Nov ODS, Сводка!I23 is -36,580, close to the
+    # previously recorded USD loan; the adjacent label is "Я арев".
+    # Respect the explicitly supplied cell, but record its source.
+    def liability(source_sheet,ref):
+        signed=book.source_num(source_sheet,ref)
+        if signed>0:
+            raise CalcError(f'Expected non-positive debt balance at {source_sheet}!{ref}, got {signed}.')
+        return float(-signed)
+    report['usdDebt'] = liability('Сводка','I23')
+    report['rubDebts'] = [
+        {'name':'Цдока МЕОЦ','amount':liability('Сводка','I14')},
+        {'name':'Мама','amount':liability('Сводка','I17')},
+        {'name':'Бюджет МЕОЦ','amount':liability('Сводка','I9')},
+        {'name':'Свой ГМАХ','amount':float(max(ZERO,book.source_num('ГМАХ мой','C5')))},
+    ]
+    report.pop('reserveTargetRub',None)
+    report['calcSources'] = {
+        'familyDeficit':'Мои!C68',
+        'usdDebt':'Сводка!I23',
+        'rubDebts':{'Цдока МЕОЦ':'Сводка!I14','Мама':'Сводка!I17',
+                    'Бюджет МЕОЦ':'Сводка!I9','Свой ГМАХ':'ГМАХ мой!C5'},
+        'savings':['Мои!C50','Мои!C57'],
+    }
     report['budgetSource'] = {'workbookSheet': 'Семейные Траты',
             'rows': [c['sourceRow'] for c in cycles],
-            'note': 'Only income, expenses and category values are refreshed from Calc.'}
+            'note': 'Budget, debts, family deficit and bank savings sourced from the saved Calc workbook.'}
     goal = fixed_goal(cycles[0]['signedResult'], cycles[0]['end'], today, previous)
     report['dailyGoal'] = goal
     history=dict(prev.get('goalHistory') or {})
@@ -413,7 +509,7 @@ def publish_encrypted(files:dict[str,str],token:str,expected_head:str):
     return commit
 
 def require_legacy_fields(previous:dict|None):
-    required=('familyDeficit','usdDebt','rate','savedRub','reserveTargetRub','rubDebts','children','installments')
+    required=('rate','children','installments')
     missing=[k for k in required if not isinstance(previous,dict) or k not in previous]
     if missing:
         raise PublisherError('Previous owner.enc is missing fields not yet mapped from Calc: '+', '.join(missing)+
