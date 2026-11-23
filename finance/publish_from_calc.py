@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# VERSION: 2026-11-23T14:45:00+03:00
+# VERSION: 2026-11-23T15:20:00+03:00
 """Standalone publisher for encrypted financial dashboards from saved local Calc.
 
 Only ONE Python file is needed. No Windows CMD launcher or second Python module.
@@ -56,23 +55,23 @@ class CalcError(ValueError):
 
 def money(value, ref):
     if value is None or value == '' or isinstance(value, bool):
-        raise CalcError(f'{ref}: отсутствует сохранённое числовое значение. Сохраните книгу Calc.')
+        raise CalcError(f'{ref}: missing cached numeric value; save the workbook in LibreOffice Calc.')
     try:
         result = Decimal(str(value).replace('\u00a0','').replace(' ', '').replace(',', '.'))
     except (ValueError, InvalidOperation) as exc:
-        raise CalcError(f'{ref}: некорректное число {value!r}') from exc
+        raise CalcError(f'{ref}: invalid numeric value {value!r}') from exc
     if not result.is_finite():
-        raise CalcError(f'{ref}: число не конечное')
+        raise CalcError(f'{ref}: number is not finite')
     return result.quantize(CENT, rounding=ROUND_HALF_UP)
 
 def number(value, ref):
     if value is None or value == '' or isinstance(value, bool):
-        raise CalcError(f'{ref}: пустое числовое значение')
+        raise CalcError(f'{ref}: missing numeric value')
     try:
         d=Decimal(str(value).replace(' ', '').replace(',', '.'))
     except (ValueError,InvalidOperation) as exc:
-        raise CalcError(f'{ref}: неверное число {value!r}') from exc
-    if not d.is_finite(): raise CalcError(f'{ref}: неконечное значение')
+        raise CalcError(f'{ref}: invalid number {value!r}') from exc
+    if not d.is_finite(): raise CalcError(f'{ref}: non-finite number')
     return d
 
 def parse_month(value, ref):
@@ -81,7 +80,7 @@ def parse_month(value, ref):
     for fmt in ('%Y-%m-%d', '%d.%m.%Y'):
         try:return datetime.strptime(str(value).strip(),fmt).date()
         except (ValueError,TypeError):pass
-    raise CalcError(f'{ref}: ожидалась дата первого числа месяца, получено {value!r}')
+    raise CalcError(f'{ref}: expected the first day of a month, got {value!r}')
 
 def colindex(col):
     n=0
@@ -91,25 +90,25 @@ def colindex(col):
 class Workbook:
     def __init__(self, path:Path):
         self.path=Path(path)
-        if not self.path.is_file(): raise CalcError(f'Нет книги {self.path}')
+        if not self.path.is_file(): raise CalcError(f'Workbook not found: {self.path}')
         self.cells={}
         if self.path.suffix.lower()=='.ods': self._read_ods()
         elif self.path.suffix.lower() in ('.xlsx','.xls','.xlsb'):
             try:from python_calamine import CalamineWorkbook
-            except ImportError as exc:raise CalcError('Для чтения Excel установите python-calamine; ODS читается без зависимостей') from exc
+            except ImportError as exc:raise CalcError('Install python-calamine to read Excel files; ODS needs no extra parser') from exc
             sheet=CalamineWorkbook.from_path(str(path)).get_sheet_by_name(SHEET)
             for ri,row in enumerate(sheet.to_python(skip_empty_area=False),1):
                 if ri<FIRST_BLOCK:continue
                 for ci,value in enumerate(row):
                     if value is not None and value!='':self.cells[(ri,ci)]=value
-        else:raise CalcError('Поддерживаются сохранённые .ods и .xlsx/.xls/.xlsb')
+        else:raise CalcError('Supported formats: saved .ods, .xlsx, .xls and .xlsb')
 
     def _read_ods(self):
         try:
             with zipfile.ZipFile(self.path) as z:root=ET.fromstring(z.read('content.xml'))
-        except (OSError,zipfile.BadZipFile,ET.ParseError) as exc:raise CalcError(f'Повреждённый ODS: {exc}') from exc
+        except (OSError,zipfile.BadZipFile,ET.ParseError) as exc:raise CalcError(f'Invalid or corrupted ODS: {exc}') from exc
         sheet=next((e for e in root.iter(T+'table') if e.get(T+'name')==SHEET),None)
-        if sheet is None:raise CalcError(f'Нет вкладки {SHEET!r}')
+        if sheet is None:raise CalcError(f'Sheet not found: {SHEET!r}')
         ri=0
         for row in sheet:
             if row.tag!=T+'table-row':continue
@@ -143,7 +142,7 @@ class Workbook:
 
     def cell(self,col,row,required=True):
         x=self.cells.get((row,colindex(col)))
-        if required and (x is None or x==''):raise CalcError(f'{SHEET}!{col}{row}: нет сохранённого значения')
+        if required and (x is None or x==''):raise CalcError(f'{SHEET}!{col}{row}: no cached value')
         return x
     def num(self,col,row):return number(self.cell(col,row),f'{SHEET}!{col}{row}')
     def text(self,col,row):return str(self.cell(col,row,False) or '').strip()
@@ -165,7 +164,7 @@ def norm(label):
 
 def budget_cycle(book, row):
     month=parse_month(book.cell('A',row),f'{SHEET}!A{row}')
-    if month.day!=1:raise CalcError(f'В A{row} ожидалось первое число месяца')
+    if month.day!=1:raise CalcError(f'Expected first day of month in A{row}')
     start=(month.replace(day=1)-timedelta(days=1)).replace(day=21)
     end=month.replace(day=20)
     categories=[];names=set();remaining=ZERO
@@ -181,9 +180,9 @@ def budget_cycle(book, row):
             rest=book.num(remaincol,rn)
             if not limit and not spent and not rest:continue
             if abs((limit-spent)-rest)>Decimal('0.02'):
-                raise CalcError(f'{label} (строка {rn}): остаток {rest}, но лимит − факт = {limit-spent}')
+                raise CalcError(f'{label} (row {rn}): remaining is {rest}, but budget - spent = {limit-spent}')
             name=norm(label)
-            if name in names:raise CalcError(f'Дублирующаяся категория {name!r} в цикле A{row}')
+            if name in names:raise CalcError(f'Duplicate category {name!r} in cycle A{row}')
             names.add(name)
             categories.append({'name':name,'limit':float(money(limit,f'{limitcol}{rn}')),
                                'spent':float(money(spent,f'{spentcol}{rn}')),
@@ -192,17 +191,17 @@ def budget_cycle(book, row):
             remaining+=rest
     expenses=book.num('A',row+8)
     if abs(expenses-remaining)>Decimal('0.03'):
-        raise CalcError(f'Цикл {start}–{end}: A{row+8} = {expenses:.2f}, '+
-           f'сумма остатков уникальных категорий = {remaining:.2f}; '+
-           f'разница {expenses-remaining:+.2f}. Проверьте F{row+13} '+
-           f'(сводная строка), Q{row+3} (REM) и формулу A{row+8}.')
+        raise CalcError(f'Cycle {start} to {end}: A{row+8} = {expenses:.2f}, '+
+           f'sum of unique category remainders = {remaining:.2f}; '+
+           f'difference {expenses-remaining:+.2f}. Check F{row+13} '+
+           f'(subtotal), Q{row+3} (REM) and formula A{row+8}.')
     income=book.num('A',row+10)
     rub=sum((max(ZERO,book.num('I',row+i)) for i in range(BLOCK_SIZE) if book.cell('I',row+i,False) not in ('',None)),ZERO)
     usd=sum((max(ZERO,book.num('J',row+i)) for i in range(BLOCK_SIZE) if book.cell('J',row+i,False) not in ('',None)),ZERO)
     expected_income=rub+usd*RUB_PER_USD
     if abs(expected_income-income)>Decimal('0.03'):
-        raise CalcError(f'Цикл A{row}: доход A{row+10}={income:.2f}, '+
-              f'но положительные I + 60×J = {expected_income:.2f} (разница {income-expected_income:+.2f})')
+        raise CalcError(f'Cycle A{row}: income A{row+10}={income:.2f}, '+
+              f'positive I + 60*J = {expected_income:.2f} (difference {income-expected_income:+.2f})')
     signed_deficit=book.num('A',row+12)
     return {'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}',
             'start':start.isoformat(),'end':end.isoformat(),'sourceRow':row,
@@ -225,11 +224,11 @@ def cycles_from_book(book,day=None):
         end=month.replace(day=20)
         if start<=day<=end:
             first=row;break
-    if first is None:raise CalcError(f'Нет 14-строчного блока текущего цикла для {day:%d.%m.%Y}; начиная с A{FIRST_BLOCK}')
+    if first is None:raise CalcError(f'No 14-row block found for current cycle {day:%d.%m.%Y}, starting at A{FIRST_BLOCK}')
     out=[budget_cycle(book,first+BLOCK_SIZE*i) for i in range(3)]
     for a,b in zip(out,out[1:]):
         if date.fromisoformat(b['start'])!=date.fromisoformat(a['end'])+timedelta(days=1):
-            raise CalcError('Бюджетные циклы в файле не следуют друг за другом')
+            raise CalcError('Budget cycles are not consecutive in the workbook')
     return out
 
 def fixed_goal(deficit, end_date, today, previous=None):
@@ -246,7 +245,7 @@ def fixed_goal(deficit, end_date, today, previous=None):
                     'basis':'Inherited fixed goal from previous encrypted dashboard'}
     end_date=end_date if isinstance(end_date,date) else date.fromisoformat(end_date)
     days=(end_date-today).days+1
-    if days<=0:raise CalcError('Нельзя назначить дневную цель за пределами цикла')
+    if days<=0:raise CalcError('Cannot fix a daily goal outside its budget cycle')
     due=max(ZERO,-number(deficit,'Прогноз дефицита'))
     target=(due/Decimal(days)).quantize(CENT, rounding=ROUND_HALF_UP)
     return {'date':today.isoformat(),'target':float(target),
@@ -295,7 +294,7 @@ def build_report(book: Workbook, *, today: date, previous: dict | None=None):
 
 def encrypt_report(data: dict, password: str) -> str:
     if not password:
-        raise PublisherError('Пароль шифрования не может быть пустым.')
+        raise PublisherError('Encryption password must not be empty.')
     from secrets import token_bytes
     salt, iv = token_bytes(16), token_bytes(12)
     key = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt,
@@ -308,19 +307,19 @@ def encrypt_report(data: dict, password: str) -> str:
            'ciphertext':enc(ciphertext)},separators=(',',':'))
 
 def decrypt_report(envelope: str | dict, password: str) -> dict:
-    if not password: raise PublisherError('Нужен FINANCE_OWNER_PASSWORD для восстановления прежней цели')
+    if not password: raise PublisherError('FINANCE_OWNER_PASSWORD is required to recover the previous daily goal')
     obj=json.loads(envelope) if isinstance(envelope,str) else envelope
     if (obj.get('v')!=1 or obj.get('kdf')!='PBKDF2-SHA256' or
         obj.get('cipher')!='AES-256-GCM' or obj.get('iterations',0)<600_000):
-        raise PublisherError('Неизвестный формат прежнего шифрованного отчёта')
+        raise PublisherError('Unsupported previous encrypted report format')
     dec=lambda x:base64.b64decode(x,validate=True)
     key=PBKDF2HMAC(algorithm=hashes.SHA256(),length=32,salt=dec(obj['salt']),
          iterations=obj['iterations']).derive(password.encode('utf-8'))
     try:
         data=json.loads(AESGCM(key).decrypt(dec(obj['iv']),dec(obj['ciphertext']),None))
     except Exception as exc:
-        raise PublisherError('Не удалось прочитать прежний отчёт: пароль не совпадает или файл повреждён') from exc
-    if not isinstance(data,dict): raise PublisherError('Неверный формат предыдущего отчёта')
+        raise PublisherError('Cannot decrypt previous report: password mismatch or corrupted file') from exc
+    if not isinstance(data,dict): raise PublisherError('Invalid previous report format')
     return data
 
 def site_previous(password: str) -> dict:
@@ -336,15 +335,15 @@ def site_previous(password: str) -> dict:
         with urllib.request.urlopen(request,timeout=30) as response:
             payload=response.read(2_000_001)
     except (OSError, urllib.error.URLError) as exc:
-        raise PublisherError('Не удалось получить актуальный owner.enc с опубликованного сайта. '
-            'Проверьте доступность '+SITE_OWNER_URL) from exc
+        raise PublisherError('Cannot download the live owner.enc from GitHub Pages. '
+            'Check access to '+SITE_OWNER_URL) from exc
     if len(payload)>2_000_000:
-        raise PublisherError('Неожиданно большой owner.enc с сайта; экспорт остановлен')
+        raise PublisherError('Live owner.enc is unexpectedly large; export aborted')
     try:
         return decrypt_report(payload.decode('utf-8'),password)
     except (UnicodeError,ValueError) as exc:
-        raise PublisherError('Сайт доступен, но действующим паролем его owner.enc расшифровать не удалось. '
-            'Проверьте, что пароль относится к личному дашборду.') from exc
+        raise PublisherError('Live owner.enc could not be decrypted using the supplied password. '
+            'Make sure this is the owner dashboard password.') from exc
 
 
 def github_json(method: str, endpoint: str, token: str, data: dict | None=None) -> dict:
@@ -374,7 +373,7 @@ def require_switched_workflow(token:str):
                 'LOCAL_CALC_SNAPSHOT_READY',
                 'test -s finance/data/owner.enc && test -s finance/data/family.enc')):
             raise PublisherError(
-                f'Безопасное переключение ещё не установлено в {path}; ничего не публикуем.'
+                f'Safe workflow cutover is missing in {path}; publication aborted.'
             )
 
 def remote_previous(token: str, password: str):
@@ -384,17 +383,17 @@ def remote_previous(token: str, password: str):
         current=github_json('GET',f'contents/{path}?ref={head}',token)
     except PublisherError as exc:
         if 'HTTP 404' in str(exc):
-            print('В GitHub отсутствует owner.enc; читаю опубликованный сайт.')
+            print('GitHub owner.enc not found; downloading live report from Pages.')
             return head,site_previous(password)
         raise
     raw=base64.b64decode(current['content']).decode('utf-8')
     try:
         obj=decrypt_report(raw,password)
     except PublisherError:
-        print('GitHub содержит старый owner.enc; читаю актуальный зашифрованный отчёт с сайта.')
+        print('Stale owner.enc in GitHub; using live encrypted report from Pages.')
         return head,site_previous(password)
     if (obj.get('budgetSource') or {}).get('workbookSheet')!='Семейные Траты':
-        print('В GitHub архивный снимок до перехода на Calc; наследую актуальные поля сайта.')
+        print('Legacy pre-Calc snapshot in GitHub; loading current fields from Pages.')
         return head,site_previous(password)
     return head,obj
 
@@ -402,7 +401,7 @@ def publish_encrypted(files:dict[str,str],token:str,expected_head:str):
     """Commit both encrypted files against same branch HEAD; never force-overwrite."""
     current=github_json('GET',f'git/ref/heads/{BRANCH}',token)['object']['sha']
     if current!=expected_head:
-        raise PublisherError('Снимок Github обновился параллельно: повторите запуск, чтобы не стереть дневную цель')
+        raise PublisherError('GitHub HEAD changed concurrently; retry to protect the fixed daily goal')
     parent=github_json('GET',f'git/commits/{current}',token)
     tree=github_json('POST','git/trees',token,{
        'base_tree':parent['tree']['sha'],
@@ -417,8 +416,8 @@ def require_legacy_fields(previous:dict|None):
     required=('familyDeficit','usdDebt','rate','savedRub','reserveTargetRub','rubDebts','children','installments')
     missing=[k for k in required if not isinstance(previous,dict) or k not in previous]
     if missing:
-        raise PublisherError('В прежнем owner.enc недостаёт ещё не сопоставленных с Calc полей: '+', '.join(missing)+
-                   '. Не публикуем выдуманные значения; нужен прежний отчёт или утверждённые адреса.')
+        raise PublisherError('Previous owner.enc is missing fields not yet mapped from Calc: '+', '.join(missing)+
+                   '. Refusing to invent values; provide a previous report or verified Calc references.')
 
 def existing_password(variable: str, prompt: str) -> str:
     """Reuse the already configured secret or ask securely for the EXISTING password.
@@ -430,11 +429,11 @@ def existing_password(variable: str, prompt: str) -> str:
     if current:
         return current
     try:
-        value = getpass.getpass(prompt + ' (ввод скрыт): ')
+        value = getpass.getpass(prompt + ' (hidden input): ')
     except (EOFError, KeyboardInterrupt) as exc:
-        raise PublisherError('Не удалось прочитать пароль из терминала') from exc
+        raise PublisherError('Could not read password from terminal') from exc
     if not value:
-        raise PublisherError('Пустой пароль. Введи действующий пароль дашборда.')
+        raise PublisherError('Empty password: enter the current dashboard password.')
     return value
 
 
@@ -455,9 +454,9 @@ def github_token() -> str:
     except (OSError,subprocess.TimeoutExpired):
         pass
     try:
-        token=getpass.getpass('GitHub token (fine-grained, только Contents: write): ').strip()
+        token=getpass.getpass('GitHub token (fine-grained, Contents: read/write): ').strip()
     except (EOFError,KeyboardInterrupt) as exc:
-        raise PublisherError('Не удалось получить токен GitHub') from exc
+        raise PublisherError('Could not read GitHub token') from exc
     if not token:
         raise PublisherError(
            'Нужен GITHUB_TOKEN или вход в GitHub CLI (gh auth login). '
@@ -492,29 +491,29 @@ def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--book',type=Path,
         default=Path.home()/'OneDrive'/'Documents'/'Бюджет_2.ods',
-        help='Путь к сохранённой .ods/.xlsx; по умолчанию ~/OneDrive/Documents/Бюджет_2.ods')
+        help='Path to saved .ods/.xlsx; default ~/OneDrive/Documents/Budget_2.ods')
     mode=parser.add_mutually_exclusive_group()
-    mode.add_argument('--publish',action='store_true',help='Опубликовать зашифрованный отчёт (после переключения workflow)')
-    mode.add_argument('--export-only',action='store_true',help='Записать только локальные .enc')
+    mode.add_argument('--publish',action='store_true',help='Publish encrypted report after guarded workflow cutover')
+    mode.add_argument('--export-only',action='store_true',help='Create local encrypted .enc files only')
     parser.add_argument('--output-dir',type=Path,default=Path.home()/'finance-export')
-    parser.add_argument('--previous-owner',type=Path,help='Необязательная копия прежнего owner.enc')
+    parser.add_argument('--previous-owner',type=Path,help='Optional previous owner.enc file')
     args=parser.parse_args(argv)
     tz=ZoneInfo(TZ)
     today=datetime.now(tz).date()
     book=Workbook(args.book)
     cycles=cycles_from_book(book,today)
-    print('Таблица:',book.path,'| сохранена',datetime.fromtimestamp(book.path.stat().st_mtime,tz))
+    print('Workbook:',book.path,'| saved:',datetime.fromtimestamp(book.path.stat().st_mtime,tz))
     for c in cycles:
-        print(f"{c['label']} | доход {c['income']:,.2f} | осталось расходов {c['expenses']:,.2f} | "+
-              f"дефицит {max(0,-c['signedResult']):,.2f} | категорий {len(c['budgets'])}")
+        print(f"{c['label']} | income {c['income']:,.2f} | remaining expenses {c['expenses']:,.2f} | "+
+              f"deficit {max(0,-c['signedResult']):,.2f} | categories {len(c['budgets'])}")
     if not(args.publish or args.export_only):
-        print('ПРОВЕРКА: структура и суммы сошлись, GitHub не изменён. Цель не фиксировалась.')
+        print('CHECK OK: structure and totals match; GitHub unchanged. Daily goal not fixed.')
         return 0
-    owner_password=existing_password('FINANCE_OWNER_PASSWORD','Действующий пароль личного дашборда')
-    family_password=existing_password('WIFE_PASSWORD','Действующий пароль семейного дашборда')
+    owner_password=existing_password('FINANCE_OWNER_PASSWORD','Current owner dashboard password')
+    family_password=existing_password('WIFE_PASSWORD','Current family dashboard password')
     previous=None;head=None
     if args.publish:
-        if not PUBLISH_ENABLED:raise PublisherError('PUBLISH_ENABLED=False: переключение публикации ещё не согласовано')
+        if not PUBLISH_ENABLED:raise PublisherError('PUBLISH_ENABLED=False: publication cutover is not enabled')
         token=github_token()
         require_switched_workflow(token)
         head,previous=remote_previous(token,owner_password)
@@ -525,9 +524,9 @@ def main(argv=None):
                                              owner_password)
             except PublisherError as exc:
                 raise PublisherError(
-                    f'В {local_latest} находится зашифрованный отчёт с другим паролем '
-                    'или ошибкой. Не публикуем: важно не потерять фиксированную '
-                    'дневную цель. Сохраните файл для проверки.'
+                    f'Encrypted report at {local_latest} uses a different password '
+                    'or is damaged. Aborting to preserve an already fixed '
+                    'daily goal. Keep this file for inspection.'
                 ) from exc
             previous=merge_first_local_goal(previous,local_report,today)
     else:
@@ -542,13 +541,13 @@ def main(argv=None):
             except PublisherError:
                 if previous_path == local_latest:
                     # Do not silently replace a newer local goal history.
-                    raise PublisherError('Не удалось прочитать локальный '+str(local_latest)+
-                        '. Возможно, его пароль отличается. Сохраните файл и разберитесь с причиной; '
-                        'не заменяем зафиксированные цели более старой копией.')
-                print('Репозиторный owner.enc не открывается: читаю актуальный отчёт с сайта.')
+                    raise PublisherError('Cannot decrypt local '+str(local_latest)+
+                        '. Its password may differ. Preserve this file and investigate; '
+                        'do not replace fixed goals using an older snapshot.')
+                print('Repository owner.enc cannot be decrypted; using live Pages report.')
                 previous=site_previous(owner_password)
         else:
-            print('Исходного owner.enc локально нет: читаю актуальный отчёт с сайта.')
+            print('No local previous owner.enc; using live Pages report.')
             previous=site_previous(owner_password)
     require_legacy_fields(previous)
     report=build_report(book,today=today,previous=previous)
@@ -560,21 +559,21 @@ def main(argv=None):
     if (owner_check.get('dailyGoal')!=report.get('dailyGoal') or
         family_check.get('cycle')!=report['cycles'][0] or
         len(owner_check.get('cycles') or [])!=3):
-        raise PublisherError('Проверка зашифрованного отчёта не пройдена; публикация запрещена.')
+        raise PublisherError('Encrypted report round-trip validation failed; publication aborted.')
     if args.export_only:
         args.output_dir.mkdir(parents=True,exist_ok=True)
         for target,content in files.items():
             p=args.output_dir/Path(target).name
             p.write_text(content,encoding='utf-8')
-            print('Локальный шифрованный файл:',p)
-        print('Дневная цель',report['dailyGoal']['date'],report['dailyGoal']['target'],'₽ (фиксирована в owner.enc)')
+            print('Local encrypted file:',p)
+        print('Daily goal:',report['dailyGoal']['date'],report['dailyGoal']['target'],'RUB (fixed in owner.enc)')
         return 0
     commit=publish_encrypted(files,token,head)
-    print('GitHub обновлён: только owner.enc и family.enc; коммит',commit)
+    print('GitHub updated: encrypted owner.enc and family.enc only; commit',commit)
     return 0
 
 if __name__=='__main__':
     try:sys.exit(main())
     except (PublisherError,CalcError,OSError,ValueError) as exc:
-        print('ОШИБКА:',str(exc),file=sys.stderr)
+        print('ERROR:',str(exc).encode('ascii','backslashreplace').decode('ascii'),file=sys.stderr)
         sys.exit(1)
