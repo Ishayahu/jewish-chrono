@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T12:00:00+03:00
+# VERSION: 2026-11-23T13:02:00+03:00
 #!/usr/bin/env python3
 """Publish encrypted finance dashboards from saved local LibreOffice Calc.
 
@@ -36,6 +36,7 @@ except ModuleNotFoundError:
 REPOSITORY = 'Ishayahu/jewish-chrono'
 BRANCH = 'main'
 TZ = 'Europe/Moscow'
+SITE_OWNER_URL = 'https://ishayahu.github.io/jewish-chrono/finance/data/owner.enc'
 PUBLISH_ENABLED = False   # Enable only after replacing cloud Google Sheets workflow.
 
 class PublisherError(ValueError):
@@ -102,6 +103,30 @@ def decrypt_report(envelope: str | dict, password: str) -> dict:
     if not isinstance(data,dict): raise PublisherError('Неверный формат предыдущего отчёта')
     return data
 
+def site_previous(password: str) -> dict:
+    """Read the encrypted snapshot ACTUALLY served to the dashboard.
+
+    GitHub Actions creates it at deploy time but does not commit it back to
+    the repository. The committed finance/data/owner.enc may be outdated.
+    """
+    request=urllib.request.Request(SITE_OWNER_URL,
+                headers={'User-Agent':'finance-local-calc-publisher',
+                         'Cache-Control':'no-cache'})
+    try:
+        with urllib.request.urlopen(request,timeout=30) as response:
+            payload=response.read(2_000_001)
+    except (OSError, urllib.error.URLError) as exc:
+        raise PublisherError('Не удалось получить актуальный owner.enc с опубликованного сайта. '
+            'Проверьте доступность '+SITE_OWNER_URL) from exc
+    if len(payload)>2_000_000:
+        raise PublisherError('Неожиданно большой owner.enc с сайта; экспорт остановлен')
+    try:
+        return decrypt_report(payload.decode('utf-8'),password)
+    except (UnicodeError,ValueError) as exc:
+        raise PublisherError('Сайт доступен, но действующим паролем его owner.enc расшифровать не удалось. '
+            'Проверьте, что пароль относится к личному дашборду.') from exc
+
+
 def github_json(method: str, endpoint: str, token: str, data: dict | None=None) -> dict:
     url='https://api.github.com/repos/'+REPOSITORY+'/'+endpoint.lstrip('/')
     headers={'Authorization':f'Bearer {token}', 'Accept':'application/vnd.github+json',
@@ -130,10 +155,15 @@ def remote_previous(token: str, password: str):
         current=github_json('GET',f'contents/{path}?ref={head}',token)
     except PublisherError as exc:
         if 'HTTP 404' in str(exc):
-            return head,None
+            print('В GitHub отсутствует owner.enc; читаю опубликованный сайт.')
+            return head,site_previous(password)
         raise
     raw=base64.b64decode(current['content']).decode('utf-8')
-    return head,decrypt_report(raw,password)
+    try:
+        return head,decrypt_report(raw,password)
+    except PublisherError:
+        print('GitHub содержит старый owner.enc; читаю актуальный зашифрованный отчёт с сайта.')
+        return head,site_previous(password)
 
 def publish_encrypted(files:dict[str,str],token:str,expected_head:str):
     """Commit both encrypted files against same branch HEAD; never force-overwrite."""
@@ -211,7 +241,19 @@ def main(argv=None):
         local_latest=args.output_dir/'owner.enc'
         previous_path=local_latest if local_latest.is_file() else args.previous_owner
         if previous_path and previous_path.is_file():
-            previous=decrypt_report(previous_path.read_text(encoding='utf-8'),owner_password)
+            try:
+                previous=decrypt_report(previous_path.read_text(encoding='utf-8'),owner_password)
+            except PublisherError:
+                if previous_path == local_latest:
+                    # Do not silently replace a newer local goal history.
+                    raise PublisherError('Не удалось прочитать локальный '+str(local_latest)+
+                        '. Возможно, его пароль отличается. Сохраните файл и разберитесь с причиной; '
+                        'не заменяем зафиксированные цели более старой копией.')
+                print('Репозиторный owner.enc не открывается: читаю актуальный отчёт с сайта.')
+                previous=site_previous(owner_password)
+        else:
+            print('Исходного owner.enc локально нет: читаю актуальный отчёт с сайта.')
+            previous=site_previous(owner_password)
     require_legacy_fields(previous)
     report=build_report(book,today=today,previous=previous)
     files={'finance/data/owner.enc':encrypt_report(report,owner_password),
