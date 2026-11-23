@@ -1,106 +1,90 @@
-# VERSION: 2026-11-23T06:50:15.437+00:00
-"""Tests for the configurable Calc -> encrypted finance dashboard publisher."""
+# VERSION: 2026-11-23T12:10:00+03:00
+"""Synthetic regression tests. Never commit actual household budget fixtures."""
 import base64
-import json
+from datetime import date
 from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
-
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives import hashes
-
+from finance.local_calc_model import CalcError,cycles_from_book,fixed_goal,number
 from finance import publish_from_calc as pub
 
+class FakeBook:
+    def __init__(self,path):
+        self.path=path
+        self.data={}
+        for i,month in enumerate(('2026-12-01','2027-01-01','2027-02-01')):
+            r=640+14*i
+            self.data[('A',r)]=month
+            self.data[('D',r)]='Продукты'
+            self.data[('G',r)]=100
+            self.data[('C',r)]=20
+            self.data[('F',r)]=80
+            self.data[('O',r)]='Интернет 720'
+            self.data[('R',r)]=20
+            self.data[('N',r)]=0
+            self.data[('Q',r)]=20
+            self.data[('D',r+13)]='ВТОРОЙ СТОЛБЕЦ'
+            self.data[('F',r+13)]=20
+            self.data[('O',r+3)]='REM'
+            self.data[('Q',r+3)]=0
+            self.data[('I',r)]=70
+            self.data[('J',r)]=1
+            self.data[('A',r+8)]=100
+            self.data[('A',r+10)]=130
+            self.data[('A',r+12)]=-50
+    def cell(self,c,r,required=True):
+        v=self.data.get((c,r))
+        if required and v is None:raise CalcError(f'{c}{r} missing')
+        return v
+    def num(self,c,r):return number(self.cell(c,r),f'{c}{r}')
+    def text(self,c,r):return str(self.cell(c,r,False) or '').strip()
 
-class FakeReader:
-    def __init__(self, path):
-        self.path = path
-        self.numbers = {}
-        self.labels = {}
-        for key, ref in pub.CELLS.items():
-            self.numbers[ref] = 0.0
-        self.numbers[pub.CELLS["usdDebt"]] = 29580.0
-        self.numbers[pub.CELLS["rate"]] = 80.0
-        self.numbers[pub.CELLS["familyDeficit"]] = 1128419.73
-        self.numbers[pub.CELLS["deficit"]] = 85000.0
-        for ref in pub.RUB_DEBTS.values():
-            self.numbers[ref] = 2000.0
-        for ref in pub.CHILDREN.values():
-            self.numbers[ref] = 200.0
-        for refs in pub.INSTALLMENTS.values():
-            self.numbers[refs["count"]] = 2.0
-            self.numbers[refs["payment"]] = 1000.0
-        for i, cycle in enumerate(pub.CYCLES):
-            self.labels[cycle["label"]] = f"Цикл {i+1}"
-            self.numbers[cycle["income"]] = 50000.0
-            self.numbers[cycle["expenses"]] = 30000.0
-            for name in pub.BUDGET_ROWS:
-                limit, spent = pub.budget_refs(name, i, cycle)
-                self.numbers[limit] = 100.0
-                self.numbers[spent] = 40.0
-
-    def money(self, ref, label):
-        return self.numbers[ref]
-
-    def text(self, ref, label):
-        return self.labels[ref]
-
-
-class CalcPublishTest(unittest.TestCase):
+class CalcPublisherTest(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.temp.cleanup)
-        self.file = Path(self.temp.name) / "budget.ods"
-        self.file.write_bytes(b"fixture for path timestamp")
-        self.reader = FakeReader(self.file)
+        self.tmp=tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        p=Path(self.tmp.name)/'saved.ods';p.write_bytes(b'test-book')
+        self.book=FakeBook(p)
+        self.today=date(2026,11,23)
+    def test_extracts_three_cycles_without_subtotal(self):
+        cycles=cycles_from_book(self.book,self.today)
+        self.assertEqual(len(cycles),3)
+        self.assertEqual(cycles[0]['income'],130)
+        self.assertEqual(cycles[0]['expenses'],100)
+        self.assertEqual([b['name'] for b in cycles[0]['budgets']],['Продукты','Интернет'])
+    def test_rejects_duplicate_aggregate(self):
+        self.book.data[('A',648)]=120
+        with self.assertRaisesRegex(CalcError,'разница'):
+            cycles_from_book(self.book,self.today)
+    def test_frozen_target_and_new_day(self):
+        original=fixed_goal(-50,'2026-12-20',self.today)
+        self.assertEqual(original['target'],1.79)
+        prev={'goalHistory':{self.today.isoformat():original}}
+        self.assertEqual(fixed_goal(-9000,'2026-12-20',self.today,prev),original)
+        self.assertNotEqual(fixed_goal(-9000,'2026-12-20',date(2026,11,24),prev),original)
+    def test_migrate_previous_dashboard_target(self):
+        x=fixed_goal(-100,'2026-12-20',self.today,{
+          'asOf':'23.11.2026 09:00 МСК','day':{'target':4321,'received':0}})
+        self.assertEqual(x['target'],4321)
+    def test_owner_report_preserves_legacy_fields(self):
+        prev={'familyDeficit':100000,'usdDebt':37000,'rate':82,'savedRub':50,
+          'reserveTargetRub':300,'rubDebts':[],'children':[],'installments':[],
+          'asOf':'22.11.2026 10:00 МСК'}
+        pub.require_legacy_fields(prev)
+        report=pub.build_report(self.book,today=self.today,previous=prev)
+        self.assertEqual(report['budgetRate'],60)
+        self.assertEqual(report['familyDeficit'],100000)
+        self.assertEqual(report['cycles'][0]['income'],130)
+        self.assertEqual(report['deficit'],50)
+        self.assertEqual(pub.build_report(self.book,today=self.today,previous=report)['dailyGoal'],report['dailyGoal'])
+    def test_encryption_compatible_with_dashboard(self):
+        key='long-but-fake-test-password'
+        data={'day':{'target':5},'dailyGoal':{'date':'2026-11-23','target':5}}
+        self.assertEqual(pub.decrypt_report(pub.encrypt_report(data,key),key),data)
+    def test_refuses_old_remote_workflow(self):
+        with mock.patch.object(pub,'github_json',return_value={
+          'content':base64.b64encode(b'python finance/build_encrypted.py').decode()}):
+            with self.assertRaises(pub.PublisherError):pub.require_switched_workflow('test-token')
 
-    def test_report_schema_three_cycles_and_no_duplicate_usd_reserve(self):
-        result = pub.build_report(self.reader)
-        self.assertEqual(len(result["cycles"]), 3)
-        self.assertEqual(result["familyDeficit"], 1128419.73)
-        self.assertEqual(result["deficit"], 85000.0)
-        self.assertEqual(result["usdDebt"], 29580.0)
-        self.assertEqual(result["day"]["target"], 0)
-        self.assertEqual(result["cycles"][0]["expenses"], 30000)
-        self.assertEqual(len(result["cycles"][0]["budgets"]), len(pub.BUDGET_ROWS))
-        subs = next(item for item in result["cycles"][0]["budgets"] if item["name"] == "Подписки (USD-резерв)")
-        self.assertEqual(subs["limit"], 100.0)
-        self.assertIsNone(subs["spent"])
-        self.assertTrue(subs["informational"])
-
-    def test_budget_limits_cannot_exceed_expense_plan(self):
-        self.reader.numbers[pub.CYCLES[0]["expenses"]] = 1000.0
-        with self.assertRaises(pub.ConfigError):
-            pub.build_report(self.reader)
-
-    def test_unclassified_expenses_are_not_discarded(self):
-        self.reader.numbers[pub.CELLS["unmappedTotal"]] = 350.0
-        result = pub.build_report(self.reader)
-        self.assertEqual(result["cycles"][0]["unmappedExpenses"][0]["amount"], 350.0)
-        self.assertEqual(result["cycles"][1]["unmappedExpenses"], [])
-
-    def test_ciphertext_format_compatible_with_dashboard(self):
-        sample = {"asOf": "23.11.2026 09:00 МСК", "cycle": None}
-        payload = json.loads(pub.encrypt_report(sample, "long-test-password-2026"))
-        self.assertEqual(payload["v"], 1)
-        self.assertEqual(payload["iterations"], 600000)
-        salt = base64.b64decode(payload["salt"])
-        iv = base64.b64decode(payload["iv"])
-        key = PBKDF2HMAC(
-            algorithm=hashes.SHA256(), length=32, salt=salt, iterations=600000
-        ).derive(b"long-test-password-2026")
-        recovered = AESGCM(key).decrypt(iv, base64.b64decode(payload["ciphertext"]), None)
-        self.assertEqual(json.loads(recovered), sample)
-
-    def test_refuses_publishing_while_google_builder_is_active(self):
-        with mock.patch.object(pub, "github_json", return_value={
-            "content": base64.b64encode(b"python finance/build_encrypted.py").decode()
-        }):
-            with self.assertRaises(pub.ConfigError):
-                pub.require_switched_workflow("fake-token")
-
-
-if __name__ == "__main__":
-    unittest.main()
+if __name__=='__main__':unittest.main()
