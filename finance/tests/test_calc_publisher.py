@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T16:10:00+03:00
+# VERSION: 2026-11-23T16:46:00+03:00
 """Synthetic regression tests. Never commit actual household budget fixtures."""
 import base64
 import io
@@ -149,24 +149,24 @@ class CalcPublisherTest(unittest.TestCase):
             'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">'
             '<office:body><office:spreadsheet>'+
             make_sheet('Семейные Траты',[(640,'A',1)])+
-            make_sheet('Мои',[(50,'C',7194.46),(57,'C',19701.27),(68,'C',1091663.367)])+
-            make_sheet('Сводка',[(9,'I',-167571),(14,'I',-2793601.451),
-                                 (17,'I',-820000),(23,'I',-36580)])+
-            make_sheet('ГМАХ мой',[(5,'C',1183000)])+
+            make_sheet('Мои',[(50,'C',123.45),(57,'C',678.90),(68,'C',9123.456)])+
+            make_sheet('Сводка',[(9,'I',-9876),(14,'I',-543210.987),
+                                 (17,'I',-71000),(23,'I',-24680)])+
+            make_sheet('ГМАХ мой',[(5,'C',12000)])+
             '</office:spreadsheet></office:body></office:document-content>'
         )
         path=Path(self.tmp.name)/'synthetic.ods'
         with zipfile.ZipFile(path,'w') as archive:
             archive.writestr('content.xml',xml.encode('utf-8'))
         book=pub.Workbook(path)
-        self.assertEqual(book.source_num('Мои','C50'),pub.Decimal('7194.46'))
-        self.assertEqual(book.source_num('Мои','C57'),pub.Decimal('19701.27'))
-        self.assertEqual(book.source_num('Мои','C68'),pub.Decimal('1091663.37'))
-        self.assertEqual(book.source_num('Сводка','I23'),pub.Decimal('-36580.00'))
-        self.assertEqual(book.source_num('Сводка','I14'),pub.Decimal('-2793601.45'))
-        self.assertEqual(book.source_num('Сводка','I17'),pub.Decimal('-820000.00'))
-        self.assertEqual(book.source_num('Сводка','I9'),pub.Decimal('-167571.00'))
-        self.assertEqual(book.source_num('ГМАХ мой','C5'),pub.Decimal('1183000.00'))
+        self.assertEqual(book.source_num('Мои','C50'),pub.Decimal('123.45'))
+        self.assertEqual(book.source_num('Мои','C57'),pub.Decimal('678.90'))
+        self.assertEqual(book.source_num('Мои','C68'),pub.Decimal('9123.46'))
+        self.assertEqual(book.source_num('Сводка','I23'),pub.Decimal('-24680.00'))
+        self.assertEqual(book.source_num('Сводка','I14'),pub.Decimal('-543210.99'))
+        self.assertEqual(book.source_num('Сводка','I17'),pub.Decimal('-71000.00'))
+        self.assertEqual(book.source_num('Сводка','I9'),pub.Decimal('-9876.00'))
+        self.assertEqual(book.source_num('ГМАХ мой','C5'),pub.Decimal('12000.00'))
 
     def test_encryption_compatible_with_dashboard(self):
         # Preserve already established (possibly shorter) dashboard passwords.
