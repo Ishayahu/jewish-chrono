@@ -196,7 +196,7 @@ class CalcPublisherTest(unittest.TestCase):
             prompt.assert_not_called()
 
     def test_scheduled_run_can_use_github_cli_and_never_prompts(self):
-        proc=mock.Mock(returncode=0,stdout='token-from-gh\\n')
+        proc=mock.Mock(returncode=0,stdout='token-from-gh\n')
         with mock.patch.dict('os.environ',{},clear=True), \
              mock.patch.object(pub.subprocess,'run',return_value=proc), \
              mock.patch.object(pub.getpass,'getpass') as prompt:
