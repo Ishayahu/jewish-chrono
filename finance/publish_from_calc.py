@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T06:48:58.700+00:00
+# VERSION: 2026-11-23T06:51:52.546+00:00
 #!/usr/bin/env python3
 """Публикация финансового дашборда из сохранённой локальной таблицы Calc.
 
@@ -413,7 +413,7 @@ def main(argv: list[str] | None = None) -> int:
                        help="Шифровать и отправить в GitHub (только после переключения workflow).")
     modes.add_argument("--export-only", action="store_true",
                        help="Создать только локальные .enc, ничего не отправляя в GitHub.")
-    parser.add_argument("--output-dir", type=Path, default=Path.cwd() / "finance-export",
+    parser.add_argument("--output-dir", type=Path, default=Path.home() / "finance-export",
                         help="Каталог для --export-only; не добавляйте его в git.")
     args = parser.parse_args(argv)
 
