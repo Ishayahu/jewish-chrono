@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - 'finance/publish_from_calc.py'
-      - 'tests/test_calc_publisher.py'
+      - 'finance/tests/test_calc_publisher.py'
       - '.github/workflows/test-calc-publisher.yml'
   workflow_dispatch:
 permissions:
@@ -19,5 +19,5 @@ jobs:
         run: python3 -m pip install --quiet python-calamine cryptography
       - name: Compile and run isolated tests
         run: |
-          python3 -m py_compile finance/publish_from_calc.py tests/test_calc_publisher.py
-          python3 -m unittest tests/test_calc_publisher.py -v
+          python3 -m py_compile finance/publish_from_calc.py finance/tests/test_calc_publisher.py
+          python3 -m unittest finance/tests/test_calc_publisher.py -v
