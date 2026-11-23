@@ -67,7 +67,7 @@ class CalcPublisherTest(unittest.TestCase):
         self.assertEqual([b['name'] for b in cycles[0]['budgets']],['Продукты','Интернет'])
     def test_rejects_duplicate_aggregate(self):
         self.book.data[('A',648)]=120
-        with self.assertRaisesRegex(CalcError,'разница'):
+        with self.assertRaisesRegex(CalcError,'difference'):
             cycles_from_book(self.book,self.today)
     def test_frozen_target_and_new_day(self):
         original=fixed_goal(-50,'2026-12-20',self.today)
