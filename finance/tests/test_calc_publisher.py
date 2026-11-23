@@ -79,9 +79,18 @@ class CalcPublisherTest(unittest.TestCase):
         self.assertEqual(report['deficit'],50)
         self.assertEqual(pub.build_report(self.book,today=self.today,previous=report)['dailyGoal'],report['dailyGoal'])
     def test_encryption_compatible_with_dashboard(self):
-        key='long-but-fake-test-password'
+        # Preserve already established (possibly shorter) dashboard passwords.
+        key='old-pass'
         data={'day':{'target':5},'dailyGoal':{'date':'2026-11-23','target':5}}
         self.assertEqual(pub.decrypt_report(pub.encrypt_report(data,key),key),data)
+
+    def test_existing_password_prompt_when_environment_is_unset(self):
+        with mock.patch.dict('os.environ',{},clear=True), mock.patch.object(pub.getpass,'getpass',return_value='my-current-password') as prompt:
+            self.assertEqual(pub.existing_password('FINANCE_OWNER_PASSWORD','Owner'), 'my-current-password')
+            prompt.assert_called_once()
+        with mock.patch.dict('os.environ',{'FINANCE_OWNER_PASSWORD':'old-pass'}), mock.patch.object(pub.getpass,'getpass') as prompt:
+            self.assertEqual(pub.existing_password('FINANCE_OWNER_PASSWORD','Owner'), 'old-pass')
+            prompt.assert_not_called()
     def test_refuses_old_remote_workflow(self):
         with mock.patch.object(pub,'github_json',return_value={
           'content':base64.b64encode(b'python finance/build_encrypted.py').decode()}):
