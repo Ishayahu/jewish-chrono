@@ -61,7 +61,7 @@ py -m pip install cryptography tzdata
 
 4. **Переключение GitHub Actions подготовлено:** обе сборки (`.github/workflows/finance.yml` и `.github/workflows/pages.yml`) развёртывают **готовые зашифрованные** `finance/data/owner.enc` и `finance/data/family.enc`, как только оба файла появились в одном коммите. До первого локального коммита остаётся старый генератор Google Sheets, поэтому действующий сайт не должен прерываться.
 
-5. **Для первой публикации в Windows** двойным щелчком запустите `finance/run_calc_publish.cmd`. Он использует `%USERPROFILE%\OneDrive\Documents\Бюджет_2.ods`, сохранённую и уже исправленную книгу; последний `~/finance-export/owner.enc` используется для переноса ранее зафиксированной дневной цели. `.ods` никогда не уходит в GitHub.
+5. **Для первой публикации в Windows** двойным щелчком запустите `finance/run_calc_publish.cmd`. Он сам загружает последние `publish_from_calc.py` и `local_calc_model.py` с `raw.githubusercontent.com/Ishayahu/jewish-chrono`, проверяет синтаксис и использует `%USERPROFILE%\OneDrive\Documents\Бюджет_2.ods`, сохранённую и уже исправленную книгу; последний `~/finance-export/owner.enc` используется для переноса ранее зафиксированной дневной цели. `.ods` никогда не уходит в GitHub.
 
 6. **GitHub авторизация:** программа сначала проверит переменную окружения `GITHUB_TOKEN`, затем работающий вход GitHub CLI (`gh auth login`), а иначе попросит временно ввести токен GitHub скрытым вводом. Fine-grained PAT должен быть ограничен только репозиторием `Ishayahu/jewish-chrono` и правом **Contents: read and write**. Токен и пароли не записывать в Excel/Calc, исходники или переписку.
 
