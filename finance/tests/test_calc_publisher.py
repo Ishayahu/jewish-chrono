@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T12:10:00+03:00
+# VERSION: 2026-11-23T13:45:00+03:00
 """Synthetic regression tests. Never commit actual household budget fixtures."""
 import base64
 import io
@@ -112,6 +112,32 @@ class CalcPublisherTest(unittest.TestCase):
         self.assertEqual(head,'abc')
         self.assertEqual(previous,{'state':'current'})
         live.assert_called_once_with('old-pass')
+
+    def test_guarded_workflows_are_required_both_places(self):
+        ready=b'# LOCAL_CALC_SNAPSHOT_READY\n# test -s finance/data/owner.enc && test -s finance/data/family.enc'
+        def fetch(method,endpoint,token):
+            self.assertIn('workflows/',endpoint)
+            return {'content':base64.b64encode(ready).decode('ascii')}
+        with mock.patch.object(pub,'github_json',side_effect=fetch) as calls:
+            pub.require_switched_workflow('test-token')
+        self.assertEqual(calls.call_count,2)
+
+    def test_first_publish_retains_local_fixed_goal(self):
+        goal={'date':'2026-11-23','target':500.25}
+        remote={'asOf':'23.11.2026 10:00 МСК','familyDeficit':123}
+        local={'asOf':'23.11.2026 13:00 МСК','dailyGoal':goal,
+               'goalHistory':{'2026-11-23':goal}}
+        merged=pub.merge_first_local_goal(remote,local,self.today)
+        self.assertEqual(merged['dailyGoal'],goal)
+        self.assertEqual(merged['familyDeficit'],123)
+        self.assertEqual(merged['goalHistory']['2026-11-23'],goal)
+
+    def test_after_first_git_upload_remote_fixed_goal_wins(self):
+        goal={'date':'2026-11-23','target':450.0}
+        remote={'budgetSource':{'workbookSheet':'Семейные Траты'},
+                'dailyGoal':goal,'goalHistory':{'2026-11-23':goal}}
+        local={'dailyGoal':{'date':'2026-11-23','target':999}}
+        self.assertIs(pub.merge_first_local_goal(remote,local,self.today),remote)
 
     def test_refuses_old_remote_workflow(self):
         with mock.patch.object(pub,'github_json',return_value={
