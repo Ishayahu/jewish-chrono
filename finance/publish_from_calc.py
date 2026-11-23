@@ -333,6 +333,13 @@ def main(argv=None):
     report=build_report(book,today=today,previous=previous)
     files={'finance/data/owner.enc':encrypt_report(report,owner_password),
            'finance/data/family.enc':encrypt_report({'asOf':report['asOf'],'cycle':report['cycles'][0]},family_password)}
+    # Check both freshly produced encrypted payloads BEFORE saving/publishing.
+    owner_check=decrypt_report(files['finance/data/owner.enc'],owner_password)
+    family_check=decrypt_report(files['finance/data/family.enc'],family_password)
+    if (owner_check.get('dailyGoal')!=report.get('dailyGoal') or
+        family_check.get('cycle')!=report['cycles'][0] or
+        len(owner_check.get('cycles') or [])!=3):
+        raise PublisherError('Проверка зашифрованного отчёта не пройдена; публикация запрещена.')
     if args.export_only:
         args.output_dir.mkdir(parents=True,exist_ok=True)
         for target,content in files.items():
