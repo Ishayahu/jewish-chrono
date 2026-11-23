@@ -1,8 +1,9 @@
-# VERSION: 2026-11-23T13:45:00+03:00
+# VERSION: 2026-11-23T16:10:00+03:00
 """Synthetic regression tests. Never commit actual household budget fixtures."""
 import base64
 import io
 import runpy
+import zipfile
 from datetime import date
 from pathlib import Path
 import tempfile
@@ -15,6 +16,12 @@ class FakeBook:
     def __init__(self,path):
         self.path=path
         self.data={}
+        self.source_values={
+            ('Мои','C50'):100,('Мои','C57'):150,('Мои','C68'):4321,
+            ('Сводка','I23'):-36000,('Сводка','I14'):-200,
+            ('Сводка','I17'):-300,('Сводка','I9'):-400,
+            ('ГМАХ мой','C5'):500,
+        }
         for i,month in enumerate(('2026-12-01','2027-01-01','2027-02-01')):
             r=640+14*i
             self.data[('A',r)]=month
@@ -40,6 +47,10 @@ class FakeBook:
         if required and v is None:raise CalcError(f'{c}{r} missing')
         return v
     def num(self,c,r):return number(self.cell(c,r),f'{c}{r}')
+    def source_num(self,sh,ref):
+        if (sh,ref) not in self.source_values:
+            raise CalcError(f'Missing cached source cell {sh}!{ref}')
+        return pub.money(self.source_values[(sh,ref)],f'{sh}!{ref}')
     def text(self,c,r):return str(self.cell(c,r,False) or '').strip()
 
 class CalcPublisherTest(unittest.TestCase):
@@ -86,10 +97,77 @@ class CalcPublisherTest(unittest.TestCase):
         pub.require_legacy_fields(prev)
         report=pub.build_report(self.book,today=self.today,previous=prev)
         self.assertEqual(report['budgetRate'],60)
-        self.assertEqual(report['familyDeficit'],100000)
+        self.assertEqual(report['familyDeficit'],4321)
+        self.assertEqual(report['savedRub'],250)
+        self.assertEqual(report['usdDebt'],36000)
+        self.assertEqual(report['savingsAccounts'],[
+            {'name':'Т-Банк','amount':100.0,'source':'Мои!C50'},
+            {'name':'Сбербанк','amount':150.0,'source':'Мои!C57'},
+        ])
+        self.assertEqual(report['rubDebts'],[
+            {'name':'Цдока МЕОЦ','amount':200},
+            {'name':'Мама','amount':300},
+            {'name':'Бюджет МЕОЦ','amount':400},
+            {'name':'Свой ГМАХ','amount':500},
+        ])
+        self.assertNotIn('reserveTargetRub',report)
+        self.assertEqual(report['children'],[])
+        self.assertEqual(report['installments'],[])
         self.assertEqual(report['cycles'][0]['income'],130)
         self.assertEqual(report['deficit'],50)
         self.assertEqual(pub.build_report(self.book,today=self.today,previous=report)['dailyGoal'],report['dailyGoal'])
+    def test_missing_source_cell_blocks_publication(self):
+        self.book.source_values.pop(('Сводка','I23'))
+        prev={'rate':82,'children':[],'installments':[]}
+        with self.assertRaisesRegex(CalcError,'Сводка!I23'):
+            pub.build_report(self.book,today=self.today,previous=prev)
+
+    def test_debt_positive_balance_is_not_silently_recast_as_a_debt(self):
+        self.book.source_values[('Сводка','I14')]=100
+        prev={'rate':82,'children':[],'installments':[]}
+        with self.assertRaisesRegex(CalcError,'Сводка!I14'):
+            pub.build_report(self.book,today=self.today,previous=prev)
+
+    def test_ods_reader_extracts_extra_sheets_and_repeated_cells(self):
+        def make_sheet(name, refs):
+            rows=[]
+            previous=0
+            for row_num,column,val in sorted(refs,key=lambda x:x[0]):
+                if row_num>previous+1:
+                    rows.append(f'<table:table-row table:number-rows-repeated="{row_num-previous-1}"/>')
+                col_no=pub.colindex(column)
+                cell=(f'<table:table-cell office:value-type="float" office:value="{val}"/>')
+                rows.append('<table:table-row>'+(
+                    f'<table:table-cell table:number-columns-repeated="{col_no}"/>'
+                    if col_no else '')+cell+'</table:table-row>')
+                previous=row_num
+            return f'<table:table table:name="{name}">'+''.join(rows)+'</table:table>'
+        xml=(
+            '<office:document-content '
+            'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
+            'xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" '
+            'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">'
+            '<office:body><office:spreadsheet>'+
+            make_sheet('Семейные Траты',[(640,'A',1)])+
+            make_sheet('Мои',[(50,'C',7194.46),(57,'C',19701.27),(68,'C',1091663.367)])+
+            make_sheet('Сводка',[(9,'I',-167571),(14,'I',-2793601.451),
+                                 (17,'I',-820000),(23,'I',-36580)])+
+            make_sheet('ГМАХ мой',[(5,'C',1183000)])+
+            '</office:spreadsheet></office:body></office:document-content>'
+        )
+        path=Path(self.tmp.name)/'synthetic.ods'
+        with zipfile.ZipFile(path,'w') as archive:
+            archive.writestr('content.xml',xml.encode('utf-8'))
+        book=pub.Workbook(path)
+        self.assertEqual(book.source_num('Мои','C50'),pub.Decimal('7194.46'))
+        self.assertEqual(book.source_num('Мои','C57'),pub.Decimal('19701.27'))
+        self.assertEqual(book.source_num('Мои','C68'),pub.Decimal('1091663.37'))
+        self.assertEqual(book.source_num('Сводка','I23'),pub.Decimal('-36580.00'))
+        self.assertEqual(book.source_num('Сводка','I14'),pub.Decimal('-2793601.45'))
+        self.assertEqual(book.source_num('Сводка','I17'),pub.Decimal('-820000.00'))
+        self.assertEqual(book.source_num('Сводка','I9'),pub.Decimal('-167571.00'))
+        self.assertEqual(book.source_num('ГМАХ мой','C5'),pub.Decimal('1183000.00'))
+
     def test_encryption_compatible_with_dashboard(self):
         # Preserve already established (possibly shorter) dashboard passwords.
         key='old-pass'
