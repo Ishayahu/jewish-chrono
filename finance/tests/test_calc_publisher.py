@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T16:46:00+03:00
+# VERSION: 2026-11-23T17:25:00+03:00
 """Synthetic regression tests. Never commit actual household budget fixtures."""
 import base64
 import io
@@ -181,6 +181,37 @@ class CalcPublisherTest(unittest.TestCase):
         with mock.patch.dict('os.environ',{'FINANCE_OWNER_PASSWORD':'old-pass'}), mock.patch.object(pub.getpass,'getpass') as prompt:
             self.assertEqual(pub.existing_password('FINANCE_OWNER_PASSWORD','Owner'), 'old-pass')
             prompt.assert_not_called()
+    def test_scheduled_run_fails_without_password_without_prompting(self):
+        with mock.patch.dict('os.environ',{},clear=True), \
+             mock.patch.object(pub.getpass,'getpass') as prompt:
+            with self.assertRaisesRegex(pub.PublisherError,'FINANCE_OWNER_PASSWORD'):
+                pub.existing_password('FINANCE_OWNER_PASSWORD','Owner',non_interactive=True)
+            prompt.assert_not_called()
+
+    def test_scheduled_run_reuses_persistent_environment(self):
+        with mock.patch.dict('os.environ',{'FINANCE_OWNER_PASSWORD':'password-from-user-env'}), \
+             mock.patch.object(pub.getpass,'getpass') as prompt:
+            self.assertEqual(pub.existing_password('FINANCE_OWNER_PASSWORD','Owner',
+                             non_interactive=True),'password-from-user-env')
+            prompt.assert_not_called()
+
+    def test_scheduled_run_can_use_github_cli_and_never_prompts(self):
+        proc=mock.Mock(returncode=0,stdout='token-from-gh\\n')
+        with mock.patch.dict('os.environ',{},clear=True), \
+             mock.patch.object(pub.subprocess,'run',return_value=proc), \
+             mock.patch.object(pub.getpass,'getpass') as prompt:
+            self.assertEqual(pub.github_token(non_interactive=True),'token-from-gh')
+            prompt.assert_not_called()
+
+    def test_scheduled_run_fails_without_github_credentials(self):
+        proc=mock.Mock(returncode=1,stdout='')
+        with mock.patch.dict('os.environ',{},clear=True), \
+             mock.patch.object(pub.subprocess,'run',return_value=proc), \
+             mock.patch.object(pub.getpass,'getpass') as prompt:
+            with self.assertRaisesRegex(pub.PublisherError,'No GitHub credentials'):
+                pub.github_token(non_interactive=True)
+            prompt.assert_not_called()
+
     def test_live_pages_owner_decrypts_with_existing_browser_password(self):
         password='old-pass'
         previous={'familyDeficit':123456,'day':{'target':120}}
