@@ -33,10 +33,10 @@
 
 ## Проверка на компьютере
 
-Python 3.11+, LibreOffice Calc, библиотека для шифрования:
+Python 3.11+, LibreOffice Calc, библиотеки для шифрования и московского часового пояса (особенно для Windows):
 
 ```powershell
-py -m pip install cryptography
+py -m pip install cryptography tzdata
 ```
 
 Для `.ods` стандартной библиотеки Python достаточно. Для `.xlsx` дополнительно `py -m pip install python-calamine`.
