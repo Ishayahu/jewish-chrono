@@ -70,6 +70,29 @@ class DailyForecastTest(unittest.TestCase):
   dollar=tx("21.10.2026","Приход",1000);dollar[4]="USD"
   unconfirmed=tx("22.10.2026","Расход",4000);unconfirmed[5]="Ожидается"
   self.assertEqual(cumulative_family_deficit([[],internal,dollar,unconfirmed],100000,dt.date(2026,10,14),dt.date(2026,11,23)),Decimal("100000.00"))
+ def test_new_explicit_recurring_categories_are_not_double_counted(self):
+  categories={'Сотовая связь':1100.0,'Интернет':720.0,'Страхование квартиры':700.0,
+   'Рассрочка — Алиса с экраном':2300.0,'Рассрочка — Алиса в гостиной':1600.0}
+  plan=dict(PLAN,budgets={**PLAN['budgets'],**categories},misc=0.0)
+  base=forecast(plan,[],dt.date(2026,11,23))
+  cases=[
+   ('Сотовая связь','Связь','Мобильная связь','Оплата мобильной связи'),
+   ('Интернет','Связь и интернет','Интернет','Интернет'),
+   ('Страхование квартиры','Жильё','Страхование','Страхование квартиры'),
+   ('Рассрочка — Алиса с экраном','Техника','','Алиса с экраном'),
+   ('Рассрочка — Алиса в гостиной','Техника','','Алиса в гостиной'),
+  ]
+  for name,category,subcategory,title in cases:
+   with self.subTest(category=name):
+    record=tx('22.11.2026','Расход',categories[name],subcategory=subcategory,category=category)
+    record[2]=title
+    self.assertEqual(forecast(plan,[[],record],dt.date(2026,11,23)),base)
+    record[3]=categories[name]+100
+    self.assertEqual(forecast(plan,[[],record],dt.date(2026,11,23)),base+100)
+  usd=tx('22.11.2026','Расход',75,category='Подписки')
+  usd[4]='USD'
+  self.assertEqual(forecast(plan,[[],usd],dt.date(2026,11,23)),base)
+
  def test_cycle_ends(self):
   self.assertEqual(cycle_start(dt.date(2026,12,20)),dt.date(2026,11,21))
   self.assertEqual(next_cycle(dt.date(2026,12,21)),dt.date(2027,1,21))
