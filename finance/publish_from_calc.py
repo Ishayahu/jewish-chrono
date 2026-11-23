@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import getpass
 from datetime import date, datetime
 import json
 import os
@@ -72,8 +73,8 @@ def build_report(book: Workbook, *, today: date, previous: dict | None=None):
     return report
 
 def encrypt_report(data: dict, password: str) -> str:
-    if len(password) < 16:
-        raise PublisherError('Пароль должен содержать минимум 16 символов.')
+    if not password:
+        raise PublisherError('Пароль шифрования не может быть пустым.')
     from secrets import token_bytes
     salt, iv = token_bytes(16), token_bytes(12)
     key = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt,
@@ -156,6 +157,24 @@ def require_legacy_fields(previous:dict|None):
         raise PublisherError('В прежнем owner.enc недостаёт ещё не сопоставленных с Calc полей: '+', '.join(missing)+
                    '. Не публикуем выдуманные значения; нужен прежний отчёт или утверждённые адреса.')
 
+def existing_password(variable: str, prompt: str) -> str:
+    """Reuse the already configured secret or ask securely for the EXISTING password.
+
+    No new length requirement: the old GitHub dashboard may use an established
+    password shorter than 16 characters. getpass never echoes typed secrets.
+    """
+    current = os.environ.get(variable)
+    if current:
+        return current
+    try:
+        value = getpass.getpass(prompt + ' (ввод скрыт): ')
+    except (EOFError, KeyboardInterrupt) as exc:
+        raise PublisherError('Не удалось прочитать пароль из терминала') from exc
+    if not value:
+        raise PublisherError('Пустой пароль. Введи действующий пароль дашборда.')
+    return value
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--book',type=Path,required=True,help='Путь к сохранённой .ods/.xlsx')
@@ -176,10 +195,8 @@ def main(argv=None):
     if not(args.publish or args.export_only):
         print('ПРОВЕРКА: структура и суммы сошлись, GitHub не изменён. Цель не фиксировалась.')
         return 0
-    owner_password=os.environ.get('FINANCE_OWNER_PASSWORD','')
-    family_password=os.environ.get('WIFE_PASSWORD','')
-    if len(owner_password)<16 or len(family_password)<16:
-        raise PublisherError('Задайте FINANCE_OWNER_PASSWORD и WIFE_PASSWORD (не короче 16 символов)')
+    owner_password=existing_password('FINANCE_OWNER_PASSWORD','Действующий пароль личного дашборда')
+    family_password=existing_password('WIFE_PASSWORD','Действующий пароль семейного дашборда')
     previous=None;head=None
     if args.publish:
         if not PUBLISH_ENABLED:raise PublisherError('PUBLISH_ENABLED=False: переключение публикации ещё не согласовано')
