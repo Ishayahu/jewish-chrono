@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T16:47:00+03:00
+# VERSION: 2026-11-23T17:20:00+03:00
 """Standalone publisher for encrypted financial dashboards from saved local Calc.
 
 Only ONE Python file is needed. No Windows CMD launcher or second Python module.
@@ -514,7 +514,7 @@ def require_legacy_fields(previous:dict|None):
         raise PublisherError('Previous owner.enc is missing fields not yet mapped from Calc: '+', '.join(missing)+
                    '. Refusing to invent values; provide a previous report or verified Calc references.')
 
-def existing_password(variable: str, prompt: str) -> str:
+def existing_password(variable: str, prompt: str, *, non_interactive: bool=False) -> str:
     """Reuse the already configured secret or ask securely for the EXISTING password.
 
     No new length requirement: the old GitHub dashboard may use an established
@@ -523,6 +523,8 @@ def existing_password(variable: str, prompt: str) -> str:
     current = os.environ.get(variable)
     if current:
         return current
+    if non_interactive:
+        raise PublisherError(f'Missing {variable} in scheduled run. Configure a persistent user environment variable.')
     try:
         value = getpass.getpass(prompt + ' (hidden input): ')
     except (EOFError, KeyboardInterrupt) as exc:
@@ -532,7 +534,7 @@ def existing_password(variable: str, prompt: str) -> str:
     return value
 
 
-def github_token() -> str:
+def github_token(*, non_interactive: bool=False) -> str:
     """Use an already configured token or the standard GitHub CLI login.
 
     Fall back to a concealed one-time prompt without storing credentials on
@@ -548,6 +550,8 @@ def github_token() -> str:
             return result.stdout.strip()
     except (OSError,subprocess.TimeoutExpired):
         pass
+    if non_interactive:
+        raise PublisherError('No GitHub credentials for scheduled run: set GITHUB_TOKEN or configure gh auth login for the same Windows account.')
     try:
         token=getpass.getpass('GitHub token (fine-grained, Contents: read/write): ').strip()
     except (EOFError,KeyboardInterrupt) as exc:
@@ -590,6 +594,8 @@ def main(argv=None):
     mode=parser.add_mutually_exclusive_group()
     mode.add_argument('--publish',action='store_true',help='Publish encrypted report after guarded workflow cutover')
     mode.add_argument('--export-only',action='store_true',help='Create local encrypted .enc files only')
+    parser.add_argument('--non-interactive',action='store_true',
+        help='For Windows Task Scheduler: fail if credentials are missing instead of prompting')
     parser.add_argument('--output-dir',type=Path,default=Path.home()/'finance-export')
     parser.add_argument('--previous-owner',type=Path,help='Optional previous owner.enc file')
     args=parser.parse_args(argv)
@@ -604,12 +610,14 @@ def main(argv=None):
     if not(args.publish or args.export_only):
         print('CHECK OK: structure and totals match; GitHub unchanged. Daily goal not fixed.')
         return 0
-    owner_password=existing_password('FINANCE_OWNER_PASSWORD','Current owner dashboard password')
-    family_password=existing_password('WIFE_PASSWORD','Current family dashboard password')
+    owner_password=existing_password('FINANCE_OWNER_PASSWORD','Current owner dashboard password',
+                                     non_interactive=args.non_interactive)
+    family_password=existing_password('WIFE_PASSWORD','Current family dashboard password',
+                                      non_interactive=args.non_interactive)
     previous=None;head=None
     if args.publish:
         if not PUBLISH_ENABLED:raise PublisherError('PUBLISH_ENABLED=False: publication cutover is not enabled')
-        token=github_token()
+        token=github_token(non_interactive=args.non_interactive)
         require_switched_workflow(token)
         head,previous=remote_previous(token,owner_password)
         local_latest=args.output_dir/'owner.enc'
