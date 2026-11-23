@@ -2,13 +2,14 @@
 """Synthetic regression tests. Never commit actual household budget fixtures."""
 import base64
 import io
+import runpy
 from datetime import date
 from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
-from finance.local_calc_model import CalcError,cycles_from_book,fixed_goal,number
 from finance import publish_from_calc as pub
+from finance.publish_from_calc import CalcError,cycles_from_book,fixed_goal,number
 
 class FakeBook:
     def __init__(self,path):
@@ -48,6 +49,16 @@ class CalcPublisherTest(unittest.TestCase):
         p=Path(self.tmp.name)/'saved.ods';p.write_bytes(b'test-book')
         self.book=FakeBook(p)
         self.today=date(2026,11,23)
+    def test_single_python_file_runs_without_sibling_module(self):
+        namespace=runpy.run_path(str(Path(pub.__file__)),run_name='__standalone_test__')
+        self.assertIn('Workbook',namespace)
+        self.assertIn('fixed_goal',namespace)
+        self.assertIn('main',namespace)
+        self.assertEqual(
+            namespace['cycles_from_book'](self.book,self.today)[0]['income'],
+            130,
+        )
+
     def test_extracts_three_cycles_without_subtotal(self):
         cycles=cycles_from_book(self.book,self.today)
         self.assertEqual(len(cycles),3)
