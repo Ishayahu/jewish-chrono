@@ -19,9 +19,29 @@ async function unlock(keyMaterial){
  if(!Array.isArray(c.budgets)||!Number.isFinite(c.income)||!Number.isFinite(c.expenses))throw Error('Неполный бюджет');
  $('current').hidden=false;$('label').textContent=c.label;
  $('summary').append(line('Прогноз поступлений',rub(c.income)),line('План расходов',rub(c.expenses)),line('Плановый результат',rub(c.income-c.expenses)));
- const box=$('categories');for(const b of c.budgets){
+ const box=$('categories');box.replaceChildren();for(const b of c.budgets){
   if(!Number.isFinite(b.limit))continue;
-  box.append(line(b.name,b.spent===null?'Лимит '+rub(b.limit):'Осталось '+rub(b.limit-b.spent)+' из '+rub(b.limit)));
+  const remaining=Number.isFinite(b.remaining)?b.remaining:
+                  Number.isFinite(b.spent)?b.limit-b.spent:null;
+  const item=document.createElement('div');item.className='budgetitem';
+  const headline=document.createElement('div');headline.className='spread';
+  const name=document.createElement('span');name.textContent=b.name;
+  const amount=document.createElement('b');
+  amount.textContent=remaining===null?'Лимит '+rub(b.limit):
+      'Осталось '+rub(remaining)+' из '+rub(b.limit);
+  headline.append(name,amount);item.append(headline);
+  if(remaining!==null&&b.limit>0&&!b.informational){
+    const progress=document.createElement('div');progress.className='progress';
+    progress.setAttribute('role','progressbar');
+    progress.setAttribute('aria-label',b.name+': remaining budget');
+    progress.setAttribute('aria-valuemin','0');
+    progress.setAttribute('aria-valuemax','100');
+    const percent=Math.max(0,Math.min(100,remaining/b.limit*100));
+    progress.setAttribute('aria-valuenow',percent.toFixed(1));
+    const fill=document.createElement('div');fill.style.width=percent.toFixed(2)+'%';
+    progress.append(fill);item.append(progress);
+  }
+  box.append(item);
  }
  if(Array.isArray(c.unmappedExpenses)&&c.unmappedExpenses.length){const total=c.unmappedExpenses.reduce((sum,x)=>sum+x.amount,0);box.append(line('Расходы без однозначной категории',rub(total)));const note=document.createElement('p');note.className='muted';note.textContent='Не распределено операций: '+c.unmappedExpenses.length+'. Эти суммы не вычтены из лимитов категорий и требуют сверки.';box.append(note)}
 }
