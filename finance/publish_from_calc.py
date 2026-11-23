@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T15:55:00+03:00
+# VERSION: 2026-11-23T16:47:00+03:00
 """Standalone publisher for encrypted financial dashboards from saved local Calc.
 
 Only ONE Python file is needed. No Windows CMD launcher or second Python module.
@@ -346,9 +346,8 @@ def build_report(book: Workbook, *, today: date, previous: dict | None=None):
         {'name':'Сбербанк','amount':float(sberbank),'source':'Мои!C57'},
     ]
     report['savedRub'] = float(money(tinkoff+sberbank,'savings total'))
-    # On the supplied 23-Nov ODS, Сводка!I23 is -36,580, close to the
-    # previously recorded USD loan; the adjacent label is "Я арев".
-    # Respect the explicitly supplied cell, but record its source.
+    # The user explicitly mapped the USD loan to Сводка!I23.
+    # Preserve its source coordinate for later audits.
     def liability(source_sheet,ref):
         signed=book.source_num(source_sheet,ref)
         if signed>0:
