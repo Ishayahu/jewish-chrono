@@ -24,6 +24,10 @@ jobs:
     steps:
       - name: Checkout published website files
         uses: actions/checkout@v5
+      - name: Test Calc publisher, fixed daily goals and encryption
+        run: |
+          python3 -m pip install --quiet --user cryptography
+          python3 -m unittest finance.tests.test_calc_publisher -v
       # LOCAL_CALC_SNAPSHOT_READY: preserve committed owner.enc and family.enc.
       # Until FIRST local upload, keep the Google-based site functioning unchanged.
       - name: Use committed encrypted Calc snapshot, or legacy builder until first upload
