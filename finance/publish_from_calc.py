@@ -1,4 +1,4 @@
-# VERSION: 2026-11-23T13:02:00+03:00
+# VERSION: 2026-11-23T13:30:00+03:00
 #!/usr/bin/env python3
 """Publish encrypted finance dashboards from saved local LibreOffice Calc.
 
@@ -17,6 +17,7 @@ import getpass
 from datetime import date, datetime
 import json
 import os
+import subprocess
 from pathlib import Path
 import sys
 import urllib.error
@@ -37,7 +38,7 @@ REPOSITORY = 'Ishayahu/jewish-chrono'
 BRANCH = 'main'
 TZ = 'Europe/Moscow'
 SITE_OWNER_URL = 'https://ishayahu.github.io/jewish-chrono/finance/data/owner.enc'
-PUBLISH_ENABLED = False   # Enable only after replacing cloud Google Sheets workflow.
+PUBLISH_ENABLED = True  # Both workflows use locally committed ciphertexts after first upload.
 
 class PublisherError(ValueError):
     pass
@@ -142,11 +143,20 @@ def github_json(method: str, endpoint: str, token: str, data: dict | None=None) 
         raise PublisherError(f'GitHub {method} {endpoint}: HTTP {exc.code}') from exc
 
 def require_switched_workflow(token:str):
-    path='.github/workflows/finance.yml'
-    info=github_json('GET',f'contents/{urllib.parse.quote(path,safe="/")}?ref={BRANCH}',token)
-    code=base64.b64decode(info['content']).decode('utf-8')
-    if 'build_encrypted.py' in code or 'FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON' in code:
-        raise PublisherError('Публикация заблокирована: прежний GitHub workflow ещё строит отчёт из Google Sheets.')
+    """Both Pages workflows must switch to committed data after first upload.
+
+    Until then they deliberately retain the legacy Google generator to keep
+    the existing website live during migration.
+    """
+    for path in ('.github/workflows/finance.yml','.github/workflows/pages.yml'):
+        info=github_json('GET',f'contents/{urllib.parse.quote(path,safe="/")}?ref={BRANCH}',token)
+        code=base64.b64decode(info['content']).decode('utf-8')
+        if not all(marker in code for marker in (
+                'LOCAL_CALC_SNAPSHOT_READY',
+                'test -s finance/data/owner.enc && test -s finance/data/family.enc')):
+            raise PublisherError(
+                f'Безопасное переключение ещё не установлено в {path}; ничего не публикуем.'
+            )
 
 def remote_previous(token: str, password: str):
     head=github_json('GET',f'git/ref/heads/{BRANCH}',token)['object']['sha']
@@ -160,10 +170,14 @@ def remote_previous(token: str, password: str):
         raise
     raw=base64.b64decode(current['content']).decode('utf-8')
     try:
-        return head,decrypt_report(raw,password)
+        obj=decrypt_report(raw,password)
     except PublisherError:
         print('GitHub содержит старый owner.enc; читаю актуальный зашифрованный отчёт с сайта.')
         return head,site_previous(password)
+    if (obj.get('budgetSource') or {}).get('workbookSheet')!='Семейные Траты':
+        print('В GitHub архивный снимок до перехода на Calc; наследую актуальные поля сайта.')
+        return head,site_previous(password)
+    return head,obj
 
 def publish_encrypted(files:dict[str,str],token:str,expected_head:str):
     """Commit both encrypted files against same branch HEAD; never force-overwrite."""
@@ -205,6 +219,56 @@ def existing_password(variable: str, prompt: str) -> str:
     return value
 
 
+def github_token() -> str:
+    """Use an already configured token or the standard GitHub CLI login.
+
+    Fall back to a concealed one-time prompt without storing credentials on
+    disk. Never echo credentials into logs, shell history or the dashboard.
+    """
+    token=os.environ.get('GITHUB_TOKEN','').strip()
+    if token:
+        return token
+    try:
+        result=subprocess.run(['gh','auth','token'],capture_output=True,
+                              text=True,timeout=15,check=False)
+        if result.returncode==0 and result.stdout.strip():
+            return result.stdout.strip()
+    except (OSError,subprocess.TimeoutExpired):
+        pass
+    try:
+        token=getpass.getpass('GitHub token (fine-grained, только Contents: write): ').strip()
+    except (EOFError,KeyboardInterrupt) as exc:
+        raise PublisherError('Не удалось получить токен GitHub') from exc
+    if not token:
+        raise PublisherError(
+           'Нужен GITHUB_TOKEN или вход в GitHub CLI (gh auth login). '
+           'Без токена публикация не выполняется.'
+        )
+    return token
+
+
+def merge_first_local_goal(remote: dict, local: dict | None, today: date) -> dict:
+    """On FIRST upload, preserve the goal fixed by prior --export-only.
+
+    Once a Calc snapshot exists on GitHub, the committed remote history is
+    authoritative; never silently replace it with older local state.
+    """
+    if (remote.get('budgetSource') or {}).get('workbookSheet')=='Семейные Траты':
+        return remote
+    if not local:
+        return remote
+    goal=(local.get('goalHistory') or {}).get(today.isoformat()) or local.get('dailyGoal') or {}
+    if goal.get('date')!=today.isoformat() or not isinstance(goal.get('target'),(int,float)):
+        return remote
+    merged=dict(remote)
+    merged['dailyGoal']=goal
+    history=dict(remote.get('goalHistory') or {})
+    history.update(local.get('goalHistory') or {})
+    history[today.isoformat()]=goal
+    merged['goalHistory']=history
+    return merged
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--book',type=Path,required=True,help='Путь к сохранённой .ods/.xlsx')
@@ -230,10 +294,21 @@ def main(argv=None):
     previous=None;head=None
     if args.publish:
         if not PUBLISH_ENABLED:raise PublisherError('PUBLISH_ENABLED=False: переключение публикации ещё не согласовано')
-        token=os.environ.get('GITHUB_TOKEN','').strip()
-        if not token:raise PublisherError('Не задан GITHUB_TOKEN (Contents: write)')
+        token=github_token()
         require_switched_workflow(token)
         head,previous=remote_previous(token,owner_password)
+        local_latest=args.output_dir/'owner.enc'
+        if local_latest.is_file():
+            try:
+                local_report=decrypt_report(local_latest.read_text(encoding='utf-8'),
+                                             owner_password)
+            except PublisherError as exc:
+                raise PublisherError(
+                    f'В {local_latest} находится зашифрованный отчёт с другим паролем '
+                    'или ошибкой. Не публикуем: важно не потерять фиксированную '
+                    'дневную цель. Сохраните файл для проверки.'
+                ) from exc
+            previous=merge_first_local_goal(previous,local_report,today)
     else:
         # Prefer the most recent LOCAL encrypted snapshot on subsequent runs;
         # --previous-owner is only a bootstrap fallback. Otherwise the frozen
