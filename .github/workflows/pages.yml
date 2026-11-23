@@ -65,17 +65,23 @@ jobs:
           else
             echo 'Chronology JSON already up to date'
           fi
-      - name: Generate encrypted owner report (when Google access configured)
+      # LOCAL_CALC_SNAPSHOT_READY: both GitHub Pages workflows must keep
+      # committed owner.enc and family.enc intact once local upload begins.
+      - name: Use committed encrypted Calc snapshot, or legacy builder until first upload
         env:
           FINANCE_OWNER_PASSWORD: ${{ secrets.FINANCE_OWNER_PASSWORD }}
           WIFE_PASSWORD: ${{ secrets.WIFE_PASSWORD }}
           FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: |
-          if [ -n "$FINANCE_OWNER_PASSWORD" ] && [ -n "$WIFE_PASSWORD" ] && [ -n "$FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON" ]; then
+          if test -s finance/data/owner.enc && test -s finance/data/family.enc; then
+            echo 'Using encrypted local-Calc snapshots already committed in finance/data/'
+          else
+            echo 'Local Calc snapshot not committed yet; preserving existing Google Sheets deployment.'
+            test -n "$FINANCE_OWNER_PASSWORD" || { echo 'Missing FINANCE_OWNER_PASSWORD'; exit 1; }
+            test -n "$WIFE_PASSWORD" || { echo 'Missing WIFE_PASSWORD'; exit 1; }
+            test -n "$FINANCE_GOOGLE_SERVICE_ACCOUNT_JSON" || { echo 'Missing finance Google credential'; exit 1; }
             python3 -m pip install --quiet --user google-auth requests cryptography
             python3 finance/build_encrypted.py
-          else
-            echo 'Finance credentials missing; refusing to publish stale demo data'; exit 1
           fi
       - name: Stage GitHub Pages artifact
         run: |
