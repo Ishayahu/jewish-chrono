@@ -1,52 +1,66 @@
 @echo off
 setlocal
 chcp 65001 >nul
-title LibreOffice Calc - Publish encrypted financial dashboard
+title Семейный бюджет - публикация из LibreOffice Calc
 
 set "BOOK=%USERPROFILE%\OneDrive\Documents\Бюджет_2.ods"
-set "PYFILE=%~dp0publish_from_calc.py"
+set "SCRIPT_DIR=%~dp0"
+set "TEMP_SOURCE=%TEMP%\calc-publisher-%RANDOM%-%RANDOM%"
+set "SOURCE_BASE=https://raw.githubusercontent.com/Ishayahu/jewish-chrono/main/finance"
 
 echo.
-echo ===========================================================
-echo  ПУБЛИКАЦИЯ: только зашифрованные данные из сохранённого Calc
-echo ===========================================================
+echo =============================================================
+echo  Экспорт финансового дашборда из сохранённого LibreOffice Calc
+echo =============================================================
 echo.
 if not exist "%BOOK%" (
-  echo ОШИБКА: не найдена таблица "%BOOK%".
-  echo Сохраните рабочую книгу под этим именем или поправьте BOOK в начале файла.
-  goto :failed
-)
-if not exist "%PYFILE%" (
-  echo ОШИБКА: не найден publish_from_calc.py рядом с этим файлом.
-  echo Скачайте актуальные скрипты из репозитория.
+  echo ОШИБКА: файл книги не найден: "%BOOK%"
+  echo Сохраните таблицу и поправьте BOOK в начале этого .cmd при другом пути.
   goto :failed
 )
 where py >nul 2>nul
 if errorlevel 1 (
-  echo ОШИБКА: не найден Python launcher "py". Установите Python 3.11 или новее.
+  echo ОШИБКА: не установлен Python launcher py
   goto :failed
 )
+
+echo Обновляю два Python-модуля из вашего репозитория GitHub...
+mkdir "%TEMP_SOURCE%" 2>nul
+powershell -NoProfile -NonInteractive -Command "$ErrorActionPreference='Stop'; $base='%SOURCE_BASE%'; $dir='%TEMP_SOURCE%'; Invoke-WebRequest -Uri ($base+'/publish_from_calc.py') -OutFile (Join-Path $dir 'publish_from_calc.py'); Invoke-WebRequest -Uri ($base+'/local_calc_model.py') -OutFile (Join-Path $dir 'local_calc_model.py')"
+if errorlevel 1 (
+  echo ОШИБКА: не получилось загрузить актуальные Python-файлы.
+  echo Публикация не начата. Проверьте доступ к raw.githubusercontent.com.
+  goto :failed
+)
+py -m py_compile "%TEMP_SOURCE%\publish_from_calc.py" "%TEMP_SOURCE%\local_calc_model.py"
+if errorlevel 1 (
+  echo ОШИБКА: загруженный Python не прошёл проверку синтаксиса.
+  goto :failed
+)
+copy /Y "%TEMP_SOURCE%\publish_from_calc.py" "%SCRIPT_DIR%publish_from_calc.py" >nul
+if errorlevel 1 goto :failed
+copy /Y "%TEMP_SOURCE%\local_calc_model.py" "%SCRIPT_DIR%local_calc_model.py" >nul
+if errorlevel 1 goto :failed
+rmdir /S /Q "%TEMP_SOURCE%" 2>nul
+
 py -c "from cryptography.hazmat.primitives.ciphers.aead import AESGCM; from zoneinfo import ZoneInfo; ZoneInfo('Europe/Moscow')" >nul 2>nul
 if errorlevel 1 (
-  echo Устанавливаю отсутствующие библиотеки cryptography и tzdata...
+  echo Устанавливаю недостающие зависимости Python...
   py -m pip install cryptography tzdata
   if errorlevel 1 goto :failed
 )
+
 echo.
-echo Сценарий: сохранить сегодняшнюю фиксированную цель.
-echo Скрипт читает данные Calc, расшифровывает прежнее состояние и
-echo отправляет в GitHub только зашифрованные owner.enc и family.enc.
+echo Проверка бюджета, фиксация дневной цели и публикация двух шифротекстов.
+echo Если ключи уже настроены, программа их использует.
+echo При отсутствии токена GitHub может быть предложен скрытый ввод.
 echo.
-echo Если GitHub CLI уже авторизован, вход происходит автоматически.
-echo Иначе скрипт спросит GitHub token скрытым вводом.
-echo Пароли дашбордов будут запрошены только если их нет в среде.
-echo.
-py "%PYFILE%" --book "%BOOK%" --publish
+py "%SCRIPT_DIR%publish_from_calc.py" --book "%BOOK%" --publish
 if errorlevel 1 goto :failed
 
 echo.
-echo GitHub принял шифрованные данные. Сайт будет обновлён GitHub Actions.
-echo В браузере проверьте после успешного запуска workflow:
+echo Отправка в GitHub прошла успешно.
+echo После успешного GitHub Actions сайт покажет новый снимок:
 echo https://ishayahu.github.io/jewish-chrono/finance/
 echo.
 pause
@@ -54,8 +68,8 @@ exit /b 0
 
 :failed
 echo.
-echo GitHub не получил новую публикацию от этого запуска.
-echo Скопируйте сообщение об ошибке без паролей и токенов.
-echo.
+echo ПУБЛИКАЦИЯ ОСТАНОВЛЕНА. Не передавайте токены и пароли.
+if exist "%TEMP_SOURCE%" rmdir /S /Q "%TEMP_SOURCE%" 2>nul
+echo Пришлите текст ошибки без секретов.
 pause
 exit /b 1
