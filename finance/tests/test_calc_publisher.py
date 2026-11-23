@@ -1,6 +1,7 @@
 # VERSION: 2026-11-23T12:10:00+03:00
 """Synthetic regression tests. Never commit actual household budget fixtures."""
 import base64
+import io
 from datetime import date
 from pathlib import Path
 import tempfile
@@ -91,6 +92,27 @@ class CalcPublisherTest(unittest.TestCase):
         with mock.patch.dict('os.environ',{'FINANCE_OWNER_PASSWORD':'old-pass'}), mock.patch.object(pub.getpass,'getpass') as prompt:
             self.assertEqual(pub.existing_password('FINANCE_OWNER_PASSWORD','Owner'), 'old-pass')
             prompt.assert_not_called()
+    def test_live_pages_owner_decrypts_with_existing_browser_password(self):
+        password='old-pass'
+        previous={'familyDeficit':123456,'day':{'target':120}}
+        envelope=pub.encrypt_report(previous,password).encode('utf-8')
+        with mock.patch.object(pub.urllib.request,'urlopen',
+                               return_value=io.BytesIO(envelope)):
+            self.assertEqual(pub.site_previous(password),previous)
+
+    def test_repository_snapshot_with_wrong_password_uses_live_site(self):
+        old=pub.encrypt_report({'state':'old'},'obsolete-password')
+        def fake_github(method,endpoint,token):
+            if endpoint.startswith('git/ref/'):
+                return {'object':{'sha':'abc'}}
+            return {'content':base64.b64encode(old.encode('utf-8')).decode('ascii')}
+        with mock.patch.object(pub,'github_json',side_effect=fake_github), \
+             mock.patch.object(pub,'site_previous',return_value={'state':'current'}) as live:
+            head,previous=pub.remote_previous('token','old-pass')
+        self.assertEqual(head,'abc')
+        self.assertEqual(previous,{'state':'current'})
+        live.assert_called_once_with('old-pass')
+
     def test_refuses_old_remote_workflow(self):
         with mock.patch.object(pub,'github_json',return_value={
           'content':base64.b64encode(b'python finance/build_encrypted.py').decode()}):
