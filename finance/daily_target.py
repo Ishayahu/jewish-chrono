@@ -27,12 +27,19 @@ def next_cycle(x):
  return dt.date(x.year+(x.month==12),x.month%12+1,21)
 
 def classify(r,budgets):
- explicit=str(r[17]).strip() if len(r)>17 else ""
- if explicit in budgets:return explicit
+ for i in (18,17):
+  explicit=str(r[i]).strip() if len(r)>i else ""
+  if explicit in budgets:return explicit
  if explicit=="Покупки к Шаббату":return "Шаббат"
  cat=str(r[6] if len(r)>6 else "").strip().casefold()
  sub=str(r[7] if len(r)>7 else "").strip().casefold()
  title=str(r[2] if len(r)>2 else "").strip().casefold()
+ if "интернет" in sub and ("связь" in cat or "интернет" in cat or "интернет" in title):return "Интернет"
+ if "мобильная связь" in sub or (cat=="связь" and ("телефон" in title or "пополн" in title)):return "Сотовая связь"
+ if "страхован" in (sub+" "+title) and "квартир" in (cat+" "+sub+" "+title):return "Страхование квартиры"
+ if ("алиса" in title or "станция" in title or "алиса" in sub):
+  if "экран" in (sub+" "+title):return "Рассрочка — Алиса с экраном"
+  if "гостин" in (sub+" "+title):return "Рассрочка — Алиса в гостиной"
  if "шаббат" in sub or (cat=="семейное питание" and "шаббат" in title):return "Шаббат"
  if (cat=="питание" and sub in ("продукты","фастфуд","рыба","овощи","фрукты")) or cat=="продукты":return "Продукты"
  if cat=="дети":
@@ -50,7 +57,7 @@ def classify(r,budgets):
 def plan_from_rolling(rows,col,opening):
  start=day(rows[2][col]);end=day(rows[3][col])
  if not start or end!=next_cycle(start)-dt.timedelta(days=1):raise ValueError("Invalid rolling cycle")
- limits={str(rows[i-1][0]):float(money(rows[i-1][col])) for i in range(6,17)}
+ limits={str(rows[i-1][0]):float(money(rows[i-1][col])) for i in range(6,22)}
  regular=money(rows[26][col])*money(rows[27][col])+money(rows[28][col])
  lessons=money(rows[32][col])-regular
  if lessons<0:raise ValueError("Negative planned lesson income")
