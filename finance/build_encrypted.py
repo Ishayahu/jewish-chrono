@@ -42,7 +42,7 @@ def main():
   legacy_day=True
  else:
   legacy_day=False
- cats=[('Шаббат',5,2,4),('Продукты',6,2,1),('Прочие дети',7,2,1),('Бытовая химия',8,2,1),('Аренда',35,1,1),('Психолог',36,1,1),('Седжаро',37,1,1),('Прочее лечение',38,1,1),('Уход за собой',39,1,1),('Развозка',29,1,1),('Хор',30,1,1),('Сотовая связь',17,1,1),('Интернет',18,1,1),('Страхование квартиры',19,1,1),('Рассрочка — Алиса с экраном',20,1,1),('Рассрочка — Алиса в гостиной',21,1,1)]
+ cats=[('Шаббат',5,2,4),('Продукты',6,2,1),('Прочие дети',7,2,1),('Бытовая химия',8,2,1),('Аренда',35,1,1),('Психолог',36,1,1),('Седжаро',37,1,1),('Прочее лечение',38,1,1),('Уход за собой',39,1,1),('Развозка',29,1,1),('Хор',30,1,1),('Сотовая связь',17,1,1),('Интернет',18,1,1),('Страхование квартиры',19,1,1),('Рассрочка — Алиса с экраном',20,1,1),('Рассрочка — Алиса в гостиной',21,1,1),('Непредвиденные траты',34,1,1)]
 
  def parse_date(x):
   try:return dt.datetime.strptime(str(x).strip(),'%d.%m.%Y').date()
@@ -70,6 +70,7 @@ def main():
   if 'седжаро' in sub:return 'Седжаро'
   if category=='здоровье и уход' and ('лекарств' in sub or 'лечение' in sub):return 'Прочее лечение'
   if category=='личные расходы' and 'уход за собой' in sub:return 'Уход за собой'
+  if category=='непредвиденные траты' or sub=='непредвиденные траты':return 'Непредвиденные траты'
   return None
  def actuals(start,end):
   # Q is the budget cycle assigned to the transaction; A is the payment date.
@@ -103,7 +104,7 @@ def main():
   if isinstance(value,str):
    return dt.datetime.strptime(value,'%d.%m.%Y').date()
   raise ValueError('Invalid rolling cycle date')
- categories=[str(rolling[row-1][0]) for row in range(6,23)]
+ category_rows=list(range(6,23))+[34]
  cycles=[]
  for i in range(3):
   start=sheet_date(rolling[2][i+1])
@@ -112,7 +113,8 @@ def main():
    raise ValueError('Rolling budget dates are inconsistent')
   spent,unmapped=actuals(start,min(end,today)) if today>=start else ({},[])
   budgets=[]
-  for row,name in enumerate(categories,6):
+  for row in category_rows:
+   name=str(rolling[row-1][0])
    limit=v(rolling,row,i+1)
    if name=='Подписки (USD-резерв)':
     # USD 75 is already removed from the available currency before conversion.
