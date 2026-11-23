@@ -1,0 +1,23 @@
+name: Test local Calc finance publisher
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'finance/publish_from_calc.py'
+      - 'tests/test_calc_publisher.py'
+      - '.github/workflows/test-calc-publisher.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Install lightweight reader and encryption library
+        run: python3 -m pip install --quiet python-calamine cryptography
+      - name: Compile and run isolated tests
+        run: |
+          python3 -m py_compile finance/publish_from_calc.py tests/test_calc_publisher.py
+          python3 -m unittest tests/test_calc_publisher.py -v
