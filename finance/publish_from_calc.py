@@ -205,8 +205,12 @@ def main(argv=None):
         require_switched_workflow(token)
         head,previous=remote_previous(token,owner_password)
     else:
-        previous_path=args.previous_owner or (args.output_dir/'owner.enc')
-        if previous_path.is_file():
+        # Prefer the most recent LOCAL encrypted snapshot on subsequent runs;
+        # --previous-owner is only a bootstrap fallback. Otherwise the frozen
+        # same-day goal would silently reset to the original legacy copy.
+        local_latest=args.output_dir/'owner.enc'
+        previous_path=local_latest if local_latest.is_file() else args.previous_owner
+        if previous_path and previous_path.is_file():
             previous=decrypt_report(previous_path.read_text(encoding='utf-8'),owner_password)
     require_legacy_fields(previous)
     report=build_report(book,today=today,previous=previous)
