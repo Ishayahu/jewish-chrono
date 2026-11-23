@@ -42,7 +42,7 @@ def main():
   legacy_day=True
  else:
   legacy_day=False
- cats=[('Шаббат',5,2,4),('Продукты',6,2,1),('Прочие дети',7,2,1),('Бытовая химия',8,2,1),('Аренда',35,1,1),('Психолог',36,1,1),('Седжаро',37,1,1),('Прочее лечение',38,1,1),('Уход за собой',39,1,1),('Развозка',29,1,1),('Хор',30,1,1)]
+ cats=[('Шаббат',5,2,4),('Продукты',6,2,1),('Прочие дети',7,2,1),('Бытовая химия',8,2,1),('Аренда',35,1,1),('Психолог',36,1,1),('Седжаро',37,1,1),('Прочее лечение',38,1,1),('Уход за собой',39,1,1),('Развозка',29,1,1),('Хор',30,1,1),('Сотовая связь',17,1,1),('Интернет',18,1,1),('Страхование квартиры',19,1,1),('Рассрочка — Алиса с экраном',20,1,1),('Рассрочка — Алиса в гостиной',21,1,1)]
 
  def parse_date(x):
   try:return dt.datetime.strptime(str(x).strip(),'%d.%m.%Y').date()
@@ -51,6 +51,12 @@ def main():
   category=str(x[6] if len(x)>6 else '').strip().casefold()
   sub=str(x[7] if len(x)>7 else '').strip().casefold()
   title=str(x[2] if len(x)>2 else '').strip().casefold()
+  if "интернет" in sub and ("связь" in category or "интернет" in category or "интернет" in title):return "Интернет"
+  if "мобильная связь" in sub or (category=="связь" and ("телефон" in title or "пополн" in title)):return "Сотовая связь"
+  if "страхован" in (sub+" "+title) and "квартир" in (category+" "+sub+" "+title):return "Страхование квартиры"
+  if "алиса" in title or "станция" in title or "алиса" in sub:
+   if "экран" in (sub+" "+title):return "Рассрочка — Алиса с экраном"
+   if "гостин" in (sub+" "+title):return "Рассрочка — Алиса в гостиной"
   if 'шаббат' in sub or (category=='семейное питание' and 'шаббат' in title):return 'Шаббат'
   if category=='питание' and sub in ('продукты','фастфуд','рыба','овощи','фрукты'):return 'Продукты'
   if category=='продукты' and sub not in ('резерв: покупки к шаббату',):return 'Продукты'
@@ -78,8 +84,9 @@ def main():
    try:amount=n(x[3])
    except (ValueError,TypeError):continue
    if amount<0:continue
-   explicit=str(x[17]).strip() if len(x)>17 else ''
-   name=({'Покупки к Шаббату':'Шаббат','Шаббат':'Шаббат'}.get(explicit,explicit) if explicit in {item[0] for item in cats}|{'Покупки к Шаббату'} else classify(x))
+   allowed={item[0] for item in cats}|{'Покупки к Шаббату'}
+   explicit=next((v for i in (18,17) if (v:=str(x[i]).strip() if len(x)>i else '') in allowed),'')
+   name=({'Покупки к Шаббату':'Шаббат','Шаббат':'Шаббат'}.get(explicit,explicit) if explicit else classify(x))
    if name:spent[name]=round(spent[name]+amount,2)
    else:unmapped.append({'row':ix,'amount':amount,'category':str(x[6]),'subcategory':str(x[7])})
   return spent,unmapped
@@ -96,7 +103,7 @@ def main():
   if isinstance(value,str):
    return dt.datetime.strptime(value,'%d.%m.%Y').date()
   raise ValueError('Invalid rolling cycle date')
- categories=[str(rolling[row-1][0]) for row in range(6,17)]
+ categories=[str(rolling[row-1][0]) for row in range(6,23)]
  cycles=[]
  for i in range(3):
   start=sheet_date(rolling[2][i+1])
@@ -107,7 +114,13 @@ def main():
   budgets=[]
   for row,name in enumerate(categories,6):
    limit=v(rolling,row,i+1)
-   budgets.append({'name':name,'limit':limit,'spent':round(spent.get(name,0),2),'prepaid':0})
+   if name=='Подписки (USD-резерв)':
+    # USD 75 is already removed from the available currency before conversion.
+    # Display this budget line, but never add its RUB equivalent to expenses.
+    budgets.append({'name':name,'limit':limit,'spent':None,'prepaid':0,
+     'informational':True,'accountingNote':'75 USD на подписки уже вычтены из доступной валюты. Сумма показана справочно по сценарному курсу, не прибавляется к рублёвым расходам.'})
+   else:
+    budgets.append({'name':name,'limit':limit,'spent':round(spent.get(name,0),2),'prepaid':0})
   income=v(rolling,33,i+1)
   expenses=v(rolling,35,i+1)
   cycles.append({'label':f'{start:%d.%m.%Y}–{end:%d.%m.%Y}',
