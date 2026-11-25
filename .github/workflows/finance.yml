@@ -17,11 +17,13 @@ concurrency:
   group: site-pages-deploy
   cancel-in-progress: false
 jobs:
-  finance:
+  build:
     runs-on: ubuntu-latest
+    # Preserve the original environment for any environment-scoped builder secrets.
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      artifact_id: ${{ steps.upload.outputs.artifact_id }}
     steps:
       - name: Checkout published website files
         uses: actions/checkout@v5
@@ -61,16 +63,24 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
+  # Separate jobs avoid the artifact service visibility race (actions/deploy-pages#451).
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Wait for Pages artifact to become visible
         env:
           GH_TOKEN: ${{ github.token }}
-          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+          ARTIFACT_ID: ${{ needs.build.outputs.artifact_id }}
         run: |
           if ! [[ "$ARTIFACT_ID" =~ ^[0-9]+$ ]]; then
             echo '::error::Upload did not return a valid Pages artifact ID'
             exit 1
           fi
-          # deploy-pages lists artifacts through the REST API, which can lag behind upload.
+          # Check REST visibility; deploy-pages uses a separate internal artifact service.
           timeout 120s bash <<'BASH' || { echo '::error::Pages artifact did not become visible within 120 seconds'; exit 1; }
           set -euo pipefail
           while true; do
