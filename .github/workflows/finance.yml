@@ -9,6 +9,7 @@ on:
   schedule:
     - cron: '11 4,10,15,16,22 * * *'
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -56,9 +57,32 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
       - name: Upload static site
+        id: upload
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
+      - name: Wait for Pages artifact to become visible
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+        run: |
+          if ! [[ "$ARTIFACT_ID" =~ ^[0-9]+$ ]]; then
+            echo '::error::Upload did not return a valid Pages artifact ID'
+            exit 1
+          fi
+          # deploy-pages lists artifacts through the REST API, which can lag behind upload.
+          timeout 120s bash <<'BASH' || { echo '::error::Pages artifact did not become visible within 120 seconds'; exit 1; }
+          set -euo pipefail
+          while true; do
+            if gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages&per_page=100" \
+              --jq '.artifacts[] | select(.expired == false) | .id' | grep -Fx "$ARTIFACT_ID"; then
+              echo "Pages artifact $ARTIFACT_ID is visible in the run artifact list."
+              exit 0
+            fi
+            echo 'Pages artifact not visible yet; retrying in 5 seconds.'
+            sleep 5
+          done
+          BASH
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
